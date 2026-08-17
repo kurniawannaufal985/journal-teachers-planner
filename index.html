@@ -13,15 +13,15 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
- --bg:#f1f5f9;--card:#ffffff;--input:#f8fafc;--border:#cbd5e1;
- --text:#0f172a;--sub:#64748b;--header:#f8fafc;--green:#047857;
- --green2:#059669;--green3:#d1fae5;--amber:#d97706;--red:#e11d48;
+  --bg:#f1f5f9;--card:#ffffff;--input:#f8fafc;--border:#cbd5e1;
+  --text:#0f172a;--sub:#64748b;--header:#f8fafc;--green:#047857;
+  --green2:#059669;--green3:#d1fae5;--amber:#d97706;--red:#e11d48;
 }
 html{scroll-behavior:smooth}
 body{font-family:'Lexend',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
 button,input,textarea,select{font-family:inherit}
 .app{display:flex;min-height:100vh}
-.sidebar{width:270px;background:var(--card);border-right:1px solid var(--border);padding:22px 16px;display:flex;flex-direction:column;justify-content:space-between;position:fixed;inset:0 auto 0 0;z-index:50}
+.sidebar{width:270px;background:var(--card);border-right:1px solid var(--border);padding:22px 16px;display:flex;flex-direction:column;justify-content:space-between;position:fixed;inset:0 auto 0 0;z-index:50;overflow-y:auto}
 .brand{display:flex;align-items:center;gap:12px;padding:4px 8px 25px}
 .brand-logo{
     width:66px;
@@ -53,11 +53,11 @@ button,input,textarea,select{font-family:inherit}
 .sidebar-bottom{border-top:1px solid var(--border);padding-top:15px}
 .main{margin-left:270px;flex:1;padding:28px 38px;max-width:1500px;width:100%}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:28px}
+.topbar-right{display:flex;align-items:center;gap:12px}
 .eyebrow{font-size:10px;color:var(--green);font-weight:800;text-transform:uppercase;letter-spacing:2px}
 h1{font-size:27px;line-height:1.2;margin-top:5px;color:var(--text)}
 .subtitle{color:var(--sub);font-size:12px;margin-top:7px}
 
-/* DESAIN ORNAMEN JAM & TANGGAL */
 .clock{
   background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
   border: 1px solid #10b98144;
@@ -185,7 +185,6 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 .nilai-table input.nilai-cell{width:52px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:4px;font-size:11px}
 .nilai-table input.remed-cell{width:40px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:4px;font-size:11px}
 
-/* REFLEKSI FORMAT STYLES */
 .refleksi-phase-title { font-weight:800; font-size:12px; text-transform:uppercase; color:var(--green); letter-spacing:1px; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
 .refleksi-subtext { font-size:11px; color:var(--sub); margin-bottom:10px; font-style:italic; }
 .mapel-checkboxes{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:8px}
@@ -214,12 +213,10 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     box-shadow:0 2px 8px #00000012;
 }.print-logo-wrap{text-align:center}
 
-/* DATE RANGE PICKER STYLES */
 .date-range-box { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .date-range-box input[type="date"] { flex: 1; min-width: 130px; cursor: pointer; }
 .date-sep { font-weight: 700; color: var(--sub); font-size: 11px; }
 
-/* ATURAN FORMATTING CETAK KHUSUS 3 LEMBAR PAS */
 @page {
   size: A4 portrait;
   margin: 10mm 12mm 10mm 12mm;
@@ -253,6 +250,8 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
  .app{display:block}.sidebar{position:fixed;width:100%;height:auto;bottom:auto;padding:10px 12px}.brand{padding:3px 5px 9px}.nav{display:none}.sidebar.open .nav{display:flex;max-height:70vh;overflow:auto;padding-bottom:8px}.sidebar-bottom{display:none}.mobile-menu{display:block;margin-left:auto;border:0;background:#10b98118;color:var(--green);border-radius:10px;padding:10px 12px}
  .main{margin-left:0;padding:105px 14px 20px}
  .topbar{align-items:stretch;flex-direction:column;gap:14px;margin-bottom:20px;padding-bottom:16px}
+ .topbar-right{flex-direction:column-reverse;width:100%;gap:10px}
+ .topbar-right button{width:100%;justify-content:center}
  
  .clock{
     width:100%;
@@ -297,8 +296,6 @@ th { border-color: inherit !important; }
       <button data-page="nilai" onclick="showSection('nilai')"><i class="fa-solid fa-graduation-cap"></i> Nilai Formatif</button>
       <button data-page="refleksi" onclick="showSection('refleksi')"><i class="fa-solid fa-pen-to-square"></i> Jurnal Refleksi</button>
       <button data-page="print_view" onclick="showSection('print_view')"><i class="fa-solid fa-file-invoice"></i> Ringkasan / Cetak Laporan</button>
-      <div class="nav-sep"></div>
-      <button onclick="resetPlanner()" style="color:#e11d48"><i class="fa-solid fa-trash-can"></i> Reset Data Lokal</button>
     </nav>
   </div>
 </aside>
@@ -311,14 +308,17 @@ th { border-color: inherit !important; }
     <div class="subtitle" id="pageSubtitle">Tahun Ajaran <span class="dynamic-ta">--</span> — SD Islam Ramah Anak</div>
   </div>
   
-  <div class="clock">
-    <div class="clock-icon-box">
-      <i class="fa-regular fa-clock"></i>
-      <span class="clock-dot"></span>
-    </div>
-    <div class="clock-info">
-      <div class="clock-time" id="clockTime">00:00:00 WIB</div>
-      <div class="clock-date" id="clockDate"><i class="fa-regular fa-calendar-check"></i> --</div>
+  <div class="topbar-right">
+    <button class="btn danger" onclick="resetPlanner()" title="Reset semua data tersimpan"><i class="fa-solid fa-rotate-left"></i> Reset Data</button>
+    <div class="clock">
+      <div class="clock-icon-box">
+        <i class="fa-regular fa-clock"></i>
+        <span class="clock-dot"></span>
+      </div>
+      <div class="clock-info">
+        <div class="clock-time" id="clockTime">00:00:00 WIB</div>
+        <div class="clock-date" id="clockDate"><i class="fa-regular fa-calendar-check"></i> --</div>
+      </div>
     </div>
   </div>
 </header>
@@ -352,7 +352,7 @@ th { border-color: inherit !important; }
 
 <!-- BIODATA -->
 <section id="biodata" class="page">
-  <div class="section-head"><div><div class="section-title"><i class="fa-solid fa-user"></i> Biodata Guru</div><div class="card-sub">Data dapat diedit manual dan tersimpan otomatis di browser.</div></div><span class="badge success"><i class="fa-solid fa-floppy-disk"></i> Auto Save</span></div>
+  <div class="section-head"><div><div class="section-title"><i class="fa-solid fa-user"></i> Biodata Guru</div><div class="card-sub">Data dapat diedit manual dan tersimpan otomatis di browser &amp; Google Sheets.</div></div><span class="badge success"><i class="fa-solid fa-floppy-disk"></i> Auto Save</span></div>
   <div class="card">
     <div class="card-title">Data Pribadi</div>
     <div class="form-grid" style="margin-top:16px">
@@ -728,7 +728,7 @@ th { border-color: inherit !important; }
             <td style="text-align:center" id="avg_sunda">0,00</td>
             <td style="text-align:center" id="avg_arab">0,00</td>
             <td style="text-align:center" id="avg_tik">0,00</td>
-            <td style="text-align:center" id="total_remed">0</td>
+            <td style="background:#e2e8f0"></td>
           </tr>
           <tr>
             <td colspan="3" style="text-align:right">Nilai Tertinggi</td>
@@ -1024,6 +1024,53 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
+// INTEGRASI GOOGLE SHEETS CLOUD SYNC
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRbPyyX4mG-ELzzBTUQt628cnK4UVPW8mxkhMxHZZxoQ2l4BmSX3-HnICJLnmCzwQE/exec";
+
+let syncTimeout = null;
+function autoSyncToCloud() {
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI")) return;
+  
+  clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(() => {
+    const payload = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k.startsWith("jtp_")) {
+        payload[k.replace("jtp_", "")] = localStorage.getItem(k);
+      }
+    }
+
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ action: "save", payload: payload }),
+      headers: { "Content-Type": "text/plain;charset=utf-8" }
+    }).catch(err => console.error("Gagal sinkronisasi ke cloud:", err));
+  }, 1500);
+}
+
+function loadDataFromCloud() {
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI")) return;
+
+  fetch(GOOGLE_SCRIPT_URL)
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === "success" && res.payload && Object.keys(res.payload).length > 0) {
+        Object.keys(res.payload).forEach(key => {
+          localStorage.setItem("jtp_" + key, res.payload[key]);
+        });
+        initInputs();
+        renderStudents();
+        renderActivities();
+        renderTargets();
+        renderDPL();
+        renderAnekdot();
+        renderNilai();
+      }
+    })
+    .catch(err => console.error("Gagal memuat data dari cloud:", err));
+}
+
 const targetTexts=[
 "Datang dan pulang tepat waktu dalam 1 pekan",
 "Memberikan informasi pembelajaran dan lainnya kepada orang tua peserta didik",
@@ -1066,7 +1113,10 @@ const monthsKeys=["JULI","AGUST","SEPT","OKT","NOV","DES","JAN","FEB","MAR","APR
 let currentMonth="AGUST";
 
 function get(k,d=""){return localStorage.getItem("jtp_"+k)??d}
-function set(k,v){localStorage.setItem("jtp_"+k,v)}
+function set(k,v){
+  localStorage.setItem("jtp_"+k,v);
+  autoSyncToCloud();
+}
 
 function getFormattedFullDate(d = new Date()) {
  const hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
@@ -1229,7 +1279,6 @@ function initInputs(){
  updateKepuasanStatPdf();
 }
 
-// FUNGSI MENDAPATKAN DAFTAR SISWA (DEFAULT 20 SISWA JIKA BELUM ADA DATA)
 function getStudentsData() {
   const saved = get("students", null);
   if (saved !== null) {
@@ -1681,14 +1730,6 @@ function calcNilaiStats(){
    if(elMin) elMin.textContent=formatVal(min);
  });
  
- let totalRemed=0;
- saved.forEach(item=>{
-   const r=parseInt(item.remed)||0;
-   totalRemed+=r;
- });
- const elRem=document.getElementById("total_remed");
- if(elRem) elRem.textContent=totalRemed;
- 
  renderNilaiChart(averages);
 }
 
@@ -1800,16 +1841,47 @@ window.addEventListener('beforeprint', () => {
 });
 
 function resetPlanner(){
- if(confirm("Reset seluruh data yang tersimpan di browser? Data yang sudah dihapus tidak dapat dikembalikan.")){
-   Object.keys(localStorage).filter(k=>k.startsWith("jtp_")).forEach(k=>localStorage.removeItem(k));
-   location.reload();
- }
+  if(confirm("Apakah Anda yakin ingin mereset seluruh data? Semua data tersimpan dan Tab Sheet Anda di Google Sheets akan dihapus secara permanen.")){
+    const teacherName = (get("bio_nama", "")).trim();
+
+    if(GOOGLE_SCRIPT_URL && teacherName && !GOOGLE_SCRIPT_URL.includes("URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI")){
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "delete_sheet",
+          sheetName: teacherName
+        }),
+        headers: { "Content-Type": "text/plain;charset=utf-8" }
+      })
+      .then(() => {
+        Object.keys(localStorage).filter(k=>k.startsWith("jtp_")).forEach(k=>localStorage.removeItem(k));
+        location.reload();
+      })
+      .catch(err => {
+        console.error("Gagal menghapus tab sheet di cloud:", err);
+        Object.keys(localStorage).filter(k=>k.startsWith("jtp_")).forEach(k=>localStorage.removeItem(k));
+        location.reload();
+      });
+    } else {
+      Object.keys(localStorage).filter(k=>k.startsWith("jtp_")).forEach(k=>localStorage.removeItem(k));
+      location.reload();
+    }
+  }
 }
 
 (function init(){
  document.documentElement.dataset.theme="light";
  initSchoolLogo();
- initAcademicYear();initInputs();renderStudents();renderActivities();renderTargets();renderDPL();renderAnekdot();renderNilai();startClock();
+ initAcademicYear();
+ initInputs();
+ renderStudents();
+ renderActivities();
+ renderTargets();
+ renderDPL();
+ renderAnekdot();
+ renderNilai();
+ startClock();
+ loadDataFromCloud();
 })();
 </script>
 </body>
