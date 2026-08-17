@@ -151,8 +151,6 @@ h1{font-size:27px;line-height:1.2;margin-top:5px;color:var(--text)}
 .full{grid-column:1/-1}
 .btn{border:0;border-radius:10px;padding:10px 14px;background:#059669;color:white;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s}.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
 .btn.secondary{background:var(--input);color:var(--text);border:1px solid var(--border)}.btn.danger{background:#e11d48;color:white}.btn.amber{background:#d97706;color:white}
-.btn-del-row{background:transparent;border:0;color:var(--red);cursor:pointer;font-size:13px;padding:4px 8px;border-radius:6px;transition:.2s}
-.btn-del-row:hover{background:#ffe4e6}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:13px}
 table{width:100%;border-collapse:collapse;min-width:850px}
@@ -384,10 +382,11 @@ th { border-color: inherit !important; }
   <div class="section-head">
     <div>
       <div class="section-title"><i class="fa-solid fa-users"></i> Data Peserta Didik</div>
-      <div class="card-sub">Jumlah siswa fleksibel (Maksimal 24 siswa per kelas). Perubahan tersimpan otomatis.</div>
+      <div class="card-sub">Atur jumlah siswa secara fleksibel (Maksimal 24 siswa). Perubahan tersimpan otomatis.</div>
     </div>
     <div class="actions">
       <button class="btn" onclick="addStudentRow()"><i class="fa-solid fa-plus"></i> Tambah Siswa</button>
+      <button class="btn danger" onclick="removeLastStudentRow()"><i class="fa-solid fa-minus"></i> Kurangi Siswa</button>
       <button class="btn secondary" onclick="saveStudents()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
     </div>
   </div>
@@ -404,7 +403,6 @@ th { border-color: inherit !important; }
             <th style="min-width:200px">Nama Ayah &amp; Ibu</th>
             <th style="min-width:180px">Pekerjaan Ayah &amp; Ibu</th>
             <th style="min-width:150px">No. Telp Orang Tua</th>
-            <th style="width:50px;text-align:center">Aksi</th>
           </tr>
         </thead>
         <tbody id="studentBody"></tbody>
@@ -1251,11 +1249,9 @@ function renderStudents(){
  saved.forEach((s, i) => {
    const tr = document.createElement("tr");
    const fields = ["name","nisn","gender","birth","parent","job","phone"];
-   const isLast = i === saved.length - 1 && saved.length > 1;
    
    tr.innerHTML = `<td>${i+1}</td>` + 
-     fields.map(f => `<td><input class="edit-cell student-input" data-i="${i}" data-f="${f}" value="${esc(s[f]||"")}" placeholder="${f==="name"?"Nama siswa":""}"></td>`).join("") +
-     `<td style="text-align:center">${isLast ? `<button class="btn-del-row" onclick="removeLastStudentRow()" title="Hapus Siswa Terakhir"><i class="fa-solid fa-trash-can"></i></button>` : ''}</td>`;
+     fields.map(f => `<td><input class="edit-cell student-input" data-i="${i}" data-f="${f}" value="${esc(s[f]||"")}" placeholder="${f==="name"?"Nama siswa":""}"></td>`).join("");
    body.appendChild(tr);
  });
  
@@ -1304,7 +1300,7 @@ function removeLastStudentRow(){
     alert("Minimal harus ada 1 siswa.");
     return;
   }
-  if (confirm(`Hapus baris siswa nomor ${saved.length}?`)) {
+  if (confirm(`Kurangi 1 siswa? Jumlah siswa akan menjadi ${saved.length - 1}.`)) {
     saved.pop();
     set("students", JSON.stringify(saved));
     renderStudents();
