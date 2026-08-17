@@ -57,7 +57,7 @@ button,input,textarea,select{font-family:inherit}
 h1{font-size:27px;line-height:1.2;margin-top:5px;color:var(--text)}
 .subtitle{color:var(--sub);font-size:12px;margin-top:7px}
 
-/* DESAIN ORNAMEN JAM & TANGGAL BARU */
+/* DESAIN ORNAMEN JAM & TANGGAL */
 .clock{
   background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
   border: 1px solid #10b98144;
@@ -151,6 +151,8 @@ h1{font-size:27px;line-height:1.2;margin-top:5px;color:var(--text)}
 .full{grid-column:1/-1}
 .btn{border:0;border-radius:10px;padding:10px 14px;background:#059669;color:white;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s}.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
 .btn.secondary{background:var(--input);color:var(--text);border:1px solid var(--border)}.btn.danger{background:#e11d48;color:white}.btn.amber{background:#d97706;color:white}
+.btn-del-row{background:transparent;border:0;color:var(--red);cursor:pointer;font-size:13px;padding:4px 8px;border-radius:6px;transition:.2s}
+.btn-del-row:hover{background:#ffe4e6}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:13px}
 table{width:100%;border-collapse:collapse;min-width:850px}
@@ -254,7 +256,6 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
  .main{margin-left:0;padding:105px 14px 20px}
  .topbar{align-items:stretch;flex-direction:column;gap:14px;margin-bottom:20px;padding-bottom:16px}
  
- /* PENYESUAIAN TAMPILAN CLOCK DI HP */
  .clock{
     width:100%;
     justify-content:flex-start;
@@ -312,7 +313,6 @@ th { border-color: inherit !important; }
     <div class="subtitle" id="pageSubtitle">Tahun Ajaran <span class="dynamic-ta">--</span> — SD Islam Ramah Anak</div>
   </div>
   
-  <!-- ORNAMEN JAM & TANGGAL DENGAN DESAIN BARU -->
   <div class="clock">
     <div class="clock-icon-box">
       <i class="fa-regular fa-clock"></i>
@@ -334,7 +334,7 @@ th { border-color: inherit !important; }
   </div>
   <div class="stats">
     <div class="stat"><div class="stat-icon"><i class="fa-solid fa-user"></i></div><div class="stat-label">Biodata</div><div class="stat-value" id="homeTeacherName">Guru</div></div>
-    <div class="stat"><div class="stat-icon"><i class="fa-solid fa-users"></i></div><div class="stat-label">Peserta Didik</div><div class="stat-value" id="studentCount">24</div></div>
+    <div class="stat"><div class="stat-icon"><i class="fa-solid fa-users"></i></div><div class="stat-label">Peserta Didik</div><div class="stat-value" id="studentCount">0</div></div>
     <div class="stat"><div class="stat-icon"><i class="fa-solid fa-calendar"></i></div><div class="stat-label">Aktivitas</div><div class="stat-value">Pekan</div></div>
     <div class="stat"><div class="stat-icon"><i class="fa-solid fa-bullseye"></i></div><div class="stat-label">Target</div><div class="stat-value" id="homeTargetStat">15/15</div></div>
   </div>
@@ -381,20 +381,30 @@ th { border-color: inherit !important; }
 
 <!-- SISWA -->
 <section id="siswa" class="page">
-  <div class="section-head"><div><div class="section-title"><i class="fa-solid fa-users"></i> Data Peserta Didik</div><div class="card-sub">24 baris siswa siap diisi. Perubahan tersimpan otomatis.</div></div><div class="actions"><button class="btn" onclick="addStudentRow()"><i class="fa-solid fa-plus"></i> Tambah Siswa</button><button class="btn secondary" onclick="saveStudents()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button></div></div>
+  <div class="section-head">
+    <div>
+      <div class="section-title"><i class="fa-solid fa-users"></i> Data Peserta Didik</div>
+      <div class="card-sub">Jumlah siswa fleksibel (Maksimal 24 siswa per kelas). Perubahan tersimpan otomatis.</div>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="addStudentRow()"><i class="fa-solid fa-plus"></i> Tambah Siswa</button>
+      <button class="btn secondary" onclick="saveStudents()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+    </div>
+  </div>
   <div class="card">
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th style="width:40px">No</th>
-            <th style="min-width:220px">Nama Siswa</th>
-            <th style="min-width:140px">NISN</th>
-            <th style="min-width:120px">Jenis Kelamin</th>
-            <th style="min-width:180px">Tempat, Tgl Lahir</th>
-            <th style="min-width:220px">Nama Ayah &amp; Ibu</th>
-            <th style="min-width:200px">Pekerjaan Ayah &amp; Ibu</th>
-            <th style="min-width:160px">No. Telp Orang Tua</th>
+            <th style="min-width:200px">Nama Siswa</th>
+            <th style="min-width:130px">NISN</th>
+            <th style="min-width:110px">Jenis Kelamin</th>
+            <th style="min-width:170px">Tempat, Tgl Lahir</th>
+            <th style="min-width:200px">Nama Ayah &amp; Ibu</th>
+            <th style="min-width:180px">Pekerjaan Ayah &amp; Ibu</th>
+            <th style="min-width:150px">No. Telp Orang Tua</th>
+            <th style="width:50px;text-align:center">Aksi</th>
           </tr>
         </thead>
         <tbody id="studentBody"></tbody>
@@ -931,7 +941,7 @@ th { border-color: inherit !important; }
       <div class="print-grid">
         <div class="print-box">
           <b>Rekap Kehadiran Bulan Ini:</b>
-          <div style="font-size:11px; font-weight:700; margin-top:4px;" id="printAbsensiSummary">Total Siswa: 24 | Tingkat Kehadiran Rata-Rata: 0%</div>
+          <div style="font-size:11px; font-weight:700; margin-top:4px;" id="printAbsensiSummary">Total Siswa: 0 | Tingkat Kehadiran Rata-Rata: 0%</div>
           <div style="margin-top:6px;">
             <div class="bar-label"><span><b>Persentase Kehadiran Murid</b></span><b id="printAbsensiPctText">0%</b></div>
             <div class="bar-track"><div class="bar-fill" id="printAbsensiBar" style="width:0%"></div></div>
@@ -1034,11 +1044,8 @@ const targetTexts=[
 "Menyiapkan perlengkapan mengajar untuk pekan depan"
 ];
 
-// SEMUA DATA DEFAULT DALAM KONDISI BERSIH / KOSONG
-const defaultStudents=[];
 const times=["07.15 - 07.30 WIB","07.30 - 09.00 WIB","09.00 - 09.30 WIB","09.30 - 10.30 WIB","10.30 - 12.00 WIB","12.00 - 13.00 WIB","13.00 - 14.00 WIB","14.00 - 15.00 WIB","15.00 - 15.30 WIB","15.30 - 16.00 WIB"];
 
-// DATA AKTIVITAS DISESUAIKAN UNTUK 5 HARI (SENIN - JUM'AT)
 const defaultActs=[
 ["","","","",""],["","","","",""],["","","","",""],["","","","",""],["","","","",""],
 ["REST","REST","REST","REST","REST"],
@@ -1224,18 +1231,36 @@ function initInputs(){
  updateKepuasanStatPdf();
 }
 
+// FUNGSI MENDAPATKAN DAFTAR SISWA (DEFAULT 20 SISWA JIKA BELUM ADA DATA)
+function getStudentsData() {
+  const saved = get("students", null);
+  if (saved !== null) {
+    return JSON.parse(saved);
+  }
+  const initArr = [];
+  for (let i = 0; i < 20; i++) {
+    initArr.push({ name: "", nisn: "", gender: "", birth: "", parent: "", job: "", phone: "" });
+  }
+  return initArr;
+}
+
 function renderStudents(){
- const saved=JSON.parse(get("students",JSON.stringify(defaultStudents)));
- const body=document.getElementById("studentBody");body.innerHTML="";
- for(let i=0;i<24;i++){
-   const s=saved[i]||{};
-   const tr=document.createElement("tr");
-   const fields=["name","nisn","gender","birth","parent","job","phone"];
-   tr.innerHTML=`<td>${i+1}</td>`+fields.map(f=>`<td><input class="edit-cell student-input" data-i="${i}" data-f="${f}" value="${esc(s[f]||"")}" placeholder="${f==="name"?"Nama siswa":""}"></td>`).join("");
+ const saved = getStudentsData();
+ const body = document.getElementById("studentBody"); body.innerHTML="";
+ 
+ saved.forEach((s, i) => {
+   const tr = document.createElement("tr");
+   const fields = ["name","nisn","gender","birth","parent","job","phone"];
+   const isLast = i === saved.length - 1 && saved.length > 1;
+   
+   tr.innerHTML = `<td>${i+1}</td>` + 
+     fields.map(f => `<td><input class="edit-cell student-input" data-i="${i}" data-f="${f}" value="${esc(s[f]||"")}" placeholder="${f==="name"?"Nama siswa":""}"></td>`).join("") +
+     `<td style="text-align:center">${isLast ? `<button class="btn-del-row" onclick="removeLastStudentRow()" title="Hapus Siswa Terakhir"><i class="fa-solid fa-trash-can"></i></button>` : ''}</td>`;
    body.appendChild(tr);
- }
- document.querySelectorAll(".student-input").forEach(x=>x.addEventListener("input",saveStudents));
- document.getElementById("studentCount").textContent=24;
+ });
+ 
+ document.querySelectorAll(".student-input").forEach(x=>x.addEventListener("input", saveStudents));
+ updateStudentCount();
  renderAbsensi();
  renderRekap();
  renderAnekdot();
@@ -1245,17 +1270,47 @@ function renderStudents(){
 function saveStudents(){
  const arr=[];
  document.querySelectorAll("#studentBody tr").forEach((tr,i)=>{
-   const s={};tr.querySelectorAll(".student-input").forEach(x=>s[x.dataset.f]=x.value);arr[i]=s;
+   const s={};
+   tr.querySelectorAll(".student-input").forEach(x=>s[x.dataset.f]=x.value);
+   arr[i]=s;
  });
- set("students",JSON.stringify(arr));updateStudentCount();
+ set("students", JSON.stringify(arr));
+ updateStudentCount();
  renderAbsensi();
  renderRekap();
  renderAnekdot();
  renderNilai();
 }
 
-function updateStudentCount(){document.getElementById("studentCount").textContent=24}
-function addStudentRow(){alert("Template sudah menyediakan 24 baris siswa. Silakan isi baris yang tersedia.")}
+function updateStudentCount(){
+  const saved = getStudentsData();
+  document.getElementById("studentCount").textContent = saved.length;
+}
+
+function addStudentRow(){
+  const saved = getStudentsData();
+  if (saved.length >= 24) {
+    alert("Jumlah siswa maksimal adalah 24 anak per kelas.");
+    return;
+  }
+  saved.push({ name: "", nisn: "", gender: "", birth: "", parent: "", job: "", phone: "" });
+  set("students", JSON.stringify(saved));
+  renderStudents();
+}
+
+function removeLastStudentRow(){
+  const saved = getStudentsData();
+  if (saved.length <= 1) {
+    alert("Minimal harus ada 1 siswa.");
+    return;
+  }
+  if (confirm(`Hapus baris siswa nomor ${saved.length}?`)) {
+    saved.pop();
+    set("students", JSON.stringify(saved));
+    renderStudents();
+  }
+}
+
 function esc(v){return String(v).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
 
 function changeAbsensiMonth(m){
@@ -1270,14 +1325,14 @@ function renderAbsensi(){
  headerRow.innerHTML="";
  for(let d=1;d<=31;d++){headerRow.innerHTML+=`<th style="padding:4px;text-align:center">${d}</th>`;}
 
- const students=JSON.parse(get("students",JSON.stringify(defaultStudents)));
- const monthData=JSON.parse(get("absData_"+currentMonth,"{}"));
- const body=document.getElementById("absensiBody");
- body.innerHTML="";
+ const students = getStudentsData();
+ const monthData = JSON.parse(get("absData_"+currentMonth,"{}"));
+ const body = document.getElementById("absensiBody");
+ body.innerHTML = "";
 
- for(let i=0;i<24;i++){
-   const name=students[i]?.name || "";
-   const studentAbs=monthData[i] || {};
+ students.forEach((st, i) => {
+   const name = st.name || "";
+   const studentAbs = monthData[i] || {};
    let daysHtml="";
    for(let d=1;d<=31;d++){
      const val=studentAbs[d]||"";
@@ -1295,7 +1350,7 @@ function renderAbsensi(){
      <td style="text-align:center"><span class="badge success" id="stat_pct_${i}">0%</span></td>`;
    body.appendChild(tr);
    calcStudentAbsensi(i);
- }
+ });
 
  document.querySelectorAll(".day-cell").forEach(input=>{
    input.addEventListener("input",e=>{
@@ -1351,12 +1406,12 @@ function calcStudentAbsensi(s){
 }
 
 function renderRekap(){
- const students=JSON.parse(get("students",JSON.stringify(defaultStudents)));
- const body=document.getElementById("rekapBody");
- body.innerHTML="";
+ const students = getStudentsData();
+ const body = document.getElementById("rekapBody");
+ body.innerHTML = "";
 
- for(let i=0;i<24;i++){
-   const name=students[i]?.name || "";
+ students.forEach((st, i) => {
+   const name = st.name || "";
    let monthCols="";
    let totalH=0, totalS=0, totalI=0, totalA=0;
 
@@ -1387,7 +1442,7 @@ function renderRekap(){
      <td style="font-weight:bold;background:#05966915">${totalI||'-'}</td>
      <td style="font-weight:bold;background:#05966915">${totalA||'-'}</td>`;
    body.appendChild(tr);
- }
+ });
 }
 
 function renderActivities(){
@@ -1529,21 +1584,22 @@ function renderDPLChart(data){
 }
 
 function renderAnekdot(){
- const students=JSON.parse(get("students",JSON.stringify(defaultStudents)));
- const saved=JSON.parse(get("anekdotData",JSON.stringify(defaultAnekdotData)));
- const body=document.getElementById("anekdotBody");body.innerHTML="";
+ const students = getStudentsData();
+ const saved = JSON.parse(get("anekdotData",JSON.stringify(defaultAnekdotData)));
+ const body = document.getElementById("anekdotBody");
+ body.innerHTML = "";
  
- for(let i=0;i<24;i++){
-   const name=students[i]?.name||"";
-   const item=saved[i]||{};
-   const tr=document.createElement("tr");
-   tr.innerHTML=`<td style="text-align:center">${i+1}</td>
+ students.forEach((st, i) => {
+   const name = st.name || "";
+   const item = saved[i] || {};
+   const tr = document.createElement("tr");
+   tr.innerHTML = `<td style="text-align:center">${i+1}</td>
      <td style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>${esc(name)}</b></td>
      <td><input class="anekdot-input" data-i="${i}" data-f="tempat" value="${esc(item.tempat||"")}" placeholder="Tempat..."></td>
      <td><input class="anekdot-input" data-i="${i}" data-f="waktu" value="${esc(item.waktu||"")}" placeholder="Waktu..."></td>
      <td><textarea class="anekdot-input" data-i="${i}" data-f="kronologi" placeholder="Kronologis peristiwa...">${esc(item.kronologi||"")}</textarea></td>`;
    body.appendChild(tr);
- }
+ });
  document.querySelectorAll(".anekdot-input").forEach(x=>x.addEventListener("input",saveAnekdot));
 }
 
@@ -1558,14 +1614,15 @@ function saveAnekdot(){
 }
 
 function renderNilai(){
- const students=JSON.parse(get("students",JSON.stringify(defaultStudents)));
- const saved=JSON.parse(get("nilaiData",JSON.stringify(defaultNilaiData)));
- const body=document.getElementById("nilaiBody");body.innerHTML="";
+ const students = getStudentsData();
+ const saved = JSON.parse(get("nilaiData",JSON.stringify(defaultNilaiData)));
+ const body = document.getElementById("nilaiBody");
+ body.innerHTML = "";
 
- for(let i=0;i<24;i++){
-   const name=students[i]?.name||"";
-   const nisn=students[i]?.nisn||"";
-   const sNilai=saved[i]||{};
+ students.forEach((st, i) => {
+   const name = st.name || "";
+   const nisn = st.nisn || "";
+   const sNilai = saved[i] || {};
    
    let mapelCols="";
    mapelKeys.forEach(mKey=>{
@@ -1573,16 +1630,16 @@ function renderNilai(){
      mapelCols+=`<td style="text-align:center"><input class="nilai-cell" data-i="${i}" data-m="${mKey}" value="${esc(val)}" placeholder="-"></td>`;
    });
    
-   const remedVal=sNilai.remed||"";
+   const remedVal = sNilai.remed || "";
    
-   const tr=document.createElement("tr");
-   tr.innerHTML=`<td style="text-align:center">${i+1}</td>
+   const tr = document.createElement("tr");
+   tr.innerHTML = `<td style="text-align:center">${i+1}</td>
      <td style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>${esc(name)}</b></td>
      <td>${esc(nisn)}</td>
      ${mapelCols}
      <td style="text-align:center"><input class="remed-cell" data-i="${i}" data-m="remed" value="${esc(remedVal)}" placeholder="0"></td>`;
    body.appendChild(tr);
- }
+ });
  
  document.querySelectorAll(".nilai-cell, .remed-cell").forEach(x=>x.addEventListener("input",saveNilai));
  calcNilaiStats();
@@ -1710,6 +1767,7 @@ function updatePrintViewData(){
  document.getElementById("printTargetPctText").textContent=`${targetPct}%`;
  document.getElementById("printTargetBar").style.width=`${targetPct}%`;
 
+ const studentsCount = getStudentsData().length;
  const monthData=JSON.parse(get("absData_"+currentMonth,"{}"));
  let totalRecorded=0, totalH=0;
  Object.values(monthData).forEach(sData=>{
@@ -1720,6 +1778,7 @@ function updatePrintViewData(){
    });
  });
  const absPct = totalRecorded>0 ? Math.round((totalH/totalRecorded)*100) : 0;
+ document.getElementById("printAbsensiSummary").textContent = `Total Siswa: ${studentsCount} | Tingkat Kehadiran Rata-Rata: ${absPct}%`;
  document.getElementById("printAbsensiPctText").textContent=`${absPct}%`;
  document.getElementById("printAbsensiBar").style.width=`${absPct}%`;
  
@@ -1754,7 +1813,7 @@ function resetPlanner(){
 (function init(){
  document.documentElement.dataset.theme="light";
  initSchoolLogo();
-initAcademicYear();initInputs();renderStudents();renderActivities();renderTargets();renderDPL();renderAnekdot();renderNilai();startClock();
+ initAcademicYear();initInputs();renderStudents();renderActivities();renderTargets();renderDPL();renderAnekdot();renderNilai();startClock();
 })();
 </script>
 </body>
