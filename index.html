@@ -1098,7 +1098,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdxr0QoYo1DLzOuHlvVEXfAHljHp68I7DbcSdQuhto1jAtot431ljy-90RSplLxsCx/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzj1oxCTk8n3yCdjccVNHk22gYebkGWwJP28Tx7Xey35N8TFWuK45xYY7tLEHx0llKb/exec";
 
 function getDeviceUserKey() {
   let key = localStorage.getItem("jtp_device_user_key");
@@ -1111,7 +1111,7 @@ function getDeviceUserKey() {
 
 let syncTimeout = null;
 function autoSyncToCloud() {
-  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI")) return;
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbzj1oxCTk8n3yCdjccVNHk22gYebkGWwJP28Tx7Xey35N8TFWuK45xYY7tLEHx0llKb/exec")) return;
   
   clearTimeout(syncTimeout);
   syncTimeout = setTimeout(() => {
@@ -1132,7 +1132,7 @@ function autoSyncToCloud() {
 }
 
 function loadDataFromCloud() {
-  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI")) return;
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbzj1oxCTk8n3yCdjccVNHk22gYebkGWwJP28Tx7Xey35N8TFWuK45xYY7tLEHx0llKb/exec")) return;
 
   const url = `${GOOGLE_SCRIPT_URL}?userKey=${encodeURIComponent(getDeviceUserKey())}`;
   fetch(url)
