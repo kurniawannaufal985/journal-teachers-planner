@@ -255,9 +255,7 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
  .app{display:block}.sidebar{position:fixed;width:100%;height:auto;bottom:auto;padding:10px 12px}.brand{padding:3px 5px 9px}.nav{display:none}.sidebar.open .nav{display:flex;max-height:70vh;overflow:auto;padding-bottom:8px}.sidebar-bottom{display:none}.mobile-menu{display:block;margin-left:auto;border:0;background:#10b98118;color:var(--green);border-radius:10px;padding:10px 12px}
  .main{margin-left:0;padding:105px 14px 20px}
  .topbar{align-items:stretch;flex-direction:column;gap:14px;margin-bottom:20px;padding-bottom:16px}
- .ta-control{justify-content:flex-start!important;width:100%;}
-  .ta-control select,.ta-control .btn{flex:1;}
-  .topbar-right{flex-direction:column-reverse;width:100%;gap:10px}
+ .topbar-right{flex-direction:column-reverse;width:100%;gap:10px}
  .topbar-right button{width:100%;justify-content:center}
  
  .clock{
@@ -379,13 +377,14 @@ th { border-color: inherit !important; }
     <div class="subtitle" id="pageSubtitle">Tahun Ajaran <span class="dynamic-ta">--</span> — SD Islam Ramah Anak</div>
   </div>
   
-  <div class="ta-control" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:8px;">
-    <label for="taSelect" style="font-size:10px;font-weight:800;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;">TA Aktif</label>
-    <select id="taSelect" onchange="switchAcademicYear(this.value)" style="background:var(--input);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:11px;font-weight:700;min-width:125px;"></select>
-    <button class="btn" type="button" onclick="createNewAcademicYear()"><i class="fa-solid fa-plus"></i> TA Baru</button>
-  </div>
-
   <div class="topbar-right">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+      <select id="taSelector" onchange="changeActiveTA(this.value)" style="background:var(--input);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:11px;font-weight:700;">
+        <option>TA --</option>
+      </select>
+      <button class="btn secondary" onclick="createNewTA()"><i class="fa-solid fa-plus"></i> TA Baru</button>
+    </div>
+    
     <button class="btn danger" onclick="resetPlanner()" title="Reset semua data tersimpan"><i class="fa-solid fa-rotate-left"></i> Reset Data</button>
     <div class="clock">
       <div class="clock-icon-box">
@@ -1106,139 +1105,297 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTwn6vPCCYjWPWIpAKQW3mHlJ2eZrhQ_opImMgssZUOv5FiuXpRHnvf5A60mz4-zt0/exec";
+const GOOGLE_SCRIPT_URL = "PASTE_NEW_APPS_SCRIPT_WEB_APP_URL_HERE";
 
-function getAccountUserKey(){
-  return localStorage.getItem("jtp_user_key") || "";
+
+/* =========================================================
+   JTP CLOUD / AUTH / MULTI-TA
+   UserKey dibuat server, bukan dari perangkat.
+   Data cloud selalu dipisahkan dengan UserKey + TA.
+   ========================================================= */
+let syncTimeout = null;
+let cloudLoading = false;
+let activeUserKey = localStorage.getItem("jtp_account_user_key") || "";
+let activeUsername = localStorage.getItem("jtp_account_username") || "";
+let activeTA = localStorage.getItem("jtp_active_ta") || "";
+
+async function sha256Hex(value){
+  const data = new TextEncoder().encode(String(value));
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest))
+    .map(b => b.toString(16).padStart(2,"0")).join("");
 }
-function getActiveTA(){return localStorage.getItem("jtp_active_ta")||get("auto_ta","")}
-function setActiveTA(ta){localStorage.setItem("jtp_active_ta",ta);localStorage.setItem("jtp_auto_ta",ta);}
-function cloudFetch(url,body){
-  return fetch(url,{method:"POST",body:JSON.stringify(body),headers:{"Content-Type":"text/plain;charset=utf-8"}}).then(r=>r.json());
+
+async function cloudPost(body){
+  if(!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxiFlT24Zq4XelbZFpA59i7ZRxMwEiIYYARtZmm_ap0YZSymdxtfKGg_dnjt7DQXsxI/exec")){
+    throw new Error("https://script.google.com/macros/s/AKfycbxiFlT24Zq4XelbZFpA59i7ZRxMwEiIYYARtZmm_ap0YZSymdxtfKGg_dnjt7DQXsxI/exec");
+  }
+  const res = await fetch(GOOGLE_SCRIPT_URL,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(body)
+  });
+  const text = await res.text();
+  let data;
+  try{ data = JSON.parse(text); }
+  catch(e){ throw new Error("Respons Apps Script bukan JSON: "+text.slice(0,180)); }
+  return data;
 }
-let syncTimeout=null;
-function collectCurrentPayload(){
-  const payload={};
+
+function getLocalPayload(){
+  const payload = {};
   for(let i=0;i<localStorage.length;i++){
-    const k=localStorage.key(i);
-    if(k && k.startsWith("jtp_") && !["jtp_is_logged_in","jtp_user_key","jtp_active_ta"].includes(k)){
-      payload[k.substring(4)]=localStorage.getItem(k);
+    const k = localStorage.key(i);
+    if(k && k.startsWith("jtp_") &&
+       !["jtp_is_logged_in","jtp_account_user_key","jtp_account_username","jtp_active_ta"].includes(k)){
+      payload[k.replace("jtp_","")] = localStorage.getItem(k);
     }
   }
-  payload.auto_ta=getActiveTA()||payload.auto_ta||"";
   return payload;
 }
-function autoSyncToCloud(){
-  if(!GOOGLE_SCRIPT_URL || localStorage.getItem("jtp_is_logged_in")!=="true" || !getAccountUserKey()) return;
-  clearTimeout(syncTimeout);
-  syncTimeout=setTimeout(()=>{
-    const ta=getActiveTA(); if(!ta)return;
-    cloudFetch(GOOGLE_SCRIPT_URL,{action:"save",userKey:getAccountUserKey(),academicYear:ta,payload:collectCurrentPayload()})
-      .catch(err=>console.error("Gagal sinkronisasi cloud:",err));
-  },700);
-}
-function putPayloadIntoLocal(payload){
-  Object.keys(localStorage).filter(k=>k.startsWith("jtp_")&&!['jtp_is_logged_in','jtp_user_key','jtp_active_ta'].includes(k)).forEach(k=>localStorage.removeItem(k));
-  Object.keys(payload||{}).forEach(k=>localStorage.setItem("jtp_"+k,String(payload[k]??"")));
-  if(payload&&payload.auto_ta)setActiveTA(payload.auto_ta);
-  if(payload&&payload.abs_current_month) currentMonth=payload.abs_current_month;
-}
-function refreshPlanner(){
-  initInputs();renderStudents();renderActivities();renderTargets();renderDPL();renderAnekdot();renderNilai();renderRefleksi();updateTAUI();updateHomeTeacherName();
-}
-function loadDataFromCloud(ta=getActiveTA()){
-  if(!GOOGLE_SCRIPT_URL || !ta || localStorage.getItem("jtp_is_logged_in")!=="true" || !getAccountUserKey())return Promise.resolve();
-  return cloudFetch(GOOGLE_SCRIPT_URL,{action:"load_ta",userKey:getAccountUserKey(),academicYear:ta})
-    .then(res=>{if(res.status==="success"){putPayloadIntoLocal(res.payload||{});setActiveTA(ta);refreshPlanner()}})
-    .catch(err=>console.error("Gagal memuat data cloud:",err));
-}
-function checkLoginSession(){
-  const ok=localStorage.getItem("jtp_is_logged_in")==="true" && !!localStorage.getItem("jtp_user_key");
-  document.getElementById("loginScreen").style.display=ok?"none":"flex";
-  if(!ok){Object.keys(localStorage).filter(k=>k.startsWith("jtp_")&&!['jtp_is_logged_in','jtp_user_key'].includes(k)).forEach(k=>localStorage.removeItem(k));}
-}
-function switchAuthTab(type){
-  const tl=document.getElementById("tabBtnLogin"),tr=document.getElementById("tabBtnRegister"),fl=document.getElementById("authLoginForm"),fr=document.getElementById("authRegisterForm");
-  const login=type==='login';tl.classList.toggle('active',login);tr.classList.toggle('active',!login);fl.style.display=login?'block':'none';fr.style.display=login?'none':'block';
-}
-function handleLogin(e){
-  e.preventDefault();
-  const btn=document.getElementById("btnLoginSubmit"),orig=btn.innerHTML;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Memverifikasi...';btn.disabled=true;
-  const username=document.getElementById("loginUsername").value.trim(),password=document.getElementById("loginPassword").value.trim();
-  cloudFetch(GOOGLE_SCRIPT_URL,{action:"login",username,password}).then(res=>{
-    btn.innerHTML=orig;btn.disabled=false;
-    if(res.status!=="success")throw new Error(res.message||"Username atau password salah.");
-    localStorage.setItem("jtp_is_logged_in","true");localStorage.setItem("jtp_user_key",res.userKey);
-    if(res.activeTA)setActiveTA(res.activeTA);
-    localStorage.setItem("jtp_teacher_name",res.teacherName||"");
-    document.getElementById("loginScreen").style.display="none";
-    populateTASelect(res.tas||[],res.activeTA);
-    return loadDataFromCloud(res.activeTA).then(()=>{refreshPlanner();showSection('home')});
-  }).catch(err=>{btn.innerHTML=orig;btn.disabled=false;alert(err.message||"Gagal terhubung ke server.")});
-}
-function handleRegister(e){
-  e.preventDefault();
-  const btn=document.getElementById("btnRegSubmit"),orig=btn.innerHTML;
-  btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...';btn.disabled=true;
-  const nama=document.getElementById("regNama").value.trim();
-  const username=document.getElementById("regUsername").value.trim();
-  const password=document.getElementById("regPassword").value.trim();
 
-  // UserKey TIDAK dibuat di browser. Apps Script membuat UserKey unik untuk akun.
-  cloudFetch(GOOGLE_SCRIPT_URL,{
-    action:"register",
-    username,
-    password,
-    payload:{bio_nama:nama,bio_nuptk:username,auto_ta:getDefaultAcademicYear()}
-  }).then(res=>{
-    if(res.status!=="success")throw new Error(res.message||"Registrasi gagal.");
-    alert((res.message||"Akun berhasil dibuat.")+"\nUserKey akun dibuat oleh server.");
-    document.getElementById("loginUsername").value=username;
-    document.getElementById("loginPassword").value=password;
-    switchAuthTab('login');
-  }).catch(err=>alert(err.message||"Gagal mendaftarkan akun."))
-    .finally(()=>{btn.innerHTML=orig;btn.disabled=false});
+function clearPlannerLocalData(){
+  Object.keys(localStorage)
+    .filter(k => k.startsWith("jtp_") &&
+      !["jtp_is_logged_in","jtp_account_user_key","jtp_account_username","jtp_active_ta"].includes(k))
+    .forEach(k => localStorage.removeItem(k));
 }
-function handleLogout(){
-  if(confirm("Keluar dari akun ini? Data TA di Google Sheets tetap aman.")){
-    Object.keys(localStorage).filter(k=>k.startsWith("jtp_")).forEach(k=>localStorage.removeItem(k));location.reload();
+
+function putPayloadToLocal(payload){
+  clearPlannerLocalData();
+  Object.keys(payload || {}).forEach(k => {
+    localStorage.setItem("jtp_"+k, payload[k]);
+  });
+}
+
+function autoSyncToCloud(){
+  if(cloudLoading || !activeUserKey || !activeTA) return;
+  clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(async()=>{
+    try{
+      await cloudPost({
+        action:"save_v2",
+        userKey:activeUserKey,
+        ta:activeTA,
+        payload:getLocalPayload()
+      });
+    }catch(err){
+      console.error("Gagal sinkronisasi:",err);
+    }
+  },900);
+}
+
+async function loadTAData(ta){
+  if(!activeUserKey || !ta) return false;
+  cloudLoading = true;
+  try{
+    const res = await cloudPost({
+      action:"load_v2",
+      userKey:activeUserKey,
+      ta:ta
+    });
+    if(!res.ok) throw new Error(res.error || "Gagal memuat data.");
+    activeTA = ta;
+    localStorage.setItem("jtp_active_ta",ta);
+    putPayloadToLocal(res.payload || {});
+    setAcademicYearUI(ta);
+    initInputs();
+    renderStudents();
+    renderActivities();
+    renderTargets();
+    renderDPL();
+    renderAnekdot();
+    renderNilai();
+    renderRefleksi();
+    return true;
+  }finally{
+    cloudLoading = false;
   }
 }
-function getDefaultAcademicYear(){
-  const d=new Date(),y=d.getFullYear(),m=d.getMonth(),s=m>=6?y:y-1;return `${s}/${s+1}`;
+
+async function getTAList(){
+  if(!activeUserKey) return [];
+  const res = await cloudPost({action:"list_ta_v2",userKey:activeUserKey});
+  return res.ok ? (res.taList || []) : [];
 }
-function updateTAUI(){
-  const ta=getActiveTA()||getDefaultAcademicYear();
-  document.querySelectorAll('.dynamic-ta').forEach(el=>el.textContent=ta);
-  const f=document.getElementById('currentYearFooter');if(f)f.textContent='TA. '+ta;
-  const sel=document.getElementById('taSelect');if(sel&&!sel.value)sel.value=ta;
+
+function setAcademicYearUI(ta){
+  if(!ta) return;
+  activeTA = ta;
+  localStorage.setItem("jtp_active_ta",ta);
+  localStorage.setItem("jtp_auto_ta",ta);
+  document.querySelectorAll(".dynamic-ta").forEach(el=>el.textContent=ta);
+  const footerYr=document.getElementById("currentYearFooter");
+  if(footerYr) footerYr.textContent=`TA. ${ta}`;
+  const sel=document.getElementById("taSelector");
+  if(sel) sel.value=ta;
 }
-function populateTASelect(tas,active){
-  const sel=document.getElementById('taSelect');if(!sel)return;
-  sel.innerHTML='';
-  (tas||[]).forEach(ta=>{const o=document.createElement('option');o.value=ta;o.textContent=ta;sel.appendChild(o)});
-  if(active)sel.value=active;updateTAUI();
+
+async function renderTASelector(){
+  const sel=document.getElementById("taSelector");
+  if(!sel || !activeUserKey) return;
+  try{
+    const list=await getTAList();
+    sel.innerHTML="";
+    list.forEach(ta=>{
+      const o=document.createElement("option");
+      o.value=ta;o.textContent=ta;sel.appendChild(o);
+    });
+    if(activeTA && list.includes(activeTA)) sel.value=activeTA;
+    else if(list.length){ activeTA=list[list.length-1]; sel.value=activeTA; }
+  }catch(e){console.error(e);}
 }
-function loadTAList(){
-  if(localStorage.getItem('jtp_is_logged_in')!=='true')return;
-  cloudFetch(GOOGLE_SCRIPT_URL,{action:'list_ta',userKey:getAccountUserKey()}).then(res=>{if(res.status==='success')populateTASelect(res.tas||[],res.activeTA||getActiveTA())}).catch(console.error);
+
+async function changeActiveTA(ta){
+  if(!ta || ta===activeTA) return;
+  if(!confirm(`Buka data TA ${ta}? Data TA yang sedang aktif akan tetap aman.`)) return;
+  try{
+    await loadTAData(ta);
+    await renderTASelector();
+  }catch(e){alert("Gagal memuat TA: "+e.message);}
 }
-function switchAcademicYear(ta){
-  if(!ta||ta===getActiveTA())return;
-  if(!confirm(`Buka data TA ${ta}? Data TA saat ini tetap aman di Google Sheets.`)){updateTAUI();return}
-  setActiveTA(ta);loadDataFromCloud(ta).then(()=>{refreshPlanner();showSection('home')});
+
+async function createNewTA(){
+  if(!activeUserKey) return alert("Silakan login terlebih dahulu.");
+  const newTA=prompt("Masukkan Tahun Ajaran baru. Contoh: 2026/2027", "");
+  if(!newTA) return;
+  if(!/^\d{4}\/\d{4}$/.test(newTA.trim()))
+    return alert("Format TA harus seperti 2026/2027.");
+  if((await getTAList()).includes(newTA.trim()))
+    return alert("TA tersebut sudah ada.");
+  try{
+    const res=await cloudPost({
+      action:"create_ta_v2",
+      userKey:activeUserKey,
+      sourceTA:activeTA,
+      newTA:newTA.trim()
+    });
+    if(!res.ok) throw new Error(res.error || "Gagal membuat TA.");
+    await loadTAData(newTA.trim());
+    await renderTASelector();
+    alert(`TA ${newTA.trim()} berhasil dibuat. Biodata guru disalin, data akademik dibuat baru.`);
+  }catch(e){alert("Gagal membuat TA baru: "+e.message);}
 }
-function createNewAcademicYear(){
-  const current=getActiveTA()||getDefaultAcademicYear();
-  const suggested=(()=>{const m=String(current).match(/(\d{4})[\/-](\d{4})/);return m?`${Number(m[1])+1}/${Number(m[2])+1}`:getDefaultAcademicYear()})();
-  const ta=prompt('Masukkan Tahun Ajaran baru (contoh: 2026/2027):',suggested);
-  if(!ta)return;
-  if(!/^\d{4}\/\d{4}$/.test(ta.trim())){alert('Format TA harus YYYY/YYYY, contoh 2026/2027.');return}
-  if(!confirm(`Buat TA ${ta}? Biodata guru akan disalin, data akademik akan dibuat kosong.`))return;
-  cloudFetch(GOOGLE_SCRIPT_URL,{action:'create_ta',userKey:getAccountUserKey(),fromAcademicYear:current,newAcademicYear:ta.trim()}).then(res=>{
-    if(res.status!=='success')throw new Error(res.message||'Gagal membuat TA baru.');
-    setActiveTA(ta.trim());putPayloadIntoLocal(res.payload||{});populateTASelect([],ta.trim());loadTAList();refreshPlanner();showSection('home');alert(`TA ${ta.trim()} berhasil dibuat. Biodata guru dipertahankan, data akademik baru dikosongkan.`);
-  }).catch(err=>alert(err.message||'Gagal membuat TA baru.'));
+
+function initAcademicYear(){
+  const now=new Date();
+  const year=now.getFullYear();
+  const month=now.getMonth();
+  const defaultTA=`${month>=6?year:year-1}/${month>=6?year+1:year}`;
+  const ta=activeTA || get("auto_ta","") || defaultTA;
+  setAcademicYearUI(ta);
+}
+
+function checkLoginSession(){
+  const isLoggedIn=localStorage.getItem("jtp_is_logged_in")==="true";
+  const loginScreen=document.getElementById("loginScreen");
+  if(isLoggedIn && activeUserKey && activeUsername) loginScreen.style.display="none";
+  else loginScreen.style.display="flex";
+}
+
+function switchAuthTab(type){
+  const tabLogin=document.getElementById("tabBtnLogin");
+  const tabReg=document.getElementById("tabBtnRegister");
+  const formLogin=document.getElementById("authLoginForm");
+  const formReg=document.getElementById("authRegisterForm");
+  if(type==="login"){
+    tabLogin.classList.add("active");tabReg.classList.remove("active");
+    formLogin.style.display="block";formReg.style.display="none";
+  }else{
+    tabReg.classList.add("active");tabLogin.classList.remove("active");
+    formReg.style.display="block";formLogin.style.display="none";
+  }
+}
+
+async function handleLogin(e){
+  e.preventDefault();
+  const btn=document.getElementById("btnLoginSubmit");
+  const orig=btn.innerHTML;
+  btn.disabled=true;btn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Memverifikasi...`;
+  try{
+    const username=document.getElementById("loginUsername").value.trim();
+    const password=document.getElementById("loginPassword").value;
+    const passwordHash=await sha256Hex(password);
+    const res=await cloudPost({action:"login_v2",username,passwordHash});
+    if(!res.ok) throw new Error(res.error || "Username atau password salah.");
+
+    activeUserKey=res.userKey;
+    activeUsername=res.username;
+    localStorage.setItem("jtp_is_logged_in","true");
+    localStorage.setItem("jtp_account_user_key",activeUserKey);
+    localStorage.setItem("jtp_account_username",activeUsername);
+
+    const list=res.taList || [];
+    activeTA=localStorage.getItem("jtp_active_ta");
+    if(!activeTA || !list.includes(activeTA)) activeTA=list[0] || res.ta;
+    localStorage.setItem("jtp_active_ta",activeTA);
+
+    await loadTAData(activeTA);
+    document.getElementById("loginScreen").style.display="none";
+    await renderTASelector();
+  }catch(err){
+    alert(err.message || "Login gagal.");
+  }finally{
+    btn.disabled=false;btn.innerHTML=orig;
+  }
+}
+
+async function handleRegister(e){
+  e.preventDefault();
+  const btn=document.getElementById("btnRegSubmit");
+  const orig=btn.innerHTML;
+  btn.disabled=true;btn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...`;
+  try{
+    const nama=document.getElementById("regNama").value.trim();
+    const username=document.getElementById("regUsername").value.trim();
+    const password=document.getElementById("regPassword").value;
+    if(password.length<6) throw new Error("Password minimal 6 karakter.");
+
+    const passwordHash=await sha256Hex(password);
+    const now=new Date();
+    const y=now.getFullYear(),m=now.getMonth();
+    const ta=`${m>=6?y:y-1}/${m>=6?y+1:y}`;
+    const payload={
+      bio_nama:nama,
+      bio_nuptk:"",
+      auto_ta:ta
+    };
+
+    const res=await cloudPost({
+      action:"register_v2",
+      name:nama,
+      username,
+      passwordHash,
+      ta,
+      payload
+    });
+    if(!res.ok) throw new Error(res.error || "Registrasi gagal.");
+
+    activeUserKey=res.userKey;
+    activeUsername=res.username;
+    activeTA=res.ta;
+    localStorage.setItem("jtp_is_logged_in","true");
+    localStorage.setItem("jtp_account_user_key",activeUserKey);
+    localStorage.setItem("jtp_account_username",activeUsername);
+    localStorage.setItem("jtp_active_ta",activeTA);
+
+    await loadTAData(activeTA);
+    document.getElementById("loginScreen").style.display="none";
+    await renderTASelector();
+    alert("Akun berhasil dibuat dan langsung masuk ke planner.");
+  }catch(err){
+    alert(err.message || "Registrasi gagal.");
+  }finally{
+    btn.disabled=false;btn.innerHTML=orig;
+  }
+}
+
+function handleLogout(){
+  if(!confirm("Apakah Anda yakin ingin keluar dari akun?")) return;
+  clearPlannerLocalData();
+  ["jtp_is_logged_in","jtp_account_user_key","jtp_account_username","jtp_active_ta","jtp_auto_ta"]
+    .forEach(k=>localStorage.removeItem(k));
+  location.reload();
 }
 
 const targetTexts=[
@@ -1280,7 +1437,7 @@ const defaultAnekdotData=[];
 const mapelKeys=["pai","bina","mtk","ipas","seni","pjok","bing","sunda","arab","tik"];
 const defaultNilaiData=[];
 const monthsKeys=["JULI","AGUST","SEPT","OKT","NOV","DES","JAN","FEB","MAR","APR","MEI","JUN"];
-let currentMonth=localStorage.getItem("jtp_abs_current_month")||"AGUST";
+let currentMonth="AGUST";
 
 function get(k,d=""){return localStorage.getItem("jtp_"+k)??d}
 function set(k,v){
@@ -1334,9 +1491,19 @@ function getFormattedDateRange(keyStart, keyEnd) {
 }
 
 function initAcademicYear(){
- const taString=getActiveTA()||getDefaultAcademicYear();
- localStorage.setItem("jtp_auto_ta",taString);
- updateTAUI();
+ const now = new Date();
+ const year = now.getFullYear();
+ const month = now.getMonth(); 
+ let startYear = month >= 6 ? year : year - 1;
+ const taString = `${startYear}/${startYear + 1}`;
+ 
+ set("auto_ta", taString);
+
+ document.querySelectorAll(".dynamic-ta").forEach(el => {
+   el.textContent = taString;
+ });
+ const footerYr = document.getElementById("currentYearFooter");
+ if(footerYr) footerYr.textContent = `TA. ${taString}`;
 }
 
 function showSection(id){
@@ -1421,8 +1588,6 @@ function updateHomeTeacherName(){
 
 function initInputs(){
  document.querySelectorAll("[data-save]").forEach(el=>{
-    if(el.dataset.boundSave === "1") return;
-    el.dataset.boundSave = "1";
    const k=el.dataset.save; 
    let savedVal = get(k, el.value||"");
    
@@ -1523,7 +1688,6 @@ function esc(v){return String(v).replaceAll("&","&amp;").replaceAll('"',"&quot;"
 
 function changeAbsensiMonth(m){
  currentMonth=m;
- set("abs_current_month",m);
  const selText=document.getElementById("absensiMonthSelect").options[document.getElementById("absensiMonthSelect").selectedIndex].text;
  document.getElementById("currentMonthLabel").textContent=selText;
  renderAbsensi();
@@ -2101,16 +2265,14 @@ window.addEventListener('beforeprint', () => {
 });
 
 function resetPlanner(){
-  const ta=getActiveTA();
-  if(!ta)return;
-  if(!confirm(`Reset data akademik TA ${ta}? Biodata guru akan dipertahankan. TA lain tidak akan berubah.`))return;
-  cloudFetch(GOOGLE_SCRIPT_URL,{action:'reset_ta',userKey:getAccountUserKey(),academicYear:ta}).then(res=>{
-    if(res.status!=='success')throw new Error(res.message||'Reset gagal.');
-    putPayloadIntoLocal(res.payload||{});setActiveTA(ta);refreshPlanner();alert(`Data akademik TA ${ta} berhasil direset.`);
-  }).catch(err=>alert(err.message||'Gagal reset TA.'));
+  if(!confirm(`Reset seluruh data TA ${activeTA}? TA lain dan akun guru tidak akan terhapus.`)) return;
+  clearPlannerLocalData();
+  set("auto_ta",activeTA);
+  initInputs();renderStudents();renderActivities();renderTargets();renderDPL();renderAnekdot();renderNilai();renderRefleksi();
+  autoSyncToCloud();
 }
 
-(function init(){
+(async function init(){
  document.documentElement.dataset.theme="light";
  checkLoginSession();
  initSchoolLogo();
@@ -2124,9 +2286,13 @@ function resetPlanner(){
  renderNilai();
  renderRefleksi();
  startClock();
- if(localStorage.getItem("jtp_is_logged_in")==="true"){
-   loadTAList();
-   loadDataFromCloud(getActiveTA()).then(()=>refreshPlanner());
+ if(localStorage.getItem("jtp_is_logged_in")==="true" && activeUserKey){
+   try{
+     const list=await getTAList();
+     if(!activeTA || !list.includes(activeTA)) activeTA=list[0] || activeTA;
+     if(activeTA) await loadTAData(activeTA);
+     await renderTASelector();
+   }catch(err){ console.error("Gagal memuat sesi cloud:",err); }
  }
 })();
 </script>
