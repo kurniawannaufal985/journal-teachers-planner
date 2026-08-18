@@ -273,6 +273,28 @@ th { border-color: inherit !important; }
 </style>
 </head>
 <body>
+
+<!-- OVERLAY LOGIN -->
+<div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:flex; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:#fff; border-radius:16px; width:100%; max-width:400px; padding:30px; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+    <div style="text-align:center; margin-bottom:20px;">
+      <h2 style="font-size:20px; color:#0f172a; font-weight:800;">Silakan Login</h2>
+      <p style="font-size:12px; color:#64748b; margin-top:4px;">Gunakan NUPTK / NIK / Email sebagai Username & No. Telp sebagai Password</p>
+    </div>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="field" style="margin-bottom:14px;">
+        <label>Username (NUPTK / NIK / Email)</label>
+        <input type="text" id="loginUsername" required placeholder="Masukkan NUPTK / NIK / Email">
+      </div>
+      <div class="field" style="margin-bottom:20px;">
+        <label>Password (No. Telepon / NIK)</label>
+        <input type="password" id="loginPassword" required placeholder="Masukkan Password">
+      </div>
+      <button type="submit" class="btn" style="width:100%; justify-content:center; padding:12px;">Login ke Aplikasi</button>
+    </form>
+  </div>
+</div>
+
 <div class="app">
 
 <aside class="sidebar" id="sidebar">
@@ -297,6 +319,11 @@ th { border-color: inherit !important; }
       <button data-page="refleksi" onclick="showSection('refleksi')"><i class="fa-solid fa-pen-to-square"></i> Jurnal Refleksi</button>
       <button data-page="print_view" onclick="showSection('print_view')"><i class="fa-solid fa-file-invoice"></i> Ringkasan / Cetak Laporan</button>
     </nav>
+  </div>
+  <div class="sidebar-bottom">
+    <button class="btn danger" style="width:100%; justify-content:center;" onclick="handleLogout()">
+      <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </button>
   </div>
 </aside>
 
@@ -1030,9 +1057,8 @@ th { border-color: inherit !important; }
 
 <script>
 // INTEGRASI GOOGLE SHEETS CLOUD SYNC (MULTI-USER SUPPORT)
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwF7Bcy7mUIErPePEZ1cCw02TxhFBTV4DVt1qNkaDjrg4u6yOrve5_fhfpjRZ4JMWKb/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx34e6b_-5FqOs-zYjYkBtAoQ0aoXNLE5d2OZla6LmViW52tdoa6MnR-UI-ZwWeyvhA/exec";
 
-// UUID Perangkat / Browser Unik untuk Setiap Guru
 function getDeviceUserKey() {
   let key = localStorage.getItem("jtp_device_user_key");
   if (!key) {
@@ -1087,6 +1113,63 @@ function loadDataFromCloud() {
       }
     })
     .catch(err => console.error("Gagal memuat data dari cloud:", err));
+}
+
+// ----------------------------------------------------
+// LOGIKA VERIFIKASI LOGIN SISTEM
+// ----------------------------------------------------
+function checkLoginSession() {
+  const isLoggedIn = localStorage.getItem("jtp_is_logged_in");
+  const loginScreen = document.getElementById("loginScreen");
+  
+  if (isLoggedIn === "true") {
+    loginScreen.style.display = "none";
+  } else {
+    loginScreen.style.display = "flex";
+  }
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const userIn = document.getElementById("loginUsername").value.trim();
+  const passIn = document.getElementById("loginPassword").value.trim();
+
+  const localUser = (get("bio_nuptk", "") || get("bio_nik", "") || get("bio_email", "")).trim();
+  const localPass = (get("bio_telepon", "") || get("bio_nik", "")).trim();
+
+  if (!localUser && !localPass) {
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ action: "login", username: userIn, password: passIn }),
+      headers: { "Content-Type": "text/plain;charset=utf-8" }
+    })
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === "success") {
+        localStorage.setItem("jtp_is_logged_in", "true");
+        document.getElementById("loginScreen").style.display = "none";
+        loadDataFromCloud();
+      } else {
+        alert(res.message || "Login gagal! Pastikan data biodata di Spreadsheet sudah diisi.");
+      }
+    })
+    .catch(() => alert("Koneksi gagal atau akun belum terdaftar di Spreadsheet!"));
+    return;
+  }
+
+  if (userIn === localUser && passIn === localPass) {
+    localStorage.setItem("jtp_is_logged_in", "true");
+    document.getElementById("loginScreen").style.display = "none";
+  } else {
+    alert("Username atau Password tidak sesuai dengan Biodata Guru yang tersimpan!");
+  }
+}
+
+function handleLogout() {
+  if (confirm("Apakah Anda yakin ingin keluar dari aplikasi?")) {
+    localStorage.removeItem("jtp_is_logged_in");
+    location.reload();
+  }
 }
 
 const targetTexts=[
@@ -1884,9 +1967,9 @@ function updateKepuasanStatPdf(){
  if(!input) return;
  let valStr = input.value;
  if(valStr === ""){
-   document.getElementById("refKepuasanValPdf").textContent = "0%";
-   document.getElementById("refKepuasanBarPdf").style.width = "0%";
-   return;
+    document.getElementById("refKepuasanValPdf").textContent = "0%";
+    document.getElementById("refKepuasanBarPdf").style.width = "0%";
+    return;
  }
  let val = parseInt(valStr) || 0;
  if(val < 50) val = 50;
@@ -1920,11 +2003,11 @@ function updatePrintViewData(){
  const monthData = JSON.parse(get("absData_"+currentMonth, "{}"));
  let totalRecorded = 0, totalH = 0;
  Object.values(monthData).forEach(sData => {
-   Object.values(sData).forEach(v => {
-     const code = String(v).toUpperCase().trim();
-     if(code === "H" || code === "." || code === "1"){ totalH++; totalRecorded++; }
-     else if(code === "S" || code === "I" || code === "A"){ totalRecorded++; }
-   });
+    Object.values(sData).forEach(v => {
+      const code = String(v).toUpperCase().trim();
+      if(code === "H" || code === "." || code === "1"){ totalH++; totalRecorded++; }
+      else if(code === "S" || code === "I" || code === "A"){ totalRecorded++; }
+    });
  });
  const absPct = totalRecorded > 0 ? Math.round((totalH / totalRecorded) * 100) : 0;
  document.getElementById("printAbsensiSummary").textContent = `Total Siswa: ${studentsCount} | Tingkat Kehadiran Rata-Rata: ${absPct}%`;
@@ -1988,6 +2071,7 @@ function resetPlanner(){
 
 (function init(){
  document.documentElement.dataset.theme="light";
+ checkLoginSession();
  initSchoolLogo();
  initAcademicYear();
  initInputs();
