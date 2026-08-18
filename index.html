@@ -24,7 +24,7 @@ button,input,textarea,select{font-family:inherit}
 .sidebar{width:270px;background:var(--card);border-right:1px solid var(--border);padding:22px 16px;display:flex;flex-direction:column;justify-content:space-between;position:fixed;inset:0 auto 0 0;z-index:50;overflow-y:auto}
 .brand{display:flex;align-items:center;gap:12px;padding:4px 8px 25px}
 .brand-logo{
-  width:66px;height:66px;min-width:66px;border-radius:50%;overflow:hidden;background:transparent;border:0;display:grid;place-items:center;box-shadow:0 4px 12px #00000018;
+    width:66px;height:66px;min-width:66px;border-radius:50%;overflow:hidden;background:transparent;border:0;display:grid;place-items:center;box-shadow:0 4px 12px #00000018;
 }
 .brand-logo img{width:100%;height:100%;object-fit:contain;padding:1px;border-radius:50%;display:block;}
 .brand-logo-fallback{font-size:18px;color:#047857}
@@ -80,41 +80,79 @@ h1{font-size:27px;line-height:1.2;margin-top:5px;color:var(--text)}
 .full{grid-column:1/-1}
 .btn{border:0;border-radius:10px;padding:10px 14px;background:#059669;color:white;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s}.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
 .btn.secondary{background:var(--input);color:var(--text);border:1px solid var(--border)}.btn.danger{background:#e11d48;color:white}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
 .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:13px}
 table{width:100%;border-collapse:collapse;min-width:850px}
 th,td{padding:11px 12px;border-bottom:1px solid var(--border);text-align:left;font-size:11px;color:var(--text)}
 th{background:var(--header);font-size:9px;text-transform:uppercase;letter-spacing:.7px;position:sticky;top:0;z-index:2;color:var(--sub)}
+.edit-cell{background:transparent!important;border:0;outline:0;color:var(--text);width:100%;font-size:11px;padding:4px}
 .badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 9px;font-size:9px;font-weight:800}
-.success{background:#d1fae5;color:#047857}.danger{background:#ffe4e6;color:#e11d48}
+.success{background:#d1fae5;color:#047857}.danger{background:#ffe4e6;color:#e11d48}.warning{background:#fef3c7;color:#d97706}
+.activity-table{min-width:750px}
+.activity-table input{width:58px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:6px}
+.legend{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:12px}
+.legend-item{padding:11px;border:1px solid var(--border);border-radius:11px;background:var(--input);font-size:10px}.legend-item strong{color:var(--green);font-size:14px;margin-right:5px}
+.bar-row{margin:8px 0}.bar-label{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;color:var(--sub)}.bar-track{height:8px;background:#e2e8f0;border-radius:10px;overflow:hidden}.bar-fill{height:100%;background:linear-gradient(90deg,#059669,#34d399);border-radius:10px;transition:.3s}
+.target-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.summary{padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--input)}.summary b{font-size:21px;display:block;color:var(--text)}.summary span{font-size:9px;color:var(--sub);text-transform:uppercase}
+.target-row.failed td{color:#94a3b8;text-decoration:line-through;text-decoration-thickness:2px}.target-row.failed input,.target-row.failed .done-input{text-decoration:none}
+.done-input{width:44px!important;text-align:center!important;font-weight:800}
 .mobile-menu{display:none}
 footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 
-/* AUTH TABS & MODAL OVERLAY */
+.absensi-table input.day-cell{width:26px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:3px 0;font-size:10px;font-weight:700}
+.rekap-table td, .rekap-table th{text-align:center;font-size:10px}
+.dpl-table input{width:45px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:4px;font-size:11px}
+.anekdot-table input,.anekdot-table textarea{width:100%;background:transparent;border:0;outline:none;color:var(--text);font-size:11px;padding:4px}
+.anekdot-table textarea{resize:vertical;min-height:38px}
+.nilai-table input.nilai-cell{width:52px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:4px;font-size:11px}
+.nilai-table input.remed-cell{width:40px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:4px;font-size:11px}
+.refleksi-phase-title { font-weight:800; font-size:12px; text-transform:uppercase; color:var(--green); letter-spacing:1px; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.mapel-checkboxes{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:8px}
+.mapel-item{display:flex;align-items:center;gap:8px;background:var(--input);padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:11px;cursor:pointer;font-weight:600}
+.print-report-container{background:#fff;padding:20px;border-radius:12px;border:1px solid var(--border)}
+.print-section-title{font-size:12px;font-weight:800;color:var(--green);margin-bottom:6px;border-bottom:2px solid var(--green);padding-bottom:3px;text-transform:uppercase}
+.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}
+.print-box{border:1px solid var(--border);padding:8px 10px;border-radius:6px;background:#f8fafc}
+.print-box textarea{width:100%;border:1px dashed var(--border);border-radius:4px;padding:4px;font-size:10px;min-height:45px;margin-top:4px;background:#fff}
+.ttd-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:15px;text-align:center;font-size:11px}
+.ttd-space{height:45px}
+.print-logo{width:96px;height:96px;border-radius:50%;object-fit:contain;padding:2px;background:#fff;border:0;margin:0 auto 8px;display:block;box-shadow:0 2px 8px #00000012;}
+.date-range-box { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.date-range-box input[type="date"] { flex: 1; min-width: 130px; cursor: pointer; }
+.date-sep { font-weight: 700; color: var(--sub); font-size: 11px; }
+
 .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--border); }
 .auth-tab-btn { flex: 1; padding: 10px; border: 0; background: transparent; font-weight: 700; color: var(--sub); cursor: pointer; font-size: 13px; text-align: center; }
 .auth-tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); margin-bottom: -2px; }
+
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body { background: #fff !important; color: #000 !important; font-size: 10px !important; }
+  .sidebar, .topbar, .actions, .mobile-menu, footer, .badge, button { display: none !important; }
+  .main { margin-left: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; }
+  .page { display: none !important; }
+  #print_view.page { display: block !important; }
+}
 
 @media(max-width:760px){
  .app{display:block}.sidebar{position:fixed;width:100%;height:auto;bottom:auto;padding:10px 12px}.brand{padding:3px 5px 9px}.nav{display:none}.sidebar.open .nav{display:flex;max-height:70vh;overflow:auto;padding-bottom:8px}.sidebar-bottom{display:none}.mobile-menu{display:block;margin-left:auto;border:0;background:#10b98118;color:var(--green);border-radius:10px;padding:10px 12px}
  .main{margin-left:0;padding:105px 14px 20px}
  .topbar{align-items:stretch;flex-direction:column;gap:14px;margin-bottom:20px;padding-bottom:16px}
- .topbar-right{flex-direction:column-reverse;width:100%;gap:10px}
- .grid-menu,.form-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.full{grid-column:auto}
+ .grid-menu,.form-grid,.target-summary{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.full{grid-column:auto}
 }
 </style>
 </head>
 <body>
 
-<!-- MODAL AUTENTIKASI (LOGIN & REGISTER) -->
+<!-- OVERLAY AUTH (LOGIN & DAFTAR) -->
 <div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:flex; align-items:center; justify-content:center; padding:20px;">
   <div style="background:#fff; border-radius:16px; width:100%; max-width:420px; padding:30px; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
-    
     <div class="auth-tabs">
       <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">Masuk (Login)</button>
       <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">Daftar Akun Baru</button>
     </div>
 
-    <!-- FORM LOGIN -->
     <div id="authLoginForm">
       <div style="text-align:center; margin-bottom:18px;">
         <h2 style="font-size:18px; color:#0f172a; font-weight:800;">Silakan Login</h2>
@@ -135,7 +173,6 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
       </form>
     </div>
 
-    <!-- FORM REGISTRASI -->
     <div id="authRegisterForm" style="display:none;">
       <div style="text-align:center; margin-bottom:18px;">
         <h2 style="font-size:18px; color:#0f172a; font-weight:800;">Pendaftaran Akun Guru</h2>
@@ -159,7 +196,6 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
         </button>
       </form>
     </div>
-
   </div>
 </div>
 
@@ -179,6 +215,13 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
       <button class="active" data-page="home" onclick="showSection('home')"><i class="fa-solid fa-house"></i> Dashboard / Home</button>
       <button data-page="biodata" onclick="showSection('biodata')"><i class="fa-solid fa-user"></i> Biodata Guru</button>
       <button data-page="siswa" onclick="showSection('siswa')"><i class="fa-solid fa-users"></i> Data Siswa</button>
+      <button data-page="absensi" onclick="showSection('absensi')"><i class="fa-solid fa-clipboard-user"></i> Absensi Peserta Didik</button>
+      <button data-page="aktivitas" onclick="showSection('aktivitas')"><i class="fa-solid fa-calendar-days"></i> Aktivitas Pekanan</button>
+      <button data-page="target" onclick="showSection('target')"><i class="fa-solid fa-bullseye"></i> Target Pengembangan</button>
+      <button data-page="anekdot" onclick="showSection('anekdot')"><i class="fa-solid fa-clipboard-check"></i> Sikap &amp; Anekdot</button>
+      <button data-page="nilai" onclick="showSection('nilai')"><i class="fa-solid fa-graduation-cap"></i> Nilai Formatif</button>
+      <button data-page="refleksi" onclick="showSection('refleksi')"><i class="fa-solid fa-pen-to-square"></i> Jurnal Refleksi</button>
+      <button data-page="print_view" onclick="showSection('print_view')"><i class="fa-solid fa-file-invoice"></i> Ringkasan / Cetak Laporan</button>
     </nav>
   </div>
   <div class="sidebar-bottom">
@@ -203,16 +246,10 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
       </select>
       <button class="btn secondary" onclick="createNewTA()"><i class="fa-solid fa-plus"></i> TA Baru</button>
     </div>
-    
+    <button class="btn danger" onclick="resetPlanner()"><i class="fa-solid fa-rotate-left"></i> Reset Data</button>
     <div class="clock">
-      <div class="clock-icon-box">
-        <i class="fa-regular fa-clock"></i>
-        <span class="clock-dot"></span>
-      </div>
-      <div class="clock-info">
-        <div class="clock-time" id="clockTime">00:00:00 WIB</div>
-        <div class="clock-date" id="clockDate"><i class="fa-regular fa-calendar-check"></i> --</div>
-      </div>
+      <div class="clock-icon-box"><i class="fa-regular fa-clock"></i><span class="clock-dot"></span></div>
+      <div class="clock-info"><div class="clock-time" id="clockTime">00:00:00 WIB</div><div class="clock-date" id="clockDate"><i class="fa-regular fa-calendar-check"></i> --</div></div>
     </div>
   </div>
 </header>
@@ -227,6 +264,20 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
   <div class="stats">
     <div class="stat"><div class="stat-icon"><i class="fa-solid fa-user"></i></div><div class="stat-label">Biodata</div><div class="stat-value" id="homeTeacherName">Guru</div></div>
     <div class="stat"><div class="stat-icon"><i class="fa-solid fa-users"></i></div><div class="stat-label">Peserta Didik</div><div class="stat-value" id="studentCount">0</div></div>
+    <div class="stat"><div class="stat-icon"><i class="fa-solid fa-calendar"></i></div><div class="stat-label">Aktivitas</div><div class="stat-value">Pekan</div></div>
+    <div class="stat"><div class="stat-icon"><i class="fa-solid fa-bullseye"></i></div><div class="stat-label">Target</div><div class="stat-value" id="homeTargetStat">15/15</div></div>
+  </div>
+  <div class="section-head" style="margin-top:28px"><div class="section-title"><i class="fa-solid fa-grid-2"></i> Menu Utama Planner</div></div>
+  <div class="grid-menu">
+    <div class="menu-card" onclick="showSection('biodata')"><div class="menu-icon"><i class="fa-solid fa-user"></i></div><div><h3>Biodata Guru</h3><p>Data personal, kontak, dan motto pendidik.</p></div></div>
+    <div class="menu-card" onclick="showSection('siswa')"><div class="menu-icon"><i class="fa-solid fa-graduation-cap"></i></div><div><h3>Data Siswa</h3><p>Daftar peserta didik TA <span class="dynamic-ta">--</span>.</p></div></div>
+    <div class="menu-card" onclick="showSection('absensi')"><div class="menu-icon"><i class="fa-solid fa-clipboard-user"></i></div><div><h3>Absensi Peserta Didik</h3><p>Daftar hadir bulanan dan rekapitulasi tahunan siswa.</p></div></div>
+    <div class="menu-card" onclick="showSection('aktivitas')"><div class="menu-icon"><i class="fa-solid fa-calendar-days"></i></div><div><h3>Aktivitas Pekanan</h3><p>Jadwal dan diagram aktivitas mengajar.</p></div></div>
+    <div class="menu-card" onclick="showSection('target')"><div class="menu-icon"><i class="fa-solid fa-bullseye"></i></div><div><h3>Target Pengembangan Diri</h3><p>Capaian target guru pekanan.</p></div></div>
+    <div class="menu-card" onclick="showSection('anekdot')"><div class="menu-icon"><i class="fa-solid fa-clipboard-check"></i></div><div><h3>Laporan Sikap &amp; Anekdot</h3><p>Capaian 8 DPL dan deskripsi peristiwa peserta didik.</p></div></div>
+    <div class="menu-card" onclick="showSection('nilai')"><div class="menu-icon"><i class="fa-solid fa-graduation-cap"></i></div><div><h3>Laporan Nilai Formatif</h3><p>Nilai harian per mata pelajaran dan rekap analisis.</p></div></div>
+    <div class="menu-card" onclick="showSection('refleksi')"><div class="menu-icon"><i class="fa-solid fa-pen-to-square"></i></div><div><h3>Jurnal Refleksi Guru</h3><p>Evaluasi pembelajaran, identifikasi masalah, &amp; tindak lanjut.</p></div></div>
+    <div class="menu-card" onclick="showSection('print_view')"><div class="menu-icon"><i class="fa-solid fa-file-invoice"></i></div><div><h3>Ringkasan / Cetak Laporan</h3><p>Laporan cetak lengkap siap tanda tangan.</p></div></div>
   </div>
 </section>
 
@@ -237,8 +288,11 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     <div class="card-title">Data Pribadi</div>
     <div class="form-grid" style="margin-top:16px">
       <div class="field"><label>Nama Lengkap</label><input data-save="bio_nama" placeholder="Tuliskan nama lengkap..."></div>
+      <div class="field"><label>Nama Panggilan</label><input data-save="bio_panggilan" placeholder="..."></div>
       <div class="field"><label>No. Telepon / WA</label><input data-save="bio_telepon" placeholder="..."></div>
       <div class="field"><label>E-mail</label><input data-save="bio_email" placeholder="..."></div>
+      <div class="field"><label>NUPTK</label><input data-save="bio_nuptk" placeholder="..."></div>
+      <div class="field"><label>NIK</label><input data-save="bio_nik" placeholder="..."></div>
       <div class="field full"><label>Alamat</label><textarea data-save="bio_alamat" placeholder="..."></textarea></div>
     </div>
   </div>
@@ -247,10 +301,114 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 <!-- SISWA -->
 <section id="siswa" class="page">
   <div class="section-head">
-    <div>
-      <div class="section-title"><i class="fa-solid fa-users"></i> Data Peserta Didik</div>
-      <div class="card-sub">Daftar siswa terhubung otomatis dengan spreadsheet Anda.</div>
+    <div><div class="section-title"><i class="fa-solid fa-users"></i> Data Peserta Didik</div><div class="card-sub">Atur jumlah siswa secara fleksibel (Maksimal 24 siswa).</div></div>
+    <div class="actions">
+      <button class="btn" onclick="addStudentRow()"><i class="fa-solid fa-plus"></i> Tambah Siswa</button>
+      <button class="btn danger" onclick="removeLastStudentRow()"><i class="fa-solid fa-minus"></i> Kurangi Siswa</button>
     </div>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th style="width:40px">No</th><th style="min-width:200px">Nama Siswa</th><th style="min-width:130px">NISN</th><th style="min-width:110px">Jenis Kelamin</th><th style="min-width:170px">Tempat, Tgl Lahir</th><th style="min-width:200px">Nama Ayah &amp; Ibu</th><th style="min-width:180px">Pekerjaan OrtU</th><th style="min-width:150px">No. Telp OrtU</th></tr>
+        </thead>
+        <tbody id="studentBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ABSENSI -->
+<section id="absensi" class="page">
+  <div class="section-head">
+    <div><div class="section-title"><i class="fa-solid fa-clipboard-user"></i> Absensi Peserta Didik</div><div class="card-sub">Daftar Hadir Peserta Didik TA. <span class="dynamic-ta">--</span></div></div>
+    <span class="badge success"><i class="fa-solid fa-floppy-disk"></i> Auto Save</span>
+  </div>
+  <div class="card">
+    <div class="form-grid" style="margin-bottom:15px;">
+      <div class="field"><label>Guru Kelas</label><input data-save="abs_guru" placeholder="Nama Guru / Kelas..."></div>
+      <div class="field">
+        <label>Pilih Bulan Absensi</label>
+        <select id="absensiMonthSelect" onchange="changeAbsensiMonth(this.value)">
+          <option value="JULI">Juli</option><option value="AGUST" selected>Agustus</option><option value="SEPT">September</option><option value="OKT">Oktober</option><option value="NOV">November</option><option value="DES">Desember</option><option value="JAN">Januari</option><option value="FEB">Februari</option><option value="MAR">Maret</option><option value="APR">April</option><option value="MEI">Mei</option><option value="JUN">Juni</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="absensi-table">
+        <thead>
+          <tr><th rowspan="2">NO</th><th rowspan="2" style="min-width:200px">NAMA SISWA</th><th colspan="31" style="text-align:center">TANGGAL</th><th rowspan="2">I</th><th rowspan="2">S</th><th rowspan="2">A</th><th rowspan="2">H</th><th rowspan="2">%</th></tr>
+          <tr id="absensiDaysHeader"></tr>
+        </thead>
+        <tbody id="absensiBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- AKTIVITAS PEKANAN -->
+<section id="aktivitas" class="page">
+  <div class="section-head">
+    <div><div class="section-title"><i class="fa-solid fa-calendar-days"></i> Aktivitas Pekanan</div><div class="card-sub">Jadwal harian dan persentase alokasi waktu mengajar.</div></div>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table class="activity-table">
+        <thead><tr><th>Waktu</th><th>SENIN</th><th>SELASA</th><th>RABU</th><th>KAMIS</th><th>JUM'AT</th></tr></thead>
+        <tbody id="activityBody"></tbody>
+      </table>
+    </div>
+    <div id="activityChart" style="margin-top:15px"></div>
+  </div>
+</section>
+
+<!-- TARGET -->
+<section id="target" class="page">
+  <div class="section-head"><div><div class="section-title"><i class="fa-solid fa-bullseye"></i> Target Pengembangan Diri</div></div></div>
+  <div class="card">
+    <div class="target-summary">
+      <div class="summary"><b id="targetDone">15</b><span>Tercapai</span></div>
+      <div class="summary"><b id="targetFail">0</b><span>Tidak Tercapai</span></div>
+      <div class="summary"><b id="targetPercent">100%</b><span>Persentase</span></div>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>No</th><th>Deskripsi Target</th><th style="text-align:center">Done</th><th style="text-align:center">Status</th></tr></thead><tbody id="targetBody"></tbody></table></div>
+  </div>
+</section>
+
+<!-- ANEKDOT -->
+<section id="anekdot" class="page">
+  <div class="section-head"><div><div class="section-title"><i class="fa-solid fa-clipboard-check"></i> Sikap &amp; Anekdot</div></div></div>
+  <div class="card"><div class="table-wrap"><table class="dpl-table"><tbody id="dplBody"></tbody></table></div><div id="dplChart" style="margin-top:15px"></div></div>
+  <div class="card"><div class="table-wrap"><table class="anekdot-table"><tbody id="anekdotBody"></tbody></table></div></div>
+</section>
+
+<!-- NILAI FORMATIF -->
+<section id="nilai" class="page">
+  <div class="section-head"><div><div class="section-title"><i class="fa-solid fa-graduation-cap"></i> Nilai Formatif</div></div></div>
+  <div class="card"><div class="table-wrap"><table class="nilai-table"><tbody id="nilaiBody"></tbody></table></div><div id="nilaiChart" style="margin-top:15px"></div></div>
+</section>
+
+<!-- REFLEKSI -->
+<section id="refleksi" class="page">
+  <div class="section-head"><div><div class="section-title"><i class="fa-solid fa-pen-to-square"></i> Jurnal Refleksi</div></div></div>
+  <div class="card">
+    <div class="field"><label>Materi Pembelajaran</label><textarea id="ref_materi_pembelajaran" oninput="saveRefleksiText(this)"></textarea></div>
+    <div class="field" style="margin-top:10px;"><label>Metode / Media</label><input id="ref_metode_pembelajaran" oninput="saveRefleksiText(this)"></div>
+    <div class="field" style="margin-top:10px;"><label>Nilai Kepuasan (50-100)</label><input type="number" id="refKepuasanInputPdf" oninput="saveRefleksiText(this)"></div>
+  </div>
+</section>
+
+<!-- RINGKASAN & PRINT -->
+<section id="print_view" class="page">
+  <div class="section-head"><div></div><button class="btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Cetak Laporan</button></div>
+  <div class="print-report-container">
+    <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:12px;">
+      <h2>SEKOLAH DASAR ISLAM RAMAH ANAK</h2>
+      <h3>JOURNAL TEACHERS PLANNER</h3>
+      <p>TAHUN AJARAN <span class="dynamic-ta">--</span></p>
+    </div>
+    <div>Nama Guru: <span id="printTeacherName">-</span></div>
   </div>
 </section>
 
@@ -259,11 +417,8 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 </div>
 
 <script>
-// PASTIKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DIBAWAH INI BENAR (BERAKHIRAN /exec)
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxwCafX2ISMd5VO7khlAF1ZR1ZK0gjU3Vern4QyBPwKnzlrlXpTw8e4C4BKAxdgDdY/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzAK0vdkS1Iab65eoe3VNh2wtaIOJNoIgS2GzRaYzdM1ArUOnUnN6Y4UanlbqNAgPJ/exec";
 
-let syncTimeout = null;
-let cloudLoading = false;
 let activeUserKey = localStorage.getItem("jtp_account_user_key") || "";
 let activeUsername = localStorage.getItem("jtp_account_username") || "";
 let activeTA = localStorage.getItem("jtp_active_ta") || "";
@@ -271,149 +426,81 @@ let activeTA = localStorage.getItem("jtp_active_ta") || "";
 async function sha256Hex(value){
   const data = new TextEncoder().encode(String(value));
   const digest = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(digest))
-    .map(b => b.toString(16).padStart(2,"0")).join("");
+  return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,"0")).join("");
 }
 
 async function cloudPost(body){
-  if(!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.trim() === ""){
-    throw new Error("URL Google Apps Script belum dikonfigurasi.");
-  }
-
-  try {
-    const res = await fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(body)
-    });
-
-    const text = await res.text();
-    let data;
-    try { 
-      data = JSON.parse(text); 
-    } catch(e) { 
-      throw new Error("Respons server bukan format JSON. Pastikan Web App Apps Script sudah di-deploy dengan akses 'Anyone'."); 
-    }
-    return data;
-  } catch (err) {
-    if (err.message.includes("Failed to fetch")) {
-      throw new Error("Gagal terhubung ke Google Script. Pastikan Pengaturan Deploy Apps Script diatur ke: 'Execute as: Me' & 'Who has access: Anyone'.");
-    }
-    throw err;
-  }
+  const res = await fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(body)
+  });
+  return await res.json();
 }
 
 function checkLoginSession(){
   const isLoggedIn = localStorage.getItem("jtp_is_logged_in") === "true";
-  const loginScreen = document.getElementById("loginScreen");
-  if(isLoggedIn && activeUserKey && activeUsername) {
-    loginScreen.style.display = "none";
-  } else {
-    loginScreen.style.display = "flex";
-  }
+  document.getElementById("loginScreen").style.display = isLoggedIn ? "none" : "flex";
 }
 
 function switchAuthTab(type){
-  const tabLogin = document.getElementById("tabBtnLogin");
-  const tabReg = document.getElementById("tabBtnRegister");
-  const formLogin = document.getElementById("authLoginForm");
-  const formReg = document.getElementById("authRegisterForm");
-  
-  if(type === "login"){
-    tabLogin.classList.add("active"); tabReg.classList.remove("active");
-    formLogin.style.display = "block"; formReg.style.display = "none";
-  } else {
-    tabReg.classList.add("active"); tabLogin.classList.remove("active");
-    formReg.style.display = "block"; formLogin.style.display = "none";
-  }
+  document.getElementById("tabBtnLogin").classList.toggle("active", type==='login');
+  document.getElementById("tabBtnRegister").classList.toggle("active", type==='register');
+  document.getElementById("authLoginForm").style.display = type==='login' ? "block" : "none";
+  document.getElementById("authRegisterForm").style.display = type==='register' ? "block" : "none";
 }
 
 async function handleLogin(e){
   e.preventDefault();
-  const btn = document.getElementById("btnLoginSubmit");
-  const origText = btn.innerHTML;
-  btn.disabled = true; 
-  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memverifikasi...`;
+  const username = document.getElementById("loginUsername").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value;
+  const passwordHash = await sha256Hex(password);
 
   try {
-    const username = document.getElementById("loginUsername").value.trim().toLowerCase();
-    const password = document.getElementById("loginPassword").value;
-    const passwordHash = await sha256Hex(password);
-
     const res = await cloudPost({ action: "login_v2", username, passwordHash });
-    if(!res.ok) throw new Error(res.error || "Username atau password salah.");
-
+    if(!res.ok) throw new Error(res.error || "Login gagal");
+    
     activeUserKey = res.userKey;
     activeUsername = res.username;
     localStorage.setItem("jtp_is_logged_in", "true");
     localStorage.setItem("jtp_account_user_key", activeUserKey);
     localStorage.setItem("jtp_account_username", activeUsername);
-
-    const list = res.taList || [];
-    activeTA = localStorage.getItem("jtp_active_ta");
-    if(!activeTA || !list.includes(activeTA)) activeTA = list[0] || res.ta;
-    localStorage.setItem("jtp_active_ta", activeTA);
-
+    localStorage.setItem("jtp_active_ta", res.ta);
+    
     document.getElementById("loginScreen").style.display = "none";
-    alert(`Selamat datang kembali, ${res.name}!`);
+    location.reload();
   } catch(err) {
-    alert(err.message || "Proses login gagal.");
-  } finally {
-    btn.disabled = false; 
-    btn.innerHTML = origText;
+    alert(err.message);
   }
 }
 
 async function handleRegister(e){
   e.preventDefault();
-  const btn = document.getElementById("btnRegSubmit");
-  const origText = btn.innerHTML;
-  btn.disabled = true; 
-  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...`;
-
+  const nama = document.getElementById("regNama").value.trim();
+  const username = document.getElementById("regUsername").value.trim().toLowerCase();
+  const password = document.getElementById("regPassword").value;
+  const passwordHash = await sha256Hex(password);
+  
   try {
-    const nama = document.getElementById("regNama").value.trim();
-    const username = document.getElementById("regUsername").value.trim().toLowerCase();
-    const password = document.getElementById("regPassword").value;
-
-    if(password.length < 6) throw new Error("Password minimal terdiri dari 6 karakter.");
-
-    const passwordHash = await sha256Hex(password);
-    const now = new Date();
-    const y = now.getFullYear(), m = now.getMonth();
-    const ta = `${m >= 6 ? y : y - 1}/${m >= 6 ? y + 1 : y}`;
-
-    const res = await cloudPost({
-      action: "register_v2",
-      name: nama,
-      username: username,
-      passwordHash: passwordHash,
-      ta: ta
-    });
-
-    if(!res.ok) throw new Error(res.error || "Registrasi akun gagal.");
-
+    const res = await cloudPost({ action: "register_v2", name: nama, username, passwordHash, ta: "2026/2027" });
+    if(!res.ok) throw new Error(res.error || "Registrasi gagal");
+    
     activeUserKey = res.userKey;
     activeUsername = res.username;
-    activeTA = res.ta;
-
     localStorage.setItem("jtp_is_logged_in", "true");
     localStorage.setItem("jtp_account_user_key", activeUserKey);
     localStorage.setItem("jtp_account_username", activeUsername);
-    localStorage.setItem("jtp_active_ta", activeTA);
-
+    localStorage.setItem("jtp_active_ta", res.ta);
+    
     document.getElementById("loginScreen").style.display = "none";
-    alert("Akun berhasil dibuat dan Anda telah otomatis login!");
+    location.reload();
   } catch(err) {
-    alert(err.message || "Proses pendaftaran gagal.");
-  } finally {
-    btn.disabled = false; 
-    btn.innerHTML = origText;
+    alert(err.message);
   }
 }
 
 function handleLogout(){
-  if(!confirm("Apakah Anda yakin ingin keluar (Logout) dari akun?")) return;
+  if(!confirm("Apakah Anda yakin ingin logout?")) return;
   localStorage.clear();
   location.reload();
 }
@@ -424,9 +511,7 @@ function showSection(id){
   document.querySelectorAll(".nav button[data-page]").forEach(x => x.classList.toggle("active", x.dataset.page === id));
 }
 
-function toggleMobileNav(){
-  document.getElementById("sidebar").classList.toggle("open");
-}
+function toggleMobileNav(){ document.getElementById("sidebar").classList.toggle("open"); }
 
 (function init(){
   checkLoginSession();
