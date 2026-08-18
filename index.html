@@ -1105,7 +1105,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "PASTE_NEW_APPS_SCRIPT_WEB_APP_URL_HERE";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxiFlT24Zq4XelbZFpA59i7ZRxMwEiIYYARtZmm_ap0YZSymdxtfKGg_dnjt7DQXsxI/exec";
 
 
 /* =========================================================
@@ -1127,8 +1127,8 @@ async function sha256Hex(value){
 }
 
 async function cloudPost(body){
-  if(!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxiFlT24Zq4XelbZFpA59i7ZRxMwEiIYYARtZmm_ap0YZSymdxtfKGg_dnjt7DQXsxI/exec")){
-    throw new Error("https://script.google.com/macros/s/AKfycbxiFlT24Zq4XelbZFpA59i7ZRxMwEiIYYARtZmm_ap0YZSymdxtfKGg_dnjt7DQXsxI/exec");
+  if(!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE_NEW_APPS_SCRIPT")){
+    throw new Error("URL Apps Script baru belum dipasang di HTML.");
   }
   const res = await fetch(GOOGLE_SCRIPT_URL,{
     method:"POST",
