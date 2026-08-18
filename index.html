@@ -1029,8 +1029,18 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-// INTEGRASI GOOGLE SHEETS CLOUD SYNC
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6TJJy9gS36iaS0uK-_ep-eV0UvmPqZ4oYwOAt0EHaCnkQjPBt5xQ5noeo8YMNho51/exec";
+// INTEGRASI GOOGLE SHEETS CLOUD SYNC (MULTI-USER SUPPORT)
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz5CHuPbz3wzRmH6B2mJPWx7EIv_HXXaaJJ0AeLQRUmM8iRKaiZuJqzht3gw7Bof5L-/exec";
+
+// UUID Perangkat / Browser Unik untuk Setiap Guru
+function getDeviceUserKey() {
+  let key = localStorage.getItem("jtp_device_user_key");
+  if (!key) {
+    key = "usr_" + Math.random().toString(36).substring(2, 11) + "_" + Date.now();
+    localStorage.setItem("jtp_device_user_key", key);
+  }
+  return key;
+}
 
 let syncTimeout = null;
 function autoSyncToCloud() {
@@ -1048,7 +1058,7 @@ function autoSyncToCloud() {
 
     fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
-      body: JSON.stringify({ action: "save", payload: payload }),
+      body: JSON.stringify({ action: "save", userKey: getDeviceUserKey(), payload: payload }),
       headers: { "Content-Type": "text/plain;charset=utf-8" }
     }).catch(err => console.error("Gagal sinkronisasi ke cloud:", err));
   }, 1500);
@@ -1057,7 +1067,8 @@ function autoSyncToCloud() {
 function loadDataFromCloud() {
   if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI")) return;
 
-  fetch(GOOGLE_SCRIPT_URL)
+  const url = `${GOOGLE_SCRIPT_URL}?userKey=${encodeURIComponent(getDeviceUserKey())}`;
+  fetch(url)
     .then(res => res.json())
     .then(res => {
       if (res.status === "success" && res.payload && Object.keys(res.payload).length > 0) {
@@ -1498,9 +1509,6 @@ function renderRekap(){
  });
 }
 
-// -----------------------------------------------------------
-// 1. AKTIVITAS PEKANAN (SPESIFIK RENTANG TANGGAL)
-// -----------------------------------------------------------
 function getActivityStorageKey(){
   const start = get("akt_tgl_mulai", "default");
   const end = get("akt_tgl_selesai", "default");
@@ -1561,9 +1569,6 @@ function renderActivityChart(data){
  }).join("");
 }
 
-// -----------------------------------------------------------
-// 2. TARGET PENGEMBANGAN DIRI (SPESIFIK RENTANG TANGGAL)
-// -----------------------------------------------------------
 function getTargetStorageKey(){
   const start = get("target_tgl_mulai", "default");
   const end = get("target_tgl_selesai", "default");
@@ -1628,9 +1633,6 @@ function updateTargetState(){
  document.getElementById("homeTargetStat").textContent = `${doneCount}/${targetTexts.length}`;
 }
 
-// -----------------------------------------------------------
-// 3. CAPAIAN 8 DPL (SPESIFIK RENTANG TANGGAL)
-// -----------------------------------------------------------
 function getDPLStorageKey(){
   const start = get("dpl_tgl_mulai", "default");
   const end = get("dpl_tgl_selesai", "default");
@@ -1717,9 +1719,6 @@ function saveAnekdot(){
  set("anekdotData",JSON.stringify(arr));
 }
 
-// -----------------------------------------------------------
-// 4. LAPORAN NILAI FORMATIF (SPESIFIK RENTANG TANGGAL)
-// -----------------------------------------------------------
 function getNilaiStorageKey(){
   const start = get("nilai_tgl_mulai", "default");
   const end = get("nilai_tgl_selesai", "default");
@@ -1824,9 +1823,6 @@ function renderNilaiChart(averages){
  }).join("");
 }
 
-// -----------------------------------------------------------
-// 5. JURNAL REFLEKSI GURU (SPESIFIK RENTANG TANGGAL)
-// -----------------------------------------------------------
 function getRefleksiStorageKey(){
   const start = get("ref_tgl_mulai", "default");
   const end = get("ref_tgl_selesai", "default");
@@ -1837,13 +1833,11 @@ function renderRefleksi(){
   const key = getRefleksiStorageKey();
   const data = JSON.parse(get(key, "{}"));
   
-  // Render Mapels (Phase 1)
   const savedMapels = data.mapels || [];
   document.querySelectorAll("#refMapelBoxes input[type='checkbox']").forEach(cb => {
     cb.checked = savedMapels.includes(cb.dataset.mapel);
   });
 
-  // Render Texts (Phase 2 - 5)
   const fields = [
     "ref_materi_pembelajaran",
     "ref_metode_pembelajaran",
@@ -1901,9 +1895,6 @@ function updateKepuasanStatPdf(){
  document.getElementById("refKepuasanBarPdf").style.width = val + "%";
 }
 
-// -----------------------------------------------------------
-// 6. RINGKASAN & CETAK LAPORAN (OTOMATIS SINKRON)
-// -----------------------------------------------------------
 function updatePrintViewData(){
  const name = get("bio_nama","");
  document.getElementById("printTeacherName").textContent = name || "..................";
@@ -1914,7 +1905,6 @@ function updatePrintViewData(){
  const printDateLabel = document.getElementById("printCurrentDateLabel");
  if(printDateLabel) printDateLabel.textContent = getFormattedSignatureDate();
 
- // Target Summary Pekan Ini
  const targetKey = getTargetStorageKey();
  const targetState = JSON.parse(get(targetKey, "{}"));
  let failCount = 0;
@@ -1926,7 +1916,6 @@ function updatePrintViewData(){
  document.getElementById("printTargetPctText").textContent = `${targetPct}%`;
  document.getElementById("printTargetBar").style.width = `${targetPct}%`;
 
- // Absensi Summary
  const studentsCount = getStudentsData().length;
  const monthData = JSON.parse(get("absData_"+currentMonth, "{}"));
  let totalRecorded = 0, totalH = 0;
@@ -1942,12 +1931,10 @@ function updatePrintViewData(){
  document.getElementById("printAbsensiPctText").textContent = `${absPct}%`;
  document.getElementById("printAbsensiBar").style.width = `${absPct}%`;
  
- // Charts
  document.getElementById("printActivityChart").innerHTML = document.getElementById("activityChart").innerHTML;
  document.getElementById("printDplChart").innerHTML = document.getElementById("dplChart").innerHTML;
  document.getElementById("printNilaiChart").innerHTML = document.getElementById("nilaiChart").innerHTML;
 
- // Jurnal Refleksi Pekan Ini
  const refKey = getRefleksiStorageKey();
  const refData = JSON.parse(get(refKey, "{}"));
 
@@ -1969,7 +1956,7 @@ window.addEventListener('beforeprint', () => {
 });
 
 function resetPlanner(){
-  if(confirm("Apakah Anda yakin ingin mereset seluruh data? Semua data tersimpan dan Tab Sheet Anda di Google Sheets akan dihapus secara permanen.")){
+  if(confirm("Apakah Anda yakin ingin mereset seluruh data? Semua data tersimpan di HP ini dan Tab Sheet Anda di Google Sheets akan dihapus secara permanen.")){
     const teacherName = (get("bio_nama", "")).trim();
     const academicYear = get("auto_ta", "");
     const fullSheetName = teacherName + (academicYear ? " - TA " + academicYear.replace("/", "-") : "");
