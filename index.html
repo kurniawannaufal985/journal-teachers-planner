@@ -274,23 +274,23 @@ th { border-color: inherit !important; }
 </head>
 <body>
 
-<!-- OVERLAY LOGIN -->
-<div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:flex; align-items:center; justify-content:center; padding:20px;">
+<!-- OVERLAY LOGIN (Hanya Tampil Jika Aplikasi Terkunci) -->
+<div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:none; align-items:center; justify-content:center; padding:20px;">
   <div style="background:#fff; border-radius:16px; width:100%; max-width:400px; padding:30px; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
     <div style="text-align:center; margin-bottom:20px;">
-      <h2 style="font-size:20px; color:#0f172a; font-weight:800;">Silakan Login</h2>
-      <p style="font-size:12px; color:#64748b; margin-top:4px;">Gunakan NUPTK / NIK / Email sebagai Username & No. Telp sebagai Password</p>
+      <h2 style="font-size:20px; color:#0f172a; font-weight:800;">Aplikasi Terkunci</h2>
+      <p style="font-size:12px; color:#64748b; margin-top:4px;">Gunakan NUPTK / NIK / Email (Username) & No. Telp (Password) dari Biodata Anda.</p>
     </div>
     <form id="loginForm" onsubmit="handleLogin(event)">
       <div class="field" style="margin-bottom:14px;">
         <label>Username (NUPTK / NIK / Email)</label>
-        <input type="text" id="loginUsername" required placeholder="Masukkan NUPTK / NIK / Email">
+        <input type="text" id="loginUsername" required placeholder="Username Anda">
       </div>
       <div class="field" style="margin-bottom:20px;">
         <label>Password (No. Telepon / NIK)</label>
-        <input type="password" id="loginPassword" required placeholder="Masukkan Password">
+        <input type="password" id="loginPassword" required placeholder="Password Anda">
       </div>
-      <button type="submit" class="btn" style="width:100%; justify-content:center; padding:12px;">Login ke Aplikasi</button>
+      <button type="submit" class="btn" style="width:100%; justify-content:center; padding:12px;">Buka Kunci Aplikasi</button>
     </form>
   </div>
 </div>
@@ -321,8 +321,8 @@ th { border-color: inherit !important; }
     </nav>
   </div>
   <div class="sidebar-bottom">
-    <button class="btn danger" style="width:100%; justify-content:center;" onclick="handleLogout()">
-      <i class="fa-solid fa-right-from-bracket"></i> Logout
+    <button class="btn secondary" style="width:100%; justify-content:center;" onclick="handleLockApp()">
+      <i class="fa-solid fa-lock"></i> Kunci Aplikasi
     </button>
   </div>
 </aside>
@@ -379,16 +379,16 @@ th { border-color: inherit !important; }
 
 <!-- BIODATA -->
 <section id="biodata" class="page">
-  <div class="section-head"><div><div class="section-title"><i class="fa-solid fa-user"></i> Biodata Guru</div><div class="card-sub">Data dapat diedit manual dan tersimpan otomatis di browser &amp; Google Sheets.</div></div><span class="badge success"><i class="fa-solid fa-floppy-disk"></i> Auto Save</span></div>
+  <div class="section-head"><div><div class="section-title"><i class="fa-solid fa-user"></i> Biodata Guru</div><div class="card-sub">Silakan lengkapi biodata Anda. NUPTK/NIK/Email & No. Telp akan otomatis menjadi Akses Kunci Aplikasi!</div></div><span class="badge success"><i class="fa-solid fa-floppy-disk"></i> Auto Save</span></div>
   <div class="card">
     <div class="card-title">Data Pribadi</div>
     <div class="form-grid" style="margin-top:16px">
       <div class="field"><label>Nama Lengkap</label><input data-save="bio_nama" placeholder="Tuliskan nama lengkap..."></div>
       <div class="field"><label>Nama Panggilan</label><input data-save="bio_panggilan" placeholder="..."></div>
-      <div class="field"><label>No. Telepon / WA</label><input data-save="bio_telepon" placeholder="..."></div>
-      <div class="field"><label>E-mail</label><input data-save="bio_email" placeholder="..."></div>
-      <div class="field"><label>NUPTK</label><input data-save="bio_nuptk" placeholder="..."></div>
-      <div class="field"><label>NIK</label><input data-save="bio_nik" placeholder="..."></div>
+      <div class="field"><label>No. Telepon / WA (Password Kunci)</label><input data-save="bio_telepon" placeholder="..."></div>
+      <div class="field"><label>E-mail (Username Kunci Alt)</label><input data-save="bio_email" placeholder="..."></div>
+      <div class="field"><label>NUPTK (Username Kunci)</label><input data-save="bio_nuptk" placeholder="..."></div>
+      <div class="field"><label>NIK (Username Kunci Alt)</label><input data-save="bio_nik" placeholder="..."></div>
       <div class="field full"><label>Alamat</label><textarea data-save="bio_alamat" placeholder="..."></textarea></div>
     </div>
   </div>
@@ -922,7 +922,7 @@ th { border-color: inherit !important; }
     <div class="print-page-break">
       <div style="text-align:center; border-bottom:2px solid var(--text); padding-bottom:8px; margin-bottom:12px;">
         <img class="print-logo school-logo" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
-        <h2 style="font-size:15px; font-weight:800;">SEKOLAH DASAR ISLAM RAMAH ANAK</h2>
+        <h2 style="font-size:15px; font-weight:800;">SEKOLAH DASAR ISRAM RAMAH ANAK</h2>
         <h3 style="font-size:13px; font-weight:700; color:var(--green); margin-top:2px;">JOURNAL TEACHERS PLANNER</h3>
         <p style="font-size:10px; font-weight:600;">TAHUN AJARAN <span class="dynamic-ta">--</span></p>
       </div>
@@ -1056,8 +1056,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-// INTEGRASI GOOGLE SHEETS CLOUD SYNC (MULTI-USER SUPPORT)
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx34e6b_-5FqOs-zYjYkBtAoQ0aoXNLE5d2OZla6LmViW52tdoa6MnR-UI-ZwWeyvhA/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8nK1w79Lb4NmPmD-jf3fgNcyRlcFh0iRxds97W2WpOUgf47Hw46wx30wbD-pGmIcn/exec";
 
 function getDeviceUserKey() {
   let key = localStorage.getItem("jtp_device_user_key");
@@ -1116,16 +1115,16 @@ function loadDataFromCloud() {
 }
 
 // ----------------------------------------------------
-// LOGIKA VERIFIKASI LOGIN SISTEM
+// LOGIKA SIKLUS KEAMANAN & KUNCI APLIKASI (OPSI 1)
 // ----------------------------------------------------
 function checkLoginSession() {
-  const isLoggedIn = localStorage.getItem("jtp_is_logged_in");
+  const isLocked = localStorage.getItem("jtp_is_app_locked");
   const loginScreen = document.getElementById("loginScreen");
   
-  if (isLoggedIn === "true") {
-    loginScreen.style.display = "none";
-  } else {
+  if (isLocked === "true") {
     loginScreen.style.display = "flex";
+  } else {
+    loginScreen.style.display = "none";
   }
 }
 
@@ -1137,6 +1136,7 @@ function handleLogin(e) {
   const localUser = (get("bio_nuptk", "") || get("bio_nik", "") || get("bio_email", "")).trim();
   const localPass = (get("bio_telepon", "") || get("bio_nik", "")).trim();
 
+  // Jika data lokal masih kosong sama sekali (perangkat lain)
   if (!localUser && !localPass) {
     fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
@@ -1146,29 +1146,39 @@ function handleLogin(e) {
     .then(res => res.json())
     .then(res => {
       if (res.status === "success") {
-        localStorage.setItem("jtp_is_logged_in", "true");
+        localStorage.removeItem("jtp_is_app_locked");
         document.getElementById("loginScreen").style.display = "none";
         loadDataFromCloud();
       } else {
-        alert(res.message || "Login gagal! Pastikan data biodata di Spreadsheet sudah diisi.");
+        alert(res.message || "Username atau Password salah!");
       }
     })
-    .catch(() => alert("Koneksi gagal atau akun belum terdaftar di Spreadsheet!"));
+    .catch(() => alert("Koneksi gagal atau data tidak ditemukan di cloud!"));
     return;
   }
 
+  // Verifikasi Kredensial Lokal
   if (userIn === localUser && passIn === localPass) {
-    localStorage.setItem("jtp_is_logged_in", "true");
+    localStorage.removeItem("jtp_is_app_locked");
     document.getElementById("loginScreen").style.display = "none";
   } else {
-    alert("Username atau Password tidak sesuai dengan Biodata Guru yang tersimpan!");
+    alert("Username atau Password tidak cocok dengan Biodata tersimpan!");
   }
 }
 
-function handleLogout() {
-  if (confirm("Apakah Anda yakin ingin keluar dari aplikasi?")) {
-    localStorage.removeItem("jtp_is_logged_in");
-    location.reload();
+function handleLockApp() {
+  const localUser = (get("bio_nuptk", "") || get("bio_nik", "") || get("bio_email", "")).trim();
+  const localPass = (get("bio_telepon", "") || get("bio_nik", "")).trim();
+
+  if (!localUser || !localPass) {
+    alert("Silakan isi Biodata Guru terlebih dahulu (terutama NUPTK/NIK/Email & No. Telp) untuk dapat mengunci aplikasi!");
+    showSection("biodata");
+    return;
+  }
+
+  if (confirm("Kunci aplikasi sekarang? Anda memerlukan NUPTK/NIK/Email & No. Telp untuk membukanya kembali.")) {
+    localStorage.setItem("jtp_is_app_locked", "true");
+    document.getElementById("loginScreen").style.display = "flex";
   }
 }
 
