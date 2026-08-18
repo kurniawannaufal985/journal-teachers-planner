@@ -1106,12 +1106,10 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw10_pHay_O5ocLC-yH0R-xxglfFTu-QDi-6ERdRBmtj2ExpJZCyCS9ecS4wAka6Uft/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTwn6vPCCYjWPWIpAKQW3mHlJ2eZrhQ_opImMgssZUOv5FiuXpRHnvf5A60mz4-zt0/exec";
 
-function getDeviceUserKey(){
-  let key=localStorage.getItem("jtp_device_user_key");
-  if(!key){key="usr_"+Math.random().toString(36).slice(2,11)+"_"+Date.now();localStorage.setItem("jtp_device_user_key",key)}
-  return key;
+function getAccountUserKey(){
+  return localStorage.getItem("jtp_user_key") || "";
 }
 function getActiveTA(){return localStorage.getItem("jtp_active_ta")||get("auto_ta","")}
 function setActiveTA(ta){localStorage.setItem("jtp_active_ta",ta);localStorage.setItem("jtp_auto_ta",ta);}
@@ -1123,7 +1121,7 @@ function collectCurrentPayload(){
   const payload={};
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
-    if(k && k.startsWith("jtp_") && !["jtp_is_logged_in","jtp_device_user_key","jtp_active_ta"].includes(k)){
+    if(k && k.startsWith("jtp_") && !["jtp_is_logged_in","jtp_user_key","jtp_active_ta"].includes(k)){
       payload[k.substring(4)]=localStorage.getItem(k);
     }
   }
@@ -1131,16 +1129,16 @@ function collectCurrentPayload(){
   return payload;
 }
 function autoSyncToCloud(){
-  if(!GOOGLE_SCRIPT_URL || localStorage.getItem("jtp_is_logged_in")!=="true") return;
+  if(!GOOGLE_SCRIPT_URL || localStorage.getItem("jtp_is_logged_in")!=="true" || !getAccountUserKey()) return;
   clearTimeout(syncTimeout);
   syncTimeout=setTimeout(()=>{
     const ta=getActiveTA(); if(!ta)return;
-    cloudFetch(GOOGLE_SCRIPT_URL,{action:"save",userKey:getDeviceUserKey(),academicYear:ta,payload:collectCurrentPayload()})
+    cloudFetch(GOOGLE_SCRIPT_URL,{action:"save",userKey:getAccountUserKey(),academicYear:ta,payload:collectCurrentPayload()})
       .catch(err=>console.error("Gagal sinkronisasi cloud:",err));
   },700);
 }
 function putPayloadIntoLocal(payload){
-  Object.keys(localStorage).filter(k=>k.startsWith("jtp_")&&!['jtp_is_logged_in','jtp_device_user_key','jtp_active_ta'].includes(k)).forEach(k=>localStorage.removeItem(k));
+  Object.keys(localStorage).filter(k=>k.startsWith("jtp_")&&!['jtp_is_logged_in','jtp_user_key','jtp_active_ta'].includes(k)).forEach(k=>localStorage.removeItem(k));
   Object.keys(payload||{}).forEach(k=>localStorage.setItem("jtp_"+k,String(payload[k]??"")));
   if(payload&&payload.auto_ta)setActiveTA(payload.auto_ta);
   if(payload&&payload.abs_current_month) currentMonth=payload.abs_current_month;
@@ -1149,15 +1147,15 @@ function refreshPlanner(){
   initInputs();renderStudents();renderActivities();renderTargets();renderDPL();renderAnekdot();renderNilai();renderRefleksi();updateTAUI();updateHomeTeacherName();
 }
 function loadDataFromCloud(ta=getActiveTA()){
-  if(!GOOGLE_SCRIPT_URL || !ta || localStorage.getItem("jtp_is_logged_in")!=="true")return Promise.resolve();
-  return cloudFetch(GOOGLE_SCRIPT_URL,{action:"load_ta",userKey:getDeviceUserKey(),academicYear:ta})
+  if(!GOOGLE_SCRIPT_URL || !ta || localStorage.getItem("jtp_is_logged_in")!=="true" || !getAccountUserKey())return Promise.resolve();
+  return cloudFetch(GOOGLE_SCRIPT_URL,{action:"load_ta",userKey:getAccountUserKey(),academicYear:ta})
     .then(res=>{if(res.status==="success"){putPayloadIntoLocal(res.payload||{});setActiveTA(ta);refreshPlanner()}})
     .catch(err=>console.error("Gagal memuat data cloud:",err));
 }
 function checkLoginSession(){
-  const ok=localStorage.getItem("jtp_is_logged_in")==="true" && !!localStorage.getItem("jtp_device_user_key");
+  const ok=localStorage.getItem("jtp_is_logged_in")==="true" && !!localStorage.getItem("jtp_user_key");
   document.getElementById("loginScreen").style.display=ok?"none":"flex";
-  if(!ok){Object.keys(localStorage).filter(k=>k.startsWith("jtp_")&&!['jtp_is_logged_in','jtp_device_user_key'].includes(k)).forEach(k=>localStorage.removeItem(k));}
+  if(!ok){Object.keys(localStorage).filter(k=>k.startsWith("jtp_")&&!['jtp_is_logged_in','jtp_user_key'].includes(k)).forEach(k=>localStorage.removeItem(k));}
 }
 function switchAuthTab(type){
   const tl=document.getElementById("tabBtnLogin"),tr=document.getElementById("tabBtnRegister"),fl=document.getElementById("authLoginForm"),fr=document.getElementById("authRegisterForm");
@@ -1170,7 +1168,7 @@ function handleLogin(e){
   cloudFetch(GOOGLE_SCRIPT_URL,{action:"login",username,password}).then(res=>{
     btn.innerHTML=orig;btn.disabled=false;
     if(res.status!=="success")throw new Error(res.message||"Username atau password salah.");
-    localStorage.setItem("jtp_is_logged_in","true");localStorage.setItem("jtp_device_user_key",res.userKey);
+    localStorage.setItem("jtp_is_logged_in","true");localStorage.setItem("jtp_user_key",res.userKey);
     if(res.activeTA)setActiveTA(res.activeTA);
     localStorage.setItem("jtp_teacher_name",res.teacherName||"");
     document.getElementById("loginScreen").style.display="none";
@@ -1180,13 +1178,26 @@ function handleLogin(e){
 }
 function handleRegister(e){
   e.preventDefault();
-  const btn=document.getElementById("btnRegSubmit"),orig=btn.innerHTML;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...';btn.disabled=true;
-  const nama=document.getElementById("regNama").value.trim(),username=document.getElementById("regUsername").value.trim(),password=document.getElementById("regPassword").value.trim();
-  cloudFetch(GOOGLE_SCRIPT_URL,{action:"register",username,password,userKey:getDeviceUserKey(),payload:{bio_nama:nama,bio_nuptk:username,auto_ta:getDefaultAcademicYear()}}).then(res=>{
+  const btn=document.getElementById("btnRegSubmit"),orig=btn.innerHTML;
+  btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...';btn.disabled=true;
+  const nama=document.getElementById("regNama").value.trim();
+  const username=document.getElementById("regUsername").value.trim();
+  const password=document.getElementById("regPassword").value.trim();
+
+  // UserKey TIDAK dibuat di browser. Apps Script membuat UserKey unik untuk akun.
+  cloudFetch(GOOGLE_SCRIPT_URL,{
+    action:"register",
+    username,
+    password,
+    payload:{bio_nama:nama,bio_nuptk:username,auto_ta:getDefaultAcademicYear()}
+  }).then(res=>{
     if(res.status!=="success")throw new Error(res.message||"Registrasi gagal.");
-    alert(res.message||"Akun berhasil dibuat. Silakan login.");
-    document.getElementById("loginUsername").value=username;document.getElementById("loginPassword").value=password;switchAuthTab('login');
-  }).catch(err=>alert(err.message||"Gagal mendaftarkan akun.")).finally(()=>{btn.innerHTML=orig;btn.disabled=false});
+    alert((res.message||"Akun berhasil dibuat.")+"\nUserKey akun dibuat oleh server.");
+    document.getElementById("loginUsername").value=username;
+    document.getElementById("loginPassword").value=password;
+    switchAuthTab('login');
+  }).catch(err=>alert(err.message||"Gagal mendaftarkan akun."))
+    .finally(()=>{btn.innerHTML=orig;btn.disabled=false});
 }
 function handleLogout(){
   if(confirm("Keluar dari akun ini? Data TA di Google Sheets tetap aman.")){
@@ -1210,7 +1221,7 @@ function populateTASelect(tas,active){
 }
 function loadTAList(){
   if(localStorage.getItem('jtp_is_logged_in')!=='true')return;
-  cloudFetch(GOOGLE_SCRIPT_URL,{action:'list_ta',userKey:getDeviceUserKey()}).then(res=>{if(res.status==='success')populateTASelect(res.tas||[],res.activeTA||getActiveTA())}).catch(console.error);
+  cloudFetch(GOOGLE_SCRIPT_URL,{action:'list_ta',userKey:getAccountUserKey()}).then(res=>{if(res.status==='success')populateTASelect(res.tas||[],res.activeTA||getActiveTA())}).catch(console.error);
 }
 function switchAcademicYear(ta){
   if(!ta||ta===getActiveTA())return;
@@ -1224,7 +1235,7 @@ function createNewAcademicYear(){
   if(!ta)return;
   if(!/^\d{4}\/\d{4}$/.test(ta.trim())){alert('Format TA harus YYYY/YYYY, contoh 2026/2027.');return}
   if(!confirm(`Buat TA ${ta}? Biodata guru akan disalin, data akademik akan dibuat kosong.`))return;
-  cloudFetch(GOOGLE_SCRIPT_URL,{action:'create_ta',userKey:getDeviceUserKey(),fromAcademicYear:current,newAcademicYear:ta.trim()}).then(res=>{
+  cloudFetch(GOOGLE_SCRIPT_URL,{action:'create_ta',userKey:getAccountUserKey(),fromAcademicYear:current,newAcademicYear:ta.trim()}).then(res=>{
     if(res.status!=='success')throw new Error(res.message||'Gagal membuat TA baru.');
     setActiveTA(ta.trim());putPayloadIntoLocal(res.payload||{});populateTASelect([],ta.trim());loadTAList();refreshPlanner();showSection('home');alert(`TA ${ta.trim()} berhasil dibuat. Biodata guru dipertahankan, data akademik baru dikosongkan.`);
   }).catch(err=>alert(err.message||'Gagal membuat TA baru.'));
@@ -2093,7 +2104,7 @@ function resetPlanner(){
   const ta=getActiveTA();
   if(!ta)return;
   if(!confirm(`Reset data akademik TA ${ta}? Biodata guru akan dipertahankan. TA lain tidak akan berubah.`))return;
-  cloudFetch(GOOGLE_SCRIPT_URL,{action:'reset_ta',userKey:getDeviceUserKey(),academicYear:ta}).then(res=>{
+  cloudFetch(GOOGLE_SCRIPT_URL,{action:'reset_ta',userKey:getAccountUserKey(),academicYear:ta}).then(res=>{
     if(res.status!=='success')throw new Error(res.message||'Reset gagal.');
     putPayloadIntoLocal(res.payload||{});setActiveTA(ta);refreshPlanner();alert(`Data akademik TA ${ta} berhasil direset.`);
   }).catch(err=>alert(err.message||'Gagal reset TA.'));
