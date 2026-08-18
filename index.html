@@ -1105,7 +1105,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwShMxe9zPmrZtQ_kOvXvRdoIXLAzl8_M2JcPLJp2U2ndoOYIY1_vT6pjBnpZWoR9vy/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFo0iHMxTXRO0vsEJeIR0PxYauOic_jkvV6QON7OAKtepTFWtPO_K5ZmD8bq76yAJT/exec";
 
 /* =========================================================
    JTP CLOUD / AUTH / MULTI-TA
@@ -1154,9 +1154,9 @@ function getLocalPayload(){
 }
 
 function clearPlannerLocalData(){
+  const keepKeys = ["jtp_is_logged_in", "jtp_account_user_key", "jtp_account_username", "jtp_active_ta"];
   Object.keys(localStorage)
-    .filter(k => k.startsWith("jtp_") &&
-      !["jtp_is_logged_in","jtp_account_user_key","jtp_account_username","jtp_active_ta"].includes(k))
+    .filter(k => k.startsWith("jtp_") && !keepKeys.includes(k))
     .forEach(k => localStorage.removeItem(k));
 }
 
@@ -1274,15 +1274,6 @@ async function createNewTA(){
     await renderTASelector();
     alert(`TA ${newTA.trim()} berhasil dibuat. Biodata guru disalin, data akademik dibuat baru.`);
   }catch(e){alert("Gagal membuat TA baru: "+e.message);}
-}
-
-function initAcademicYear(){
-  const now=new Date();
-  const year=now.getFullYear();
-  const month=now.getMonth();
-  const defaultTA=`${month>=6?year:year-1}/${month>=6?year+1:year}`;
-  const ta=activeTA || get("auto_ta","") || defaultTA;
-  setAcademicYearUI(ta);
 }
 
 function checkLoginSession(){
@@ -1493,16 +1484,9 @@ function initAcademicYear(){
  const now = new Date();
  const year = now.getFullYear();
  const month = now.getMonth(); 
- let startYear = month >= 6 ? year : year - 1;
- const taString = `${startYear}/${startYear + 1}`;
- 
- set("auto_ta", taString);
-
- document.querySelectorAll(".dynamic-ta").forEach(el => {
-   el.textContent = taString;
- });
- const footerYr = document.getElementById("currentYearFooter");
- if(footerYr) footerYr.textContent = `TA. ${taString}`;
+ const defaultTA = `${month >= 6 ? year : year - 1}/${month >= 6 ? year + 1 : year}`;
+ const ta = activeTA || get("auto_ta", "") || defaultTA;
+ setAcademicYearUI(ta);
 }
 
 function showSection(id){
@@ -2264,10 +2248,19 @@ window.addEventListener('beforeprint', () => {
 });
 
 function resetPlanner(){
-  if(!confirm(`Reset seluruh data TA ${activeTA}? TA lain dan akun guru tidak akan terhapus.`)) return;
+  if(!confirm(`Reset seluruh isian data TA ${activeTA}? Akun guru dan tab sheet tetap aman.`)) return;
+  const currentBioNama = get("bio_nama", "");
   clearPlannerLocalData();
-  set("auto_ta",activeTA);
-  initInputs();renderStudents();renderActivities();renderTargets();renderDPL();renderAnekdot();renderNilai();renderRefleksi();
+  set("auto_ta", activeTA);
+  if(currentBioNama) set("bio_nama", currentBioNama);
+  initInputs();
+  renderStudents();
+  renderActivities();
+  renderTargets();
+  renderDPL();
+  renderAnekdot();
+  renderNilai();
+  renderRefleksi();
   autoSyncToCloud();
 }
 
