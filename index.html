@@ -58,6 +58,27 @@ button,input,textarea,select{font-family:inherit}
 h1{font-size:27px;line-height:1.2;margin-top:5px;color:var(--text)}
 .subtitle{color:var(--sub);font-size:12px;margin-top:7px}
 
+.ta-select-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--input);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green);
+}
+.ta-select-box select {
+  border: 0;
+  background: transparent;
+  font-weight: 800;
+  color: var(--green);
+  outline: none;
+  cursor: pointer;
+}
+
 .clock{
   background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
   border: 1px solid #10b98144;
@@ -309,6 +330,12 @@ th { border-color: inherit !important; }
   </div>
   
   <div class="topbar-right">
+    <div class="ta-select-box">
+      <i class="fa-solid fa-calendar"></i> TA:
+      <select id="academicYearSelect" onchange="changeAcademicYear(this.value)">
+        <!-- Pilihan TA Diisi secara Dinamis oleh JS -->
+      </select>
+    </div>
     <button class="btn danger" onclick="resetPlanner()" title="Reset semua data tersimpan"><i class="fa-solid fa-rotate-left"></i> Reset Data</button>
     <div class="clock">
       <div class="clock-icon-box">
@@ -1019,13 +1046,13 @@ th { border-color: inherit !important; }
   </div>
 </section>
 
-<footer>© <span id="currentYearFooter">TA. 2026/2027</span> SD Islam Ramah Anak — Journal Teachers Planner</footer>
+<footer>© <span id="currentYearFooter">TA. --</span> SD Islam Ramah Anak — Journal Teachers Planner</footer>
 </main>
 </div>
 
 <script>
 // INTEGRASI GOOGLE SHEETS CLOUD SYNC
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby68Mxm3OauT8S2yww31Mt5iqJJ0Z6wYDWVJPwPAoneYttm_0sLh0AWusDk5x7v7KPj/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxoOJLx0lSrAAf7oH8h10bs5xHAMVXpSLTPXccyiyCcj4XuiLfY8tVGPyyoneSeo757/exec";
 
 let syncTimeout = null;
 function autoSyncToCloud() {
@@ -1059,6 +1086,7 @@ function loadDataFromCloud() {
         Object.keys(res.payload).forEach(key => {
           localStorage.setItem("jtp_" + key, res.payload[key]);
         });
+        initAcademicYear();
         initInputs();
         renderStudents();
         renderActivities();
@@ -1163,13 +1191,36 @@ function getFormattedDateRange(keyStart, keyEnd) {
  return `${formatDateFromPicker(startStr)} s/d ${formatDateFromPicker(endStr)}`;
 }
 
+// MEMBUAT DAN MENGELOLA TAHUN AJARAN FLEXIBEL
 function initAcademicYear(){
  const now = new Date();
- const year = now.getFullYear();
- const month = now.getMonth(); 
- let startYear = month >= 6 ? year : year - 1;
- const taString = `${startYear}/${startYear + 1}`;
- 
+ const currentYr = now.getFullYear();
+ const currentMo = now.getMonth(); 
+ let baseStartYear = currentMo >= 6 ? currentYr : currentYr - 1;
+
+ const selectEl = document.getElementById("academicYearSelect");
+ selectEl.innerHTML = "";
+
+ // Membuat pilihan TA 3 tahun ke belakang sampai 5 tahun ke depan
+ for(let y = baseStartYear - 2; y <= baseStartYear + 4; y++) {
+    const taVal = `${y}/${y+1}`;
+    const opt = document.createElement("option");
+    opt.value = taVal;
+    opt.textContent = taVal;
+    selectEl.appendChild(opt);
+ }
+
+ const savedTA = get("selected_ta", `${baseStartYear}/${baseStartYear+1}`);
+ selectEl.value = savedTA;
+ updateDynamicTADisplay(savedTA);
+}
+
+function changeAcademicYear(taValue){
+ set("selected_ta", taValue);
+ updateDynamicTADisplay(taValue);
+}
+
+function updateDynamicTADisplay(taString){
  document.querySelectorAll(".dynamic-ta").forEach(el => {
    el.textContent = taString;
  });
@@ -1182,7 +1233,7 @@ function showSection(id){
  document.getElementById(id).classList.add("active");
  document.querySelectorAll(".nav button[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===id));
  
- const ta = document.querySelector(".dynamic-ta")?.textContent || "";
+ const ta = get("selected_ta", "");
  const titles={
    home:["Journal Teachers Planner",`Tahun Ajaran ${ta} — SD Islam Ramah Anak`],
    biodata:["Biodata Guru","Data personal dan informasi pendidik"],
@@ -1843,13 +1894,15 @@ window.addEventListener('beforeprint', () => {
 function resetPlanner(){
   if(confirm("Apakah Anda yakin ingin mereset seluruh data? Semua data tersimpan dan Tab Sheet Anda di Google Sheets akan dihapus secara permanen.")){
     const teacherName = (get("bio_nama", "")).trim();
+    const academicYear = get("selected_ta", "");
+    const fullSheetName = teacherName + (academicYear ? " - TA " + academicYear.replace("/", "-") : "");
 
     if(GOOGLE_SCRIPT_URL && teacherName && !GOOGLE_SCRIPT_URL.includes("URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI")){
       fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         body: JSON.stringify({
           action: "delete_sheet",
-          sheetName: teacherName
+          sheetName: fullSheetName
         }),
         headers: { "Content-Type": "text/plain;charset=utf-8" }
       })
