@@ -217,6 +217,11 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 .date-range-box input[type="date"] { flex: 1; min-width: 130px; cursor: pointer; }
 .date-sep { font-weight: 700; color: var(--sub); font-size: 11px; }
 
+/* TAB AUTENTIKASI DI OVERLAY */
+.auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--border); }
+.auth-tab-btn { flex: 1; padding: 10px; border: 0; background: transparent; font-weight: 700; color: var(--sub); cursor: pointer; font-size: 13px; text-align: center; }
+.auth-tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); margin-bottom: -2px; }
+
 @page {
   size: A4 portrait;
   margin: 10mm 12mm 10mm 12mm;
@@ -274,24 +279,61 @@ th { border-color: inherit !important; }
 </head>
 <body>
 
-<!-- OVERLAY LOGIN (Hanya Tampil Jika Aplikasi Terkunci) -->
-<div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:none; align-items:center; justify-content:center; padding:20px;">
-  <div style="background:#fff; border-radius:16px; width:100%; max-width:400px; padding:30px; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
-    <div style="text-align:center; margin-bottom:20px;">
-      <h2 style="font-size:20px; color:#0f172a; font-weight:800;">Aplikasi Terkunci</h2>
-      <p style="font-size:12px; color:#64748b; margin-top:4px;">Gunakan NUPTK / NIK / Email (Username) & No. Telp (Password) dari Biodata Anda.</p>
+<!-- OVERLAY AUTH (LOGIN & DAFTAR) -->
+<div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:flex; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:#fff; border-radius:16px; width:100%; max-width:420px; padding:30px; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+    
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">Masuk (Login)</button>
+      <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">Daftar Akun Baru</button>
     </div>
-    <form id="loginForm" onsubmit="handleLogin(event)">
-      <div class="field" style="margin-bottom:14px;">
-        <label>Username (NUPTK / NIK / Email)</label>
-        <input type="text" id="loginUsername" required placeholder="Username Anda">
+
+    <!-- FORM LOGIN -->
+    <div id="authLoginForm">
+      <div style="text-align:center; margin-bottom:18px;">
+        <h2 style="font-size:18px; color:#0f172a; font-weight:800;">Silakan Login</h2>
+        <p style="font-size:11px; color:#64748b; margin-top:4px;">Gunakan NUPTK / NIK / Email (Username) & No. WA (Password)</p>
       </div>
-      <div class="field" style="margin-bottom:20px;">
-        <label>Password (No. Telepon / NIK)</label>
-        <input type="password" id="loginPassword" required placeholder="Password Anda">
+      <form onsubmit="handleLogin(event)">
+        <div class="field" style="margin-bottom:14px;">
+          <label>Username (NUPTK / NIK / Email)</label>
+          <input type="text" id="loginUsername" required placeholder="Tuliskan Username...">
+        </div>
+        <div class="field" style="margin-bottom:20px;">
+          <label>Password (No. WA / Telepon)</label>
+          <input type="password" id="loginPassword" required placeholder="Tuliskan Password...">
+        </div>
+        <button type="submit" class="btn" style="width:100%; justify-content:center; padding:12px;" id="btnLoginSubmit">
+          <i class="fa-solid fa-right-to-bracket"></i> Masuk Aplikasi
+        </button>
+      </form>
+    </div>
+
+    <!-- FORM REGISTRASI -->
+    <div id="authRegisterForm" style="display:none;">
+      <div style="text-align:center; margin-bottom:18px;">
+        <h2 style="font-size:18px; color:#0f172a; font-weight:800;">Pendaftaran Akun Guru</h2>
+        <p style="font-size:11px; color:#64748b; margin-top:4px;">Isi biodata awal untuk mendaftarkan akun ke Google Sheets</p>
       </div>
-      <button type="submit" class="btn" style="width:100%; justify-content:center; padding:12px;">Buka Kunci Aplikasi</button>
-    </form>
+      <form onsubmit="handleRegister(event)">
+        <div class="field" style="margin-bottom:12px;">
+          <label>Nama Lengkap Guru</label>
+          <input type="text" id="regNama" required placeholder="Nama Lengkap & Gelar">
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label>Username (NUPTK / NIK / Email)</label>
+          <input type="text" id="regUsername" required placeholder="NUPTK, NIK, atau Email">
+        </div>
+        <div class="field" style="margin-bottom:20px;">
+          <label>Password (No. WA / Telepon)</label>
+          <input type="text" id="regPassword" required placeholder="Nomor Telepon/WA Aktif">
+        </div>
+        <button type="submit" class="btn" style="width:100%; justify-content:center; padding:12px;" id="btnRegSubmit">
+          <i class="fa-solid fa-user-plus"></i> Simpan &amp; Buat Akun
+        </button>
+      </form>
+    </div>
+
   </div>
 </div>
 
@@ -321,8 +363,8 @@ th { border-color: inherit !important; }
     </nav>
   </div>
   <div class="sidebar-bottom">
-    <button class="btn secondary" style="width:100%; justify-content:center;" onclick="handleLockApp()">
-      <i class="fa-solid fa-lock"></i> Kunci Aplikasi
+    <button class="btn secondary" style="width:100%; justify-content:center;" onclick="handleLogout()">
+      <i class="fa-solid fa-right-from-bracket"></i> Keluar (Logout)
     </button>
   </div>
 </aside>
@@ -379,16 +421,16 @@ th { border-color: inherit !important; }
 
 <!-- BIODATA -->
 <section id="biodata" class="page">
-  <div class="section-head"><div><div class="section-title"><i class="fa-solid fa-user"></i> Biodata Guru</div><div class="card-sub">Silakan lengkapi biodata Anda. NUPTK/NIK/Email & No. Telp akan otomatis menjadi Akses Kunci Aplikasi!</div></div><span class="badge success"><i class="fa-solid fa-floppy-disk"></i> Auto Save</span></div>
+  <div class="section-head"><div><div class="section-title"><i class="fa-solid fa-user"></i> Biodata Guru</div><div class="card-sub">Data biodata terdaftar pada akun Anda. Data tersimpan otomatis ke Google Sheets.</div></div><span class="badge success"><i class="fa-solid fa-floppy-disk"></i> Auto Save</span></div>
   <div class="card">
     <div class="card-title">Data Pribadi</div>
     <div class="form-grid" style="margin-top:16px">
       <div class="field"><label>Nama Lengkap</label><input data-save="bio_nama" placeholder="Tuliskan nama lengkap..."></div>
       <div class="field"><label>Nama Panggilan</label><input data-save="bio_panggilan" placeholder="..."></div>
-      <div class="field"><label>No. Telepon / WA (Password Kunci)</label><input data-save="bio_telepon" placeholder="..."></div>
-      <div class="field"><label>E-mail (Username Kunci Alt)</label><input data-save="bio_email" placeholder="..."></div>
-      <div class="field"><label>NUPTK (Username Kunci)</label><input data-save="bio_nuptk" placeholder="..."></div>
-      <div class="field"><label>NIK (Username Kunci Alt)</label><input data-save="bio_nik" placeholder="..."></div>
+      <div class="field"><label>No. Telepon / WA (Password Login)</label><input data-save="bio_telepon" placeholder="..."></div>
+      <div class="field"><label>E-mail (Username Login Alt)</label><input data-save="bio_email" placeholder="..."></div>
+      <div class="field"><label>NUPTK (Username Login)</label><input data-save="bio_nuptk" placeholder="..."></div>
+      <div class="field"><label>NIK (Username Login Alt)</label><input data-save="bio_nik" placeholder="..."></div>
       <div class="field full"><label>Alamat</label><textarea data-save="bio_alamat" placeholder="..."></textarea></div>
     </div>
   </div>
@@ -1056,7 +1098,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8nK1w79Lb4NmPmD-jf3fgNcyRlcFh0iRxds97W2WpOUgf47Hw46wx30wbD-pGmIcn/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdxr0QoYo1DLzOuHlvVEXfAHljHp68I7DbcSdQuhto1jAtot431ljy-90RSplLxsCx/exec";
 
 function getDeviceUserKey() {
   let key = localStorage.getItem("jtp_device_user_key");
@@ -1115,70 +1157,141 @@ function loadDataFromCloud() {
 }
 
 // ----------------------------------------------------
-// LOGIKA SIKLUS KEAMANAN & KUNCI APLIKASI (OPSI 1)
+// ALUR LOG IN & REGISTRASI LENGKAP VIA SCRIPT/SHEETS
 // ----------------------------------------------------
 function checkLoginSession() {
-  const isLocked = localStorage.getItem("jtp_is_app_locked");
+  const isLoggedIn = localStorage.getItem("jtp_is_logged_in");
   const loginScreen = document.getElementById("loginScreen");
   
-  if (isLocked === "true") {
-    loginScreen.style.display = "flex";
-  } else {
+  if (isLoggedIn === "true") {
     loginScreen.style.display = "none";
+  } else {
+    loginScreen.style.display = "flex";
+  }
+}
+
+function switchAuthTab(type) {
+  const tabLogin = document.getElementById("tabBtnLogin");
+  const tabReg = document.getElementById("tabBtnRegister");
+  const formLogin = document.getElementById("authLoginForm");
+  const formReg = document.getElementById("authRegisterForm");
+
+  if (type === 'login') {
+    tabLogin.classList.add("active");
+    tabReg.classList.remove("active");
+    formLogin.style.display = "block";
+    formReg.style.display = "none";
+  } else {
+    tabReg.classList.add("active");
+    tabLogin.classList.remove("active");
+    formReg.style.display = "block";
+    formLogin.style.display = "none";
   }
 }
 
 function handleLogin(e) {
   e.preventDefault();
+  const btn = document.getElementById("btnLoginSubmit");
+  const origText = btn.innerHTML;
+  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memverifikasi...`;
+  btn.disabled = true;
+
   const userIn = document.getElementById("loginUsername").value.trim();
   const passIn = document.getElementById("loginPassword").value.trim();
 
-  const localUser = (get("bio_nuptk", "") || get("bio_nik", "") || get("bio_email", "")).trim();
-  const localPass = (get("bio_telepon", "") || get("bio_nik", "")).trim();
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify({ action: "login", username: userIn, password: passIn }),
+    headers: { "Content-Type": "text/plain;charset=utf-8" }
+  })
+  .then(res => res.json())
+  .then(res => {
+    btn.innerHTML = origText;
+    btn.disabled = false;
 
-  // Jika data lokal masih kosong sama sekali (perangkat lain)
-  if (!localUser && !localPass) {
-    fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({ action: "login", username: userIn, password: passIn }),
-      headers: { "Content-Type": "text/plain;charset=utf-8" }
-    })
-    .then(res => res.json())
-    .then(res => {
-      if (res.status === "success") {
-        localStorage.removeItem("jtp_is_app_locked");
-        document.getElementById("loginScreen").style.display = "none";
-        loadDataFromCloud();
-      } else {
-        alert(res.message || "Username atau Password salah!");
+    if (res.status === "success") {
+      localStorage.setItem("jtp_is_logged_in", "true");
+      if (res.payload && Object.keys(res.payload).length > 0) {
+        Object.keys(res.payload).forEach(key => {
+          localStorage.setItem("jtp_" + key, res.payload[key]);
+        });
       }
-    })
-    .catch(() => alert("Koneksi gagal atau data tidak ditemukan di cloud!"));
-    return;
-  }
-
-  // Verifikasi Kredensial Lokal
-  if (userIn === localUser && passIn === localPass) {
-    localStorage.removeItem("jtp_is_app_locked");
-    document.getElementById("loginScreen").style.display = "none";
-  } else {
-    alert("Username atau Password tidak cocok dengan Biodata tersimpan!");
-  }
+      document.getElementById("loginScreen").style.display = "none";
+      initInputs();
+      renderStudents();
+      renderActivities();
+      renderTargets();
+      renderDPL();
+      renderAnekdot();
+      renderNilai();
+      renderRefleksi();
+    } else {
+      alert(res.message || "Username atau Password salah!");
+    }
+  })
+  .catch(err => {
+    btn.innerHTML = origText;
+    btn.disabled = false;
+    alert("Gagal terhubung ke Google Sheets. Periksa koneksi internet!");
+  });
 }
 
-function handleLockApp() {
-  const localUser = (get("bio_nuptk", "") || get("bio_nik", "") || get("bio_email", "")).trim();
-  const localPass = (get("bio_telepon", "") || get("bio_nik", "")).trim();
+function handleRegister(e) {
+  e.preventDefault();
+  const btn = document.getElementById("btnRegSubmit");
+  const origText = btn.innerHTML;
+  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...`;
+  btn.disabled = true;
 
-  if (!localUser || !localPass) {
-    alert("Silakan isi Biodata Guru terlebih dahulu (terutama NUPTK/NIK/Email & No. Telp) untuk dapat mengunci aplikasi!");
-    showSection("biodata");
-    return;
-  }
+  const nama = document.getElementById("regNama").value.trim();
+  const username = document.getElementById("regUsername").value.trim();
+  const password = document.getElementById("regPassword").value.trim();
 
-  if (confirm("Kunci aplikasi sekarang? Anda memerlukan NUPTK/NIK/Email & No. Telp untuk membukanya kembali.")) {
-    localStorage.setItem("jtp_is_app_locked", "true");
+  const regPayload = {
+    bio_nama: nama,
+    bio_nuptk: username,
+    bio_telepon: password
+  };
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "register",
+      userKey: getDeviceUserKey(),
+      payload: regPayload
+    }),
+    headers: { "Content-Type": "text/plain;charset=utf-8" }
+  })
+  .then(res => res.json())
+  .then(res => {
+    btn.innerHTML = origText;
+    btn.disabled = false;
+
+    if (res.status === "success") {
+      alert(res.message || "Registrasi berhasil!");
+      set("bio_nama", nama);
+      set("bio_nuptk", username);
+      set("bio_telepon", password);
+      
+      document.getElementById("loginUsername").value = username;
+      document.getElementById("loginPassword").value = password;
+      switchAuthTab('login');
+    } else {
+      alert(res.message || "Registrasi gagal!");
+    }
+  })
+  .catch(err => {
+    btn.innerHTML = origText;
+    btn.disabled = false;
+    alert("Gagal terhubung ke server untuk pendaftaran!");
+  });
+}
+
+function handleLogout() {
+  if (confirm("Apakah Anda yakin ingin keluar dari aplikasi?")) {
+    localStorage.removeItem("jtp_is_logged_in");
     document.getElementById("loginScreen").style.display = "flex";
+    switchAuthTab('login');
   }
 }
 
