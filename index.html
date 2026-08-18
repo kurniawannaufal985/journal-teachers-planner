@@ -608,13 +608,16 @@ th { border-color: inherit !important; }
 
   <div class="card">
     <div class="card-title" style="margin-bottom:6px">1. Capaian 8 DPL (Dimensi Profil Lulusan)</div>
+    <div class="card-sub" style="margin-bottom:12px; color:var(--green)">
+      <i class="fa-solid fa-circle-info"></i> Pilih tanggal pekan di bawah ini. Tabel &amp; Diagram akan otomatis berganti sesuai pekan yang dipilih!
+    </div>
     <div class="form-grid" style="grid-template-columns:1fr; margin-bottom:15px;">
       <div class="field">
-        <label>Tanggal / Rentang Pekan</label>
+        <label>Tanggal / Rentang Pekan DPL</label>
         <div class="date-range-box">
-          <input type="date" data-save="dpl_tgl_mulai">
+          <input type="date" data-save="dpl_tgl_mulai" onchange="renderDPL()">
           <span class="date-sep">s/d</span>
-          <input type="date" data-save="dpl_tgl_selesai">
+          <input type="date" data-save="dpl_tgl_selesai" onchange="renderDPL()">
         </div>
       </div>
     </div>
@@ -643,7 +646,7 @@ th { border-color: inherit !important; }
   </div>
 
   <div class="card">
-    <div class="card-title">Diagram Alokasi Progres 8 DPL</div>
+    <div class="card-title">Diagram Alokasi Progres 8 DPL (Pekan Terpilih)</div>
     <div id="dplChart" style="margin-top:10px"></div>
   </div>
 
@@ -890,7 +893,7 @@ th { border-color: inherit !important; }
     <div class="print-page-break">
       <div style="text-align:center; border-bottom:2px solid var(--text); padding-bottom:8px; margin-bottom:12px;">
         <img class="print-logo school-logo" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
-        <h2 style="font-size:15px; font-weight:800;">SEKOLAH DASAR ISRAM RAMAH ANAK</h2>
+        <h2 style="font-size:15px; font-weight:800;">SEKOLAH DASAR ISLAM RAMAH ANAK</h2>
         <h3 style="font-size:13px; font-weight:700; color:var(--green); margin-top:2px;">JOURNAL TEACHERS PLANNER</h3>
         <p style="font-size:10px; font-weight:600;">TAHUN AJARAN <span class="dynamic-ta">--</span></p>
       </div>
@@ -1025,7 +1028,7 @@ th { border-color: inherit !important; }
 
 <script>
 // INTEGRASI GOOGLE SHEETS CLOUD SYNC
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAZfC_xqVhGssW17t_0qIg5Cesf25WW4G-Vy9g04_Av8-hBKmowD8CwsGRoyi_4kAR/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNF37BefOzDiP41n9_OB4ZYxhI9ZSrB-aWRh1SUaYcTxIRzHS7agUNSbhwDiXV0kSI/exec";
 
 let syncTimeout = null;
 function autoSyncToCloud() {
@@ -1164,7 +1167,6 @@ function getFormattedDateRange(keyStart, keyEnd) {
  return `${formatDateFromPicker(startStr)} s/d ${formatDateFromPicker(endStr)}`;
 }
 
-// OTOMATIS MENGHITUNG TAHUN AJARAN BERJALAN
 function initAcademicYear(){
  const now = new Date();
  const year = now.getFullYear();
@@ -1588,46 +1590,62 @@ function updateTargetState(){
  document.getElementById("homeTargetStat").textContent=`${doneCount}/${targetTexts.length}`;
 }
 
+// -----------------------------------------------------------
+// FITUR BARU: CAPAIAN 8 DPL SPESIFIK RENTANG TANGGAL PEKAN
+// -----------------------------------------------------------
+function getDPLStorageKey(){
+  const start = get("dpl_tgl_mulai", "default");
+  const end = get("dpl_tgl_selesai", "default");
+  return `dplData_${start}_${end}`;
+}
+
 function renderDPL(){
- const saved=JSON.parse(get("dplData",JSON.stringify(defaultDPL)));
- const body=document.getElementById("dplBody");body.innerHTML="";
- daysDPL.forEach((day,r)=>{
-  const tr=document.createElement("tr");
-  let colsHtml="";
-  for(let c=0;c<8;c++){
-    const val=(saved[r]&&saved[r][c])||"";
-    colsHtml+=`<td style="text-align:center"><input class="dpl-input" data-r="${r}" data-c="${c}" value="${esc(val)}"></td>`;
+ const key = getDPLStorageKey();
+ const saved = JSON.parse(get(key, JSON.stringify(defaultDPL)));
+ const body = document.getElementById("dplBody"); 
+ body.innerHTML = "";
+
+ daysDPL.forEach((day, r) => {
+  const tr = document.createElement("tr");
+  let colsHtml = "";
+  for(let c = 0; c < 8; c++){
+    const val = (saved[r] && saved[r][c]) || "";
+    colsHtml += `<td style="text-align:center"><input class="dpl-input" data-r="${r}" data-c="${c}" value="${esc(val)}"></td>`;
   }
-  tr.innerHTML=`<td style="text-align:center">${r+1}</td><td><b>${day}</b></td>${colsHtml}`;
+  tr.innerHTML = `<td style="text-align:center">${r+1}</td><td><b>${day}</b></td>${colsHtml}`;
   body.appendChild(tr);
  });
- document.querySelectorAll(".dpl-input").forEach(x=>x.addEventListener("input",saveDPL));
+
+ document.querySelectorAll(".dpl-input").forEach(x => x.addEventListener("input", saveDPL));
  renderDPLChart(saved);
 }
 
 function saveDPL(){
- const arr=[];
- document.querySelectorAll("#dplBody tr").forEach((tr,r)=>{
-  const row=[];
-  tr.querySelectorAll(".dpl-input").forEach(x=>row[x.dataset.c]=x.value);
+ const arr = [];
+ document.querySelectorAll("#dplBody tr").forEach((tr, r) => {
+  const row = [];
+  tr.querySelectorAll(".dpl-input").forEach(x => row[x.dataset.c] = x.value);
   arr.push(row);
  });
- set("dplData",JSON.stringify(arr));
+
+ const key = getDPLStorageKey();
+ set(key, JSON.stringify(arr));
+ set("dplData", JSON.stringify(arr)); // simpan juga ke dplData umum untuk fallback
  renderDPLChart(arr);
 }
 
 function renderDPLChart(data){
- const counts=[0,0,0,0,0,0,0,0];
- data.forEach(row=>{
-  row.forEach((v,c)=>{
-    const n=Number(v);
-    if(n>0) counts[c]+=n;
+ const counts = [0,0,0,0,0,0,0,0];
+ data.forEach(row => {
+  row.forEach((v, c) => {
+    const n = Number(v);
+    if(n > 0) counts[c] += n;
   });
  });
- const total=counts.reduce((a,b)=>a+b,0)||1;
- const labels=["Keimanan & Ketakwaan","Kewargaan","Penalaran Kritis","Kreativitas","Kolaborasi","Kemandirian","Kesehatan","Komunikasi"];
- document.getElementById("dplChart").innerHTML=counts.map((n,i)=>{
-  const p=counts.reduce((a,b)=>a+b,0)>0 ? Math.round(n/total*100) : 0;
+ const total = counts.reduce((a, b) => a + b, 0) || 1;
+ const labels = ["Keimanan & Ketakwaan","Kewargaan","Penalaran Kritis","Kreativitas","Kolaborasi","Kemandirian","Kesehatan","Komunikasi"];
+ document.getElementById("dplChart").innerHTML = counts.map((n, i) => {
+  const p = counts.reduce((a, b) => a + b, 0) > 0 ? Math.round(n / total * 100) : 0;
   return `<div class="bar-row"><div class="bar-label"><span><b>${i+1}.</b> ${labels[i]}</span><b>${p}% (${n})</b></div><div class="bar-track"><div class="bar-fill" style="width:${p}%"></div></div></div>`;
  }).join("");
 }
