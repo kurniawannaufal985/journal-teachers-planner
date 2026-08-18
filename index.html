@@ -1098,7 +1098,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEcGau-_R7hW9qRpNXGLA1iJBDNSQic4_6CsbD4kvJtkl3KJPjW9Qs5vqgV05TcT3-/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-QfnlRb3hYDBSz2sB4dinalBo21vnNeV7Q9YLN7s2iGsmGDX7Eyl6wYYp0rnvJt_W/exec";
 
 function getDeviceUserKey() {
   let key = localStorage.getItem("jtp_device_user_key");
@@ -1111,7 +1111,7 @@ function getDeviceUserKey() {
 
 let syncTimeout = null;
 function autoSyncToCloud() {
-  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("script.google.com")) return;
+  if (!GOOGLE_SCRIPT_URL) return;
   
   clearTimeout(syncTimeout);
   syncTimeout = setTimeout(() => {
@@ -1132,7 +1132,7 @@ function autoSyncToCloud() {
 }
 
 function loadDataFromCloud() {
-  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("script.google.com")) return;
+  if (!GOOGLE_SCRIPT_URL) return;
 
   const url = `${GOOGLE_SCRIPT_URL}?userKey=${encodeURIComponent(getDeviceUserKey())}`;
   fetch(url)
@@ -1346,6 +1346,7 @@ const monthsKeys=["JULI","AGUST","SEPT","OKT","NOV","DES","JAN","FEB","MAR","APR
 let currentMonth="AGUST";
 
 function get(k,d=""){return localStorage.getItem("jtp_"+k)??d}
+currentMonth=get("currentMonth","AGUST");
 function set(k,v){
   localStorage.setItem("jtp_"+k,v);
   autoSyncToCloud();
@@ -1493,6 +1494,9 @@ function updateHomeTeacherName(){
 }
 
 function initInputs(){
+ currentMonth=get("currentMonth","AGUST");
+ const monthSelect=document.getElementById("absensiMonthSelect");
+ if(monthSelect) monthSelect.value=currentMonth;
  document.querySelectorAll("[data-save]").forEach(el=>{
    const k=el.dataset.save; 
    let savedVal = get(k, el.value||"");
@@ -1594,6 +1598,7 @@ function esc(v){return String(v).replaceAll("&","&amp;").replaceAll('"',"&quot;"
 
 function changeAbsensiMonth(m){
  currentMonth=m;
+ set("currentMonth", currentMonth);
  const selText=document.getElementById("absensiMonthSelect").options[document.getElementById("absensiMonthSelect").selectedIndex].text;
  document.getElementById("currentMonthLabel").textContent=selText;
  renderAbsensi();
@@ -2176,7 +2181,7 @@ function resetPlanner(){
     const academicYear = get("auto_ta", "");
     const fullSheetName = teacherName + (academicYear ? " - TA " + academicYear.replace("/", "-") : "");
 
-    if(GOOGLE_SCRIPT_URL && teacherName && !GOOGLE_SCRIPT_URL.includes("script.google.com")){
+    if(GOOGLE_SCRIPT_URL && teacherName){
       fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         body: JSON.stringify({
