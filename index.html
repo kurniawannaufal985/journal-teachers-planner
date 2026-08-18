@@ -988,8 +988,8 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-// PASTE URL EXEC WEB APP APPS SCRIPT ANDA DI SINI
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQmyPNvNXvscdP4CmX9z3aO6SkWKaCggBXLEVuc0xBBkN-hCnVGWzEStr1egNt8rdq/exec";
+// MASUKKAN URL EXEC GOOGLE APPS SCRIPT ANDA DI SINI
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOVwJrSiloTQK4HIW49GxVsXB-zRFw5gwAcd1BMhM22H7YlJUwcb2z2ynIDRNHkFeN/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -1006,7 +1006,7 @@ async function sha256Hex(value){
 
 async function cloudPost(body){
   if(!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE_NEW_APPS_SCRIPT")){
-    throw new Error("URL Apps Script belum dikonfigurasi.");
+    throw new Error("URL Apps Script belum dipasang pada kode HTML.");
   }
   const res = await fetch(GOOGLE_SCRIPT_URL,{
     method:"POST",
