@@ -221,6 +221,32 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 .auth-tab-btn { flex: 1; padding: 10px; border: 0; background: transparent; font-weight: 700; color: var(--sub); cursor: pointer; font-size: 13px; text-align: center; }
 .auth-tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); margin-bottom: -2px; }
 
+/* STYLE KHUSUS INPUT PASSWORD + TOGGLE MATA */
+.password-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.password-box input {
+  padding-right: 42px !important;
+}
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--sub);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toggle-password-btn:hover {
+  color: var(--green);
+}
+
 @page {
   size: A4 portrait;
   margin: 10mm 12mm 10mm 12mm;
@@ -295,12 +321,17 @@ th { border-color: inherit !important; }
       </div>
       <form onsubmit="handleLogin(event)">
         <div class="field" style="margin-bottom:14px;">
-          <label>Username (NUPTK / NIK / Email)</label>
-          <input type="text" id="loginUsername" required placeholder="Tuliskan Username...">
+          <label>Username (Bebas: Nama / NUPTK / NIK / Email)</label>
+          <input type="text" id="loginUsername" required placeholder="Tuliskan nama atau username Anda...">
         </div>
         <div class="field" style="margin-bottom:20px;">
-          <label>Password Kustom</label>
-          <input type="password" id="loginPassword" required placeholder="Tuliskan Password...">
+          <label>Password</label>
+          <div class="password-box">
+            <input type="password" id="loginPassword" required placeholder="Tuliskan Password Anda...">
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('loginPassword', this)">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
         </div>
         <button type="submit" class="btn" style="width:100%; justify-content:center; padding:12px;" id="btnLoginSubmit">
           <i class="fa-solid fa-right-to-bracket"></i> Masuk Aplikasi
@@ -316,16 +347,21 @@ th { border-color: inherit !important; }
       </div>
       <form onsubmit="handleRegister(event)">
         <div class="field" style="margin-bottom:12px;">
-          <label>Nama Lengkap Guru</label>
-          <input type="text" id="regNama" required placeholder="Nama Lengkap & Gelar">
+          <label>Nama Lengkap Guru &amp; Gelar</label>
+          <input type="text" id="regNama" required placeholder="Contoh: Ahmad Subagja, S.Pd">
         </div>
         <div class="field" style="margin-bottom:12px;">
-          <label>Username (NUPTK / NIK / Email)</label>
-          <input type="text" id="regUsername" required placeholder="NUPTK, NIK, atau Email">
+          <label>Username (Bebas: Nama / NUPTK / NIK / Email)</label>
+          <input type="text" id="regUsername" required placeholder="Contoh: ahmad / 12345 / email">
         </div>
         <div class="field" style="margin-bottom:20px;">
-          <label>Password Kustom</label>
-          <input type="password" id="regPassword" required placeholder="Buat password kustom Anda...">
+          <label>Buat Password Kustom</label>
+          <div class="password-box">
+            <input type="password" id="regPassword" required placeholder="Buat password kustom Anda...">
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('regPassword', this)">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
         </div>
         <button type="submit" class="btn" style="width:100%; justify-content:center; padding:12px;" id="btnRegSubmit">
           <i class="fa-solid fa-user-plus"></i> Simpan &amp; Buat Akun
@@ -1104,7 +1140,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyr99O3WYPYDEi5TK9H1Z2Hn2WqKYbOFn5A9fnWhk9bnHnVWJF0YlqklG61simtj2B/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPJjKfzwH4Izla0r5msAZQZa0Xgw68GS5es9K84VNQO_Jt4MEzrigYusJtiLtSIYxb/exec";
 
 /* =========================================================
    JTP CLOUD / AUTH / MULTI-TA
@@ -1114,6 +1150,19 @@ let cloudLoading = false;
 let activeUserKey = localStorage.getItem("jtp_account_user_key") || "";
 let activeUsername = localStorage.getItem("jtp_account_username") || "";
 let activeTA = localStorage.getItem("jtp_active_ta") || localStorage.getItem("jtp_auto_ta") || "";
+
+function togglePasswordVisibility(inputId, btnEl) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const icon = btnEl.querySelector("i");
+  if (input.type === "password") {
+    input.type = "text";
+    icon.className = "fa-regular fa-eye-slash";
+  } else {
+    input.type = "password";
+    icon.className = "fa-regular fa-eye";
+  }
+}
 
 async function sha256Hex(value){
   const data = new TextEncoder().encode(String(value));
@@ -1347,7 +1396,7 @@ async function handleRegister(e){
     const nama=document.getElementById("regNama").value.trim();
     const username=document.getElementById("regUsername").value.trim();
     const password=document.getElementById("regPassword").value;
-    if(password.length<6) throw new Error("Password minimal 6 karakter.");
+    if(password.length<4) throw new Error("Password minimal 4 karakter.");
 
     const passwordHash=await sha256Hex(password);
     const now=new Date();
@@ -2254,9 +2303,6 @@ window.addEventListener('beforeprint', () => {
  updatePrintViewData();
 });
 
-/* =========================================================
-   FUNGSI RESET TOTAL (MENGHAPUS SERVER SHEET + DATA AKUN)
-   ========================================================= */
 async function resetPlanner(){
   if(!confirm(`PERINGATAN KONFIRMASI RESET TOTAL:\n\n1. Seluruh Tab Sheet Anda di Google Sheets AKAN DIHAPUS PERMANEN.\n2. Akun Login Anda di Data_Akun AKAN DIHAPUS PERMANEN.\n3. Seluruh data lokal browser Anda akan dibersihkan dan dialihkan ke menu Login.\n\nApakah Anda yakin ingin MELAKUKAN RESET TOTAL?`)) return;
 
@@ -2280,7 +2326,6 @@ async function resetPlanner(){
       }
     }
 
-    // Bersihkan seluruh data browser
     clearPlannerLocalData();
 
     alert(`Reset Total Berhasil!\n\nSeluruh tab sheet dan akun pengguna Anda telah terhapus dari server. Aplikasi akan memuat ulang ke layar Login/Pendaftaran.`);
