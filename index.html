@@ -22,7 +22,6 @@ body{font-family:'Lexend',sans-serif;background:var(--bg);color:var(--text);min-
 button,input,textarea,select{font-family:inherit}
 .app{display:flex;min-height:100vh}
 
-/* DESKTOP SIDEBAR */
 .sidebar{
   width:270px;
   background:var(--card);
@@ -36,11 +35,12 @@ button,input,textarea,select{font-family:inherit}
   z-index:50;
   overflow-y:auto;
 }
-.brand{display:flex;align-items:center;gap:12px;padding:4px 8px 25px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 8px 25px}
+.brand-left{display:flex;align-items:center;gap:10px}
 .brand-logo{
-    width:55px;
-    height:55px;
-    min-width:55px;
+    width:50px;
+    height:50px;
+    min-width:50px;
     border-radius:50%;
     overflow:hidden;
     background:transparent;
@@ -58,15 +58,16 @@ button,input,textarea,select{font-family:inherit}
     display:block;
 }
 .brand-logo-fallback{font-size:18px;color:#047857}
-.brand-title{font-weight:800;font-size:13px;line-height:1.35;color:var(--text)}
-.brand-sub{font-size:10px;color:var(--sub);margin-top:3px}
+.brand-title{font-weight:800;font-size:12.5px;line-height:1.35;color:var(--text)}
+.brand-sub{font-size:10px;color:var(--sub);margin-top:2px}
 .nav{display:flex;flex-direction:column;gap:6px}
 .nav button{border:0;background:transparent;color:var(--sub);width:100%;padding:12px 13px;border-radius:12px;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;font-size:12px;font-weight:600;transition:.2s}
 .nav button i{width:21px;text-align:center;font-size:15px}
 .nav button:hover{background:#10b98112;color:var(--text);transform:translateX(2px)}
 .nav button.active{background:linear-gradient(135deg,#047857,#059669);color:white;box-shadow:0 4px 12px #05966930}
-.nav-sep{height:1px;background:var(--border);margin:12px 6px}
 .sidebar-bottom{border-top:1px solid var(--border);padding-top:15px}
+
+.mobile-action-group{display:none}
 
 .main{margin-left:270px;flex:1;padding:28px 38px;max-width:1500px;width:100%}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:28px}
@@ -255,9 +256,6 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
   .mapel-checkboxes{grid-template-columns:repeat(3,1fr)}
 }
 
-/* =========================================================
-   PERBAIKAN BESAR RESPONSIF MOBILE / HP (TIDAK NUTUP LAYAR)
-   ========================================================= */
 @media(max-width:760px){
   .app { display: block; }
 
@@ -267,8 +265,8 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     left: 0;
     right: 0;
     width: 100% !important;
-    height: 70px; /* Tinggi header ringkas saat ditutup */
-    padding: 10px 16px;
+    height: 68px;
+    padding: 10px 14px;
     z-index: 999;
     background: #ffffff;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -278,7 +276,6 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Ketika Hamburger di-klik, sidebar membesar penuh */
   .sidebar.open {
     height: 100vh;
     overflow-y: auto;
@@ -288,33 +285,37 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     padding: 0;
     margin: 0;
     width: 100%;
-    justify-content: space-between;
   }
 
   .brand-logo {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
   }
 
   .brand-title {
-    font-size: 12px;
+    font-size: 11px;
   }
 
-  .nav {
+  .mobile-action-group {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .btn-mobile-logout {
+    border: 0;
+    background: #ffe4e6;
+    color: var(--red);
+    padding: 8px 10px;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .sidebar-bottom {
-    display: block;
-    padding-top: 15px;
-    margin-top: 10px;
-    border-top: 1px solid var(--border);
+    align-items: center;
+    gap: 5px;
   }
 
   .mobile-menu {
@@ -324,17 +325,28 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     border: 0;
     background: #10b98118;
     color: var(--green);
-    border-radius: 10px;
-    width: 42px;
-    height: 42px;
-    font-size: 18px;
+    border-radius: 9px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
     cursor: pointer;
   }
 
-  /* AREA MAIN TAMPIL LANGSUNG DI BAWAH HEADER */
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 20px;
+    padding-bottom: 15px;
+  }
+
+  .sidebar-bottom {
+    display: none !important;
+  }
+
   .main {
     margin-left: 0 !important;
-    padding: 85px 14px 25px 14px !important;
+    padding: 82px 14px 25px 14px !important;
     max-width: 100% !important;
   }
 
@@ -460,7 +472,7 @@ th { border-color: inherit !important; }
 <aside class="sidebar" id="sidebar">
   <div>
     <div class="brand">
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div class="brand-left">
         <div class="brand-logo">
           <img class="school-logo" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
           <span class="brand-logo-fallback" style="display:none;"><i class="fa-solid fa-school"></i></span>
@@ -470,10 +482,15 @@ th { border-color: inherit !important; }
           <div class="brand-sub">SD Islam Ramah Anak · <span class="dynamic-ta">TA --</span></div>
         </div>
       </div>
-      <button class="mobile-menu" onclick="toggleMobileNav()"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="mobile-action-group">
+        <button class="btn-mobile-logout" onclick="handleLogout()" title="Keluar Akun">
+          <i class="fa-solid fa-right-from-bracket"></i> Keluar
+        </button>
+        <button class="mobile-menu" onclick="toggleMobileNav()"><i class="fa-solid fa-bars"></i></button>
+      </div>
     </div>
 
-    <!-- NAV MENU DI SINI AKAN MUNCUL SAAT HAMBURGER DI-KLIK -->
     <nav class="nav">
       <button class="active" data-page="home" onclick="showSection('home')"><i class="fa-solid fa-house"></i> Dashboard / Home</button>
       <button data-page="biodata" onclick="showSection('biodata')"><i class="fa-solid fa-user"></i> Biodata Guru</button>
@@ -1094,7 +1111,6 @@ th { border-color: inherit !important; }
 
   <div class="print-report-container">
     
-    <!-- LEMBAR 1: HEADER, AKTIVITAS & TARGET PENGEMBANGAN DIRI -->
     <div class="print-page-break">
       <div style="text-align:center; border-bottom:2px solid var(--text); padding-bottom:8px; margin-bottom:12px;">
         <img class="print-logo school-logo" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
@@ -1109,7 +1125,6 @@ th { border-color: inherit !important; }
         <div><b>Tanggal / Pekan:</b> <span id="printDate">-</span></div>
       </div>
 
-      <!-- I. AKTIVITAS PEKANAN -->
       <div class="print-section-title">I. Aktivitas Pekanan</div>
       <div class="print-grid">
         <div class="print-box">
@@ -1122,7 +1137,6 @@ th { border-color: inherit !important; }
         </div>
       </div>
 
-      <!-- II. TARGET PENGEMBANGAN DIRI -->
       <div class="print-section-title">II. Target Pengembangan Diri</div>
       <div class="print-grid">
         <div class="print-box">
@@ -1140,9 +1154,7 @@ th { border-color: inherit !important; }
       </div>
     </div>
 
-    <!-- LEMBAR 2: ABSENSI, CAPAIAN 8 DPL & RATA-RATA NILAI FORMATIF -->
     <div class="print-page-break">
-      <!-- III. LAPORAN ABSENSI PESERTA DIDIK -->
       <div class="print-section-title">III. Laporan Absensi Peserta Didik</div>
       <div class="print-grid">
         <div class="print-box">
@@ -1159,7 +1171,6 @@ th { border-color: inherit !important; }
         </div>
       </div>
 
-      <!-- IV. CAPAIAN 8 DPL PESERTA DIDIK -->
       <div class="print-section-title">IV. Capaian 8 DPL Peserta Didik</div>
       <div class="print-grid">
         <div class="print-box">
@@ -1172,7 +1183,6 @@ th { border-color: inherit !important; }
         </div>
       </div>
 
-      <!-- V. RATA-RATA NILAI FORMATIF -->
       <div class="print-section-title">V. Rata-Rata Nilai Formatif</div>
       <div class="print-grid">
         <div class="print-box">
@@ -1186,7 +1196,6 @@ th { border-color: inherit !important; }
       </div>
     </div>
 
-    <!-- LEMBAR 3: RINGKASAN JURNAL REFLEKSI GURU & TANDA TANGAN -->
     <div>
       <div class="print-section-title">VI. Ringkasan Jurnal Refleksi Guru</div>
       <div class="print-grid" style="grid-template-columns:1fr; gap:8px;">
@@ -1232,11 +1241,9 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymyrzEWS9CYcFIkU55BBnC5VzcXmqpp9kWhmn0-Eln0d1ZjrfCWzBsn7z5LKquggiz/exec";
+// MASUKKAN URL APPS SCRIPT HASIL DEPLOY DENGAN AKSES "SIAPA SAJA" DI BAWAH INI:
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfL15sLk7pZFMOCd6u1OaCu5-O9D17Pm15FaaKLp4yLF4FwhIM4dTABdvZ4AhmB1BM/exec";
 
-/* =========================================================
-   JTP CLOUD / AUTH / MULTI-TA
-   ========================================================= */
 let syncTimeout = null;
 let cloudLoading = false;
 let activeUserKey = localStorage.getItem("jtp_account_user_key") || "";
@@ -1264,18 +1271,27 @@ async function sha256Hex(value){
 }
 
 async function cloudPost(body){
-  if(!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE_NEW_APPS_SCRIPT")){
-    throw new Error("URL Apps Script baru belum dipasang di HTML.");
+  if(!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE_URL_APPS_SCRIPT")){
+    throw new Error("URL Apps Script belum dipasang di index.html!");
   }
-  const res = await fetch(GOOGLE_SCRIPT_URL,{
-    method:"POST",
-    headers:{"Content-Type":"text/plain;charset=utf-8"},
-    body:JSON.stringify(body)
+  
+  const res = await fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(body),
+    redirect: "follow"
   });
+
   const text = await res.text();
   let data;
-  try{ data = JSON.parse(text); }
-  catch(e){ throw new Error("Respons Apps Script bukan JSON: "+text.slice(0,180)); }
+  try { 
+    data = JSON.parse(text); 
+  } catch(e) { 
+    if (text.includes("<!DOCTYPE html>") || text.includes("<html")) {
+      throw new Error("Akses Google Apps Script Ditolak! Pastikan saat Deploy -> 'Who has access' / 'Siapa yang memiliki akses' diatur ke 'Anyone' / 'Siapa saja'.");
+    }
+    throw new Error("Respons Server Salah Format: " + text.slice(0, 150)); 
+  }
   return data;
 }
 
