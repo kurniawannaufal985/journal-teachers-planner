@@ -384,7 +384,7 @@ th { border-color: inherit !important; }
       <button class="btn secondary" onclick="createNewTA()"><i class="fa-solid fa-plus"></i> TA Baru</button>
     </div>
     
-    <button class="btn danger" onclick="resetPlanner()" title="Reset seluruh data tersimpan"><i class="fa-solid fa-rotate-left"></i> Reset Data</button>
+    <button class="btn danger" onclick="resetPlanner()" title="Reset seluruh data dan hapus akun"><i class="fa-solid fa-trash-can"></i> Reset Total Data &amp; Akun</button>
     <div class="clock">
       <div class="clock-icon-box">
         <i class="fa-regular fa-clock"></i>
@@ -1104,7 +1104,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwX7TZ3lnViY2qUlFQP8U_vIjGZYml2Xj4WkO82Ky-gBYnivv8sFh-yuA9UAu_91-yP/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyr99O3WYPYDEi5TK9H1Z2Hn2WqKYbOFn5A9fnWhk9bnHnVWJF0YlqklG61simtj2B/exec";
 
 /* =========================================================
    JTP CLOUD / AUTH / MULTI-TA
@@ -1151,9 +1151,8 @@ function getLocalPayload(){
 }
 
 function clearPlannerLocalData(){
-  const keepKeys = ["jtp_is_logged_in", "jtp_account_user_key", "jtp_account_username", "jtp_active_ta", "jtp_auto_ta"];
   Object.keys(localStorage)
-    .filter(k => k.startsWith("jtp_") && !keepKeys.includes(k))
+    .filter(k => k.startsWith("jtp_"))
     .forEach(k => localStorage.removeItem(k));
 }
 
@@ -1393,8 +1392,6 @@ async function handleRegister(e){
 function handleLogout(){
   if(!confirm("Apakah Anda yakin ingin keluar dari akun?")) return;
   clearPlannerLocalData();
-  ["jtp_is_logged_in","jtp_account_user_key","jtp_account_username","jtp_active_ta","jtp_auto_ta"]
-    .forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
 
@@ -2257,51 +2254,38 @@ window.addEventListener('beforeprint', () => {
  updatePrintViewData();
 });
 
+/* =========================================================
+   FUNGSI RESET TOTAL (MENGHAPUS SERVER SHEET + DATA AKUN)
+   ========================================================= */
 async function resetPlanner(){
-  if(!confirm(`PERINGATAN KONFIRMASI RESET:\n\n1. Seluruh isi Biodata s/d Ringkasan Laporan akan TERHAPUS BERSIH.\n2. Tab Sheet Google Sheets '${makeSheetNameLocal()}' akan DIHAPUS & DIBUAT ULANG.\n3. Akun Login Anda (Username & Password) tetap AMAN di server.\n\nApakah Anda yakin ingin melanjutkan reset?`)) return;
+  if(!confirm(`PERINGATAN KONFIRMASI RESET TOTAL:\n\n1. Seluruh Tab Sheet Anda di Google Sheets AKAN DIHAPUS PERMANEN.\n2. Akun Login Anda di Data_Akun AKAN DIHAPUS PERMANEN.\n3. Seluruh data lokal browser Anda akan dibersihkan dan dialihkan ke menu Login.\n\nApakah Anda yakin ingin MELAKUKAN RESET TOTAL?`)) return;
 
   const btnReset = document.querySelector("button[onclick='resetPlanner()']");
   let origText = "";
   if(btnReset) {
     origText = btnReset.innerHTML;
     btnReset.disabled = true;
-    btnReset.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menghapus Sheet & Data...`;
+    btnReset.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menghapus Sheet & Akun...`;
   }
 
   try {
-    if (activeUserKey && activeTA) {
+    if (activeUserKey) {
       const res = await cloudPost({
         action: "reset_ta_v2",
-        userKey: activeUserKey,
-        ta: activeTA
+        userKey: activeUserKey
       });
 
       if (!res.ok) {
-        throw new Error(res.error || "Gagal mereset tab sheet di Google Sheets.");
+        throw new Error(res.error || "Gagal mereset data akun di server.");
       }
     }
 
+    // Bersihkan seluruh data browser
     clearPlannerLocalData();
-    localStorage.removeItem("jtp_bio_nama");
 
-    set("auto_ta", activeTA);
-    localStorage.setItem("jtp_active_ta", activeTA);
+    alert(`Reset Total Berhasil!\n\nSeluruh tab sheet dan akun pengguna Anda telah terhapus dari server. Aplikasi akan memuat ulang ke layar Login/Pendaftaran.`);
+    location.reload();
 
-    document.querySelectorAll("[data-save]").forEach(input => {
-      input.value = "";
-    });
-
-    initInputs();
-    renderStudents();
-    renderActivities();
-    renderTargets();
-    renderDPL();
-    renderAnekdot();
-    renderNilai();
-    renderRefleksi();
-    await renderTASelector();
-
-    alert(`Reset Berhasil!\n\nTab Sheet telah dihapus & diperbarui, seluruh data (Biodata s/d Ringkasan Laporan) telah bersih. Akun login Anda tetap aman.`);
   } catch(err) {
     alert("Gagal melakukan reset data: " + err.message);
   } finally {
@@ -2310,11 +2294,6 @@ async function resetPlanner(){
       btnReset.innerHTML = origText;
     }
   }
-}
-
-function makeSheetNameLocal(){
-  const name = get("bio_nama", activeUsername || "Guru");
-  return `${name} - TA ${activeTA}`;
 }
 
 (async function init(){
