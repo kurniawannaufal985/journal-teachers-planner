@@ -21,12 +21,26 @@ html{scroll-behavior:smooth}
 body{font-family:'Lexend',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
 button,input,textarea,select{font-family:inherit}
 .app{display:flex;min-height:100vh}
-.sidebar{width:270px;background:var(--card);border-right:1px solid var(--border);padding:22px 16px;display:flex;flex-direction:column;justify-content:space-between;position:fixed;inset:0 auto 0 0;z-index:50;overflow-y:auto}
+
+/* DESKTOP SIDEBAR */
+.sidebar{
+  width:270px;
+  background:var(--card);
+  border-right:1px solid var(--border);
+  padding:22px 16px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:50;
+  overflow-y:auto;
+}
 .brand{display:flex;align-items:center;gap:12px;padding:4px 8px 25px}
 .brand-logo{
-    width:66px;
-    height:66px;
-    min-width:66px;
+    width:55px;
+    height:55px;
+    min-width:55px;
     border-radius:50%;
     overflow:hidden;
     background:transparent;
@@ -34,14 +48,16 @@ button,input,textarea,select{font-family:inherit}
     display:grid;
     place-items:center;
     box-shadow:0 4px 12px #00000018;
-}.brand-logo img{
+}
+.brand-logo img{
     width:100%;
     height:100%;
     object-fit:contain;
     padding:1px;
     border-radius:50%;
     display:block;
-}.brand-logo-fallback{font-size:18px;color:#047857}
+}
+.brand-logo-fallback{font-size:18px;color:#047857}
 .brand-title{font-weight:800;font-size:13px;line-height:1.35;color:var(--text)}
 .brand-sub{font-size:10px;color:var(--sub);margin-top:3px}
 .nav{display:flex;flex-direction:column;gap:6px}
@@ -51,6 +67,7 @@ button,input,textarea,select{font-family:inherit}
 .nav button.active{background:linear-gradient(135deg,#047857,#059669);color:white;box-shadow:0 4px 12px #05966930}
 .nav-sep{height:1px;background:var(--border);margin:12px 6px}
 .sidebar-bottom{border-top:1px solid var(--border);padding-top:15px}
+
 .main{margin-left:270px;flex:1;padding:28px 38px;max-width:1500px;width:100%}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:28px}
 .topbar-right{display:flex;align-items:center;gap:12px}
@@ -201,8 +218,8 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 .ttd-space{height:45px}
 
 .print-logo{
-    width:96px;
-    height:96px;
+    width:80px;
+    height:80px;
     border-radius:50%;
     object-fit:contain;
     padding:2px;
@@ -211,7 +228,7 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     margin:0 auto 8px;
     display:block;
     box-shadow:0 2px 8px #00000012;
-}.print-logo-wrap{text-align:center}
+}
 
 .date-range-box { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .date-range-box input[type="date"] { flex: 1; min-width: 130px; cursor: pointer; }
@@ -221,63 +238,25 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 .auth-tab-btn { flex: 1; padding: 10px; border: 0; background: transparent; font-weight: 700; color: var(--sub); cursor: pointer; font-size: 13px; text-align: center; }
 .auth-tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); margin-bottom: -2px; }
 
-.password-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.password-box input {
-  padding-right: 42px !important;
-}
+.password-box { position: relative; display: flex; align-items: center; }
+.password-box input { padding-right: 42px !important; }
 .toggle-password-btn {
-  position: absolute;
-  right: 12px;
-  background: transparent;
-  border: none;
-  color: var(--sub);
-  cursor: pointer;
-  font-size: 14px;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute; right: 12px; background: transparent;
+  border: none; color: var(--sub); cursor: pointer; font-size: 14px;
+  padding: 4px; display: flex; align-items: center; justify-content: center;
 }
-.toggle-password-btn:hover {
-  color: var(--green);
-}
+.toggle-password-btn:hover { color: var(--green); }
 
-@page {
-  size: A4 portrait;
-  margin: 10mm 12mm 10mm 12mm;
+@media(max-width:1050px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .sidebar{width:235px}
+  .main{margin-left:235px;padding:25px}
+  .legend{grid-template-columns:repeat(2,1fr)}
+  .mapel-checkboxes{grid-template-columns:repeat(3,1fr)}
 }
-
-@media print {
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  body { background: #fff !important; color: #000 !important; font-size: 10px !important; }
-  .sidebar, .topbar, .actions, .mobile-menu, footer, .badge, button { display: none !important; }
-  .main { margin-left: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; }
-  .page { display: none !important; }
-  #print_view.page { display: block !important; }
-  .print-report-container { border: none !important; padding: 0 !important; }
-  .print-box { border: 1px solid #cbd5e1 !important; background: #f8fafc !important; break-inside: avoid; }
-  .bar-track { background: #e2e8f0 !important; }
-  .bar-fill { background: #059669 !important; }
-  .bar-row { margin: 4px 0 !important; }
-  .bar-label { font-size: 9px !important; }
-  
-  .print-page-break {
-    break-after: page;
-    page-break-after: always;
-  }
-}
-
-@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}.sidebar{width:235px}.main{margin-left:235px;padding:25px}.legend{grid-template-columns:repeat(2,1fr)}.mapel-checkboxes{grid-template-columns:repeat(3,1fr)}}
 
 /* =========================================================
-   PERBAIKAN MOBILE FRIENDLY TERBARU
+   PERBAIKAN BESAR RESPONSIF MOBILE / HP (TIDAK NUTUP LAYAR)
    ========================================================= */
 @media(max-width:760px){
   .app { display: block; }
@@ -288,44 +267,53 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     left: 0;
     right: 0;
     width: 100% !important;
-    height: auto;
-    max-height: 100vh;
-    padding: 12px 16px;
+    height: 70px; /* Tinggi header ringkas saat ditutup */
+    padding: 10px 16px;
     z-index: 999;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     border-right: none;
     border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Ketika Hamburger di-klik, sidebar membesar penuh */
+  .sidebar.open {
+    height: 100vh;
     overflow-y: auto;
   }
 
   .brand {
     padding: 0;
     margin: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .brand-logo {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+
+  .brand-title {
+    font-size: 12px;
   }
 
   .nav {
-    display: none;
-  }
-
-  .sidebar.open .nav {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    max-height: 55vh;
-    overflow-y: auto;
-    margin-top: 15px;
-    padding-bottom: 10px;
+    margin-top: 20px;
+    padding-bottom: 15px;
     border-bottom: 1px solid var(--border);
   }
 
   .sidebar-bottom {
-    display: none;
-  }
-
-  .sidebar.open .sidebar-bottom {
     display: block;
-    padding-top: 12px;
-    margin-top: 8px;
+    padding-top: 15px;
+    margin-top: 10px;
     border-top: 1px solid var(--border);
   }
 
@@ -333,20 +321,20 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     display: flex !important;
     align-items: center;
     justify-content: center;
-    margin-left: auto;
     border: 0;
     background: #10b98118;
     color: var(--green);
     border-radius: 10px;
-    width: 38px;
-    height: 38px;
-    font-size: 16px;
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
     cursor: pointer;
   }
 
+  /* AREA MAIN TAMPIL LANGSUNG DI BAWAH HEADER */
   .main {
     margin-left: 0 !important;
-    padding: 95px 14px 25px 14px !important;
+    padding: 85px 14px 25px 14px !important;
     max-width: 100% !important;
   }
 
@@ -359,12 +347,12 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
   }
 
   .topbar-right {
-    flex-direction: column-reverse;
+    flex-direction: column;
     width: 100%;
     gap: 10px;
   }
 
-  .topbar-right button {
+  .topbar-right button, .topbar-right select {
     width: 100%;
     justify-content: center;
   }
@@ -383,8 +371,9 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
   .grid-menu, .form-grid, .chart-grid { grid-template-columns: 1fr; }
   .stats { grid-template-columns: 1fr 1fr; }
   .full { grid-column: auto; }
-  h1 { font-size: 22px; }
-  .hero h2 { font-size: 22px; }
+  h1 { font-size: 20px; }
+  .hero { padding: 20px; }
+  .hero h2 { font-size: 20px; }
   .target-summary { grid-template-columns: 1fr; }
   .mapel-checkboxes { grid-template-columns: repeat(2, 1fr); }
   .print-grid { grid-template-columns: 1fr; }
@@ -398,8 +387,8 @@ th { border-color: inherit !important; }
 <body>
 
 <!-- OVERLAY AUTH (LOGIN & DAFTAR) -->
-<div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:flex; align-items:center; justify-content:center; padding:20px;">
-  <div style="background:#fff; border-radius:16px; width:100%; max-width:420px; padding:30px; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+<div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto;">
+  <div style="background:#fff; border-radius:16px; width:100%; max-width:420px; padding:25px; box-shadow:0 10px 25px rgba(0,0,0,0.2); margin:auto;">
     
     <div class="auth-tabs">
       <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">Masuk (Login)</button>
@@ -415,7 +404,7 @@ th { border-color: inherit !important; }
       <form onsubmit="handleLogin(event)">
         <div class="field" style="margin-bottom:14px;">
           <label>Username (Bebas: Nama / NUPTK / NIK / Email)</label>
-          <input type="text" id="loginUsername" required placeholder="Tuliskan nama atau username Anda...">
+          <input type="text" id="loginUsername" required placeholder="Tuliskan nama/username Anda...">
         </div>
         <div class="field" style="margin-bottom:20px;">
           <label>Password</label>
@@ -436,7 +425,7 @@ th { border-color: inherit !important; }
     <div id="authRegisterForm" style="display:none;">
       <div style="text-align:center; margin-bottom:18px;">
         <h2 style="font-size:18px; color:#0f172a; font-weight:800;">Pendaftaran Akun Guru</h2>
-        <p style="font-size:11px; color:#64748b; margin-top:4px;">Isi biodata &amp; buat password kustom Anda sendiri</p>
+        <p style="font-size:11px; color:#64748b; margin-top:4px;">Isi biodata &amp; buat password Anda</p>
       </div>
       <form onsubmit="handleRegister(event)">
         <div class="field" style="margin-bottom:12px;">
@@ -467,16 +456,24 @@ th { border-color: inherit !important; }
 
 <div class="app">
 
+<!-- SIDEBAR HEADER MOBILE / DESKTOP -->
 <aside class="sidebar" id="sidebar">
   <div>
     <div class="brand">
-      <div class="brand-logo">
-        <img class="school-logo" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
-        <span class="brand-logo-fallback" style="display:none;"><i class="fa-solid fa-school"></i></span>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="brand-logo">
+          <img class="school-logo" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
+          <span class="brand-logo-fallback" style="display:none;"><i class="fa-solid fa-school"></i></span>
+        </div>
+        <div>
+          <div class="brand-title">JOURNAL TEACHERS PLANNER</div>
+          <div class="brand-sub">SD Islam Ramah Anak · <span class="dynamic-ta">TA --</span></div>
+        </div>
       </div>
-      <div><div class="brand-title">JOURNAL TEACHERS<br>PLANNER</div><div class="brand-sub">SD Islam Ramah Anak · <span class="dynamic-ta">TA --</span></div></div>
       <button class="mobile-menu" onclick="toggleMobileNav()"><i class="fa-solid fa-bars"></i></button>
     </div>
+
+    <!-- NAV MENU DI SINI AKAN MUNCUL SAAT HAMBURGER DI-KLIK -->
     <nav class="nav">
       <button class="active" data-page="home" onclick="showSection('home')"><i class="fa-solid fa-house"></i> Dashboard / Home</button>
       <button data-page="biodata" onclick="showSection('biodata')"><i class="fa-solid fa-user"></i> Biodata Guru</button>
@@ -490,6 +487,7 @@ th { border-color: inherit !important; }
       <button data-page="print_view" onclick="showSection('print_view')"><i class="fa-solid fa-file-invoice"></i> Ringkasan / Cetak Laporan</button>
     </nav>
   </div>
+
   <div class="sidebar-bottom">
     <button class="btn secondary" style="width:100%; justify-content:center;" onclick="handleLogout()">
       <i class="fa-solid fa-right-from-bracket"></i> Keluar (Logout)
@@ -506,14 +504,15 @@ th { border-color: inherit !important; }
   </div>
   
   <div class="topbar-right">
-    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
-      <select id="taSelector" onchange="changeActiveTA(this.value)" style="background:var(--input);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:11px;font-weight:700;">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;width:100%;">
+      <select id="taSelector" onchange="changeActiveTA(this.value)" style="background:var(--input);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:11px;font-weight:700;flex:1;">
         <option>TA --</option>
       </select>
       <button class="btn secondary" onclick="createNewTA()"><i class="fa-solid fa-plus"></i> TA Baru</button>
     </div>
     
     <button class="btn danger" onclick="resetPlanner()" title="Reset seluruh data dan hapus akun"><i class="fa-solid fa-trash-can"></i> Reset Total Data &amp; Akun</button>
+    
     <div class="clock">
       <div class="clock-icon-box">
         <i class="fa-regular fa-clock"></i>
@@ -1233,7 +1232,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwkeg44ZEd1mfWOrvKZvm3p39XmydGRwSQQ65BOQxWSUpIsLdxBKuaEbumJLFbxHmUY/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyK6DkBSejV3HuudMFTNURJaomOJeAMEfBSeOQ-T_1n-wniGGUZKujp9QoKFiVK-hkh/exec";
 
 /* =========================================================
    JTP CLOUD / AUTH / MULTI-TA
@@ -1606,14 +1605,11 @@ function formatDateFromPicker(dateStr) {
 function getCurrentWeekRange() {
  const now = new Date();
  const dayOfWeek = now.getDay(); 
- 
  const distanceToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
  const monday = new Date(now);
  monday.setDate(now.getDate() + distanceToMonday);
- 
  const friday = new Date(monday);
  friday.setDate(monday.getDate() + 4);
- 
  return `${getFormattedFullDate(monday)} s/d ${getFormattedFullDate(friday)}`;
 }
 
@@ -1675,7 +1671,6 @@ function initSchoolLogo(){
 
   document.querySelectorAll(".school-logo").forEach(img => {
     let index = 0;
-
     const tryNext = () => {
       if(index >= candidates.length){
         img.style.display = "none";
@@ -1683,14 +1678,12 @@ function initSchoolLogo(){
         if(fallback) fallback.style.display = "grid";
         return;
       }
-
       const test = new Image();
       const candidate = candidates[index++];
       test.onload = () => { img.src = candidate; img.style.display = "block"; };
       test.onerror = tryNext;
       test.src = candidate;
     };
-
     tryNext();
   });
 }
@@ -1722,7 +1715,6 @@ function initInputs(){
  document.querySelectorAll("[data-save]").forEach(el=>{
    const k=el.dataset.save; 
    let savedVal = get(k, el.value||"");
-   
    el.value = savedVal;
    el.addEventListener("input",()=>{
      set(k,el.value);
@@ -1734,7 +1726,6 @@ function initInputs(){
      }
    });
  });
-
  updateHomeTeacherName();
  renderRefleksi();
 }
