@@ -217,7 +217,6 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 .date-range-box input[type="date"] { flex: 1; min-width: 130px; cursor: pointer; }
 .date-sep { font-weight: 700; color: var(--sub); font-size: 11px; }
 
-/* TAB AUTENTIKASI DI OVERLAY */
 .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--border); }
 .auth-tab-btn { flex: 1; padding: 10px; border: 0; background: transparent; font-weight: 700; color: var(--sub); cursor: pointer; font-size: 13px; text-align: center; }
 .auth-tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); margin-bottom: -2px; }
@@ -1105,7 +1104,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw1V4QxXnTgLMEj63xFa5dVfvq2vmKA85sxrN7EzQJCOzrfdqQ8M3toDYdQ-Eo8-B38/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVD9wAwCSspci8x807wSowSm5Bn29oJJFhyRSG-0xQSE0f1QcIWRjTrvu0tqT14gtA/exec";
 
 /* =========================================================
    JTP CLOUD / AUTH / MULTI-TA
@@ -2247,21 +2246,65 @@ window.addEventListener('beforeprint', () => {
  updatePrintViewData();
 });
 
-function resetPlanner(){
-  if(!confirm(`Reset seluruh isian data TA ${activeTA}? Akun guru dan tab sheet tetap aman.`)) return;
+/* =========================================================
+   FUNGSI RESET PLANNER DENGAN HAPUS TAB SHEET PADA GOOGLE SHEETS
+   ========================================================= */
+async function resetPlanner(){
+  if(!confirm(`PERINGATAN: Seluruh isi data (biodata s/d cetak laporan) untuk TA ${activeTA} akan terhapus dan tab sheet di Google Sheets akan dihapus & dibuat ulang secara bersih.\n\nApakah Anda yakin ingin melanjutkan?`)) return;
+
   const currentBioNama = get("bio_nama", "");
-  clearPlannerLocalData();
-  set("auto_ta", activeTA);
-  if(currentBioNama) set("bio_nama", currentBioNama);
-  initInputs();
-  renderStudents();
-  renderActivities();
-  renderTargets();
-  renderDPL();
-  renderAnekdot();
-  renderNilai();
-  renderRefleksi();
-  autoSyncToCloud();
+
+  const btnReset = document.querySelector("button[onclick='resetPlanner()']");
+  let origText = "";
+  if(btnReset) {
+    origText = btnReset.innerHTML;
+    btnReset.disabled = true;
+    btnReset.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mereset...`;
+  }
+
+  try {
+    // 1. Bersihkan penyimpanan lokal aplikasi
+    clearPlannerLocalData();
+
+    // 2. Kirim instruksi ke Google Apps Script untuk menghapus tab sheet lama & membuat sheet baru yang bersih
+    if (activeUserKey && activeTA) {
+      const res = await cloudPost({
+        action: "reset_ta_v2",
+        userKey: activeUserKey,
+        ta: activeTA
+      });
+
+      if (!res.ok) {
+        throw new Error(res.error || "Gagal mereset sheet di Google Sheets.");
+      }
+
+      if (res.payload) {
+        putPayloadToLocal(res.payload);
+      }
+    }
+
+    set("auto_ta", activeTA);
+    if(currentBioNama) set("bio_nama", currentBioNama);
+
+    // 3. Render ulang tampilan interface
+    initInputs();
+    renderStudents();
+    renderActivities();
+    renderTargets();
+    renderDPL();
+    renderAnekdot();
+    renderNilai();
+    renderRefleksi();
+
+    alert(`Data TA ${activeTA} dan tab sheet terkait di Google Sheets telah berhasil direset.`);
+  } catch(err) {
+    alert("Gagal mereset data: " + err.message);
+  } finally {
+    if(btnReset) {
+      btnReset.disabled = false;
+      btnReset.innerHTML = origText;
+    }
+  }
 }
 
 (async function init(){
