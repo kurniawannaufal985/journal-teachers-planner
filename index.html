@@ -1104,7 +1104,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzgvWe22EPPaCklj8wd3Mu26VIhv7sHg0OH0KwLrmoOg1-oTn5hMe6Fz7f37mZDzPm1/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwd4OMzKUTj4FF-IqF38clkE4Jlxwhy6Ycau9foW61RDL3J5YZwU4oxj3fAdT2St5dm/exec";
 
 /* =========================================================
    JTP CLOUD / AUTH / MULTI-TA
@@ -1113,7 +1113,7 @@ let syncTimeout = null;
 let cloudLoading = false;
 let activeUserKey = localStorage.getItem("jtp_account_user_key") || "";
 let activeUsername = localStorage.getItem("jtp_account_username") || "";
-let activeTA = localStorage.getItem("jtp_active_ta") || "";
+let activeTA = localStorage.getItem("jtp_active_ta") || localStorage.getItem("jtp_auto_ta") || "";
 
 async function sha256Hex(value){
   const data = new TextEncoder().encode(String(value));
@@ -1151,7 +1151,7 @@ function getLocalPayload(){
 }
 
 function clearPlannerLocalData(){
-  const keepKeys = ["jtp_is_logged_in", "jtp_account_user_key", "jtp_account_username", "jtp_active_ta"];
+  const keepKeys = ["jtp_is_logged_in", "jtp_account_user_key", "jtp_account_username", "jtp_active_ta", "jtp_auto_ta"];
   Object.keys(localStorage)
     .filter(k => k.startsWith("jtp_") && !keepKeys.includes(k))
     .forEach(k => localStorage.removeItem(k));
@@ -1193,6 +1193,7 @@ async function loadTAData(ta){
     if(!res.ok) throw new Error(res.error || "Gagal memuat data.");
     activeTA = ta;
     localStorage.setItem("jtp_active_ta",ta);
+    localStorage.setItem("jtp_auto_ta",ta);
     putPayloadToLocal(res.payload || {});
     setAcademicYearUI(ta);
     initInputs();
@@ -1216,7 +1217,12 @@ async function getTAList(){
 }
 
 function setAcademicYearUI(ta){
-  if(!ta) return;
+  if(!ta) {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    ta = `${month >= 6 ? year : year - 1}/${month >= 6 ? year + 1 : year}`;
+  }
   activeTA = ta;
   localStorage.setItem("jtp_active_ta",ta);
   localStorage.setItem("jtp_auto_ta",ta);
@@ -1233,12 +1239,17 @@ async function renderTASelector(){
   try{
     const list=await getTAList();
     sel.innerHTML="";
+    if(!list.length) {
+      if(activeTA) list.push(activeTA);
+      else list.push("2026/2027");
+    }
     list.forEach(ta=>{
       const o=document.createElement("option");
-      o.value=ta;o.textContent=ta;sel.appendChild(o);
+      o.value=ta;o.textContent="TA " + ta;sel.appendChild(o);
     });
     if(activeTA && list.includes(activeTA)) sel.value=activeTA;
-    else if(list.length){ activeTA=list[list.length-1]; sel.value=activeTA; }
+    else if(list.length){ activeTA=list[0]; sel.value=activeTA; }
+    setAcademicYearUI(activeTA);
   }catch(e){console.error(e);}
 }
 
@@ -1316,6 +1327,7 @@ async function handleLogin(e){
     activeTA=localStorage.getItem("jtp_active_ta");
     if(!activeTA || !list.includes(activeTA)) activeTA=list[0] || res.ta;
     localStorage.setItem("jtp_active_ta",activeTA);
+    localStorage.setItem("jtp_auto_ta",activeTA);
 
     await loadTAData(activeTA);
     document.getElementById("loginScreen").style.display="none";
@@ -1365,6 +1377,7 @@ async function handleRegister(e){
     localStorage.setItem("jtp_account_user_key",activeUserKey);
     localStorage.setItem("jtp_account_username",activeUsername);
     localStorage.setItem("jtp_active_ta",activeTA);
+    localStorage.setItem("jtp_auto_ta",activeTA);
 
     await loadTAData(activeTA);
     document.getElementById("loginScreen").style.display="none";
@@ -1482,7 +1495,7 @@ function initAcademicYear(){
  const year = now.getFullYear();
  const month = now.getMonth(); 
  const defaultTA = `${month >= 6 ? year : year - 1}/${month >= 6 ? year + 1 : year}`;
- const ta = activeTA || get("auto_ta", "") || defaultTA;
+ const ta = activeTA || get("auto_ta", "") || get("jtp_active_ta", "") || defaultTA;
  setAcademicYearUI(ta);
 }
 
@@ -1491,7 +1504,7 @@ function showSection(id){
  document.getElementById(id).classList.add("active");
  document.querySelectorAll(".nav button[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===id));
  
- const ta = get("auto_ta", "");
+ const ta = activeTA || get("auto_ta", "") || "2026/2027";
  const titles={
    home:["Journal Teachers Planner",`Tahun Ajaran ${ta} — SD Islam Ramah Anak`],
    biodata:["Biodata Guru","Data personal dan informasi pendidik"],
@@ -1590,7 +1603,7 @@ function initInputs(){
 function getStudentsData() {
   const saved = get("students", null);
   if (saved !== null) {
-    return JSON.parse(saved);
+    try { return JSON.parse(saved); } catch(e) {}
   }
   const initArr = [];
   for (let i = 0; i < 20; i++) {
@@ -2244,9 +2257,6 @@ window.addEventListener('beforeprint', () => {
  updatePrintViewData();
 });
 
-/* =========================================================
-   FUNGSI RESET PLANNER DENGAN HAPUS TAB SHEET PADA GOOGLE SHEETS
-   ========================================================= */
 async function resetPlanner(){
   if(!confirm(`PERINGATAN KONFIRMASI RESET:\n\n1. Seluruh isi Biodata s/d Ringkasan Laporan akan TERHAPUS BERSIH.\n2. Tab Sheet Google Sheets '${makeSheetNameLocal()}' akan DIHAPUS & DIBUAT ULANG.\n3. Akun Login Anda (Username & Password) tetap AMAN di server.\n\nApakah Anda yakin ingin melanjutkan reset?`)) return;
 
@@ -2259,7 +2269,6 @@ async function resetPlanner(){
   }
 
   try {
-    // 1. Kirim instruksi ke Google Apps Script (menghapus tab sheet di Google Sheets & buat lembar baru)
     if (activeUserKey && activeTA) {
       const res = await cloudPost({
         action: "reset_ta_v2",
@@ -2272,19 +2281,16 @@ async function resetPlanner(){
       }
     }
 
-    // 2. Bersihkan penyimpanan lokal aplikasi
     clearPlannerLocalData();
     localStorage.removeItem("jtp_bio_nama");
 
-    // 3. Set ulang TA aktif
     set("auto_ta", activeTA);
+    localStorage.setItem("jtp_active_ta", activeTA);
 
-    // 4. Reset seluruh input elemen di layar
     document.querySelectorAll("[data-save]").forEach(input => {
       input.value = "";
     });
 
-    // 5. Render ulang tampilan interface dari awal
     initInputs();
     renderStudents();
     renderActivities();
@@ -2293,6 +2299,7 @@ async function resetPlanner(){
     renderAnekdot();
     renderNilai();
     renderRefleksi();
+    await renderTASelector();
 
     alert(`Reset Berhasil!\n\nTab Sheet telah dihapus & diperbarui, seluruh data (Biodata s/d Ringkasan Laporan) telah bersih. Akun login Anda tetap aman.`);
   } catch(err) {
