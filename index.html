@@ -384,7 +384,7 @@ th { border-color: inherit !important; }
       <button class="btn secondary" onclick="createNewTA()"><i class="fa-solid fa-plus"></i> TA Baru</button>
     </div>
     
-    <button class="btn danger" onclick="resetPlanner()" title="Reset semua data tersimpan"><i class="fa-solid fa-rotate-left"></i> Reset Data</button>
+    <button class="btn danger" onclick="resetPlanner()" title="Reset seluruh data tersimpan"><i class="fa-solid fa-rotate-left"></i> Reset Data</button>
     <div class="clock">
       <div class="clock-icon-box">
         <i class="fa-regular fa-clock"></i>
@@ -1104,12 +1104,10 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVD9wAwCSspci8x807wSowSm5Bn29oJJFhyRSG-0xQSE0f1QcIWRjTrvu0tqT14gtA/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzgvWe22EPPaCklj8wd3Mu26VIhv7sHg0OH0KwLrmoOg1-oTn5hMe6Fz7f37mZDzPm1/exec";
 
 /* =========================================================
    JTP CLOUD / AUTH / MULTI-TA
-   UserKey dibuat server, bukan dari perangkat.
-   Data cloud selalu dipisahkan dengan UserKey + TA.
    ========================================================= */
 let syncTimeout = null;
 let cloudLoading = false;
@@ -2250,23 +2248,18 @@ window.addEventListener('beforeprint', () => {
    FUNGSI RESET PLANNER DENGAN HAPUS TAB SHEET PADA GOOGLE SHEETS
    ========================================================= */
 async function resetPlanner(){
-  if(!confirm(`PERINGATAN: Seluruh isi data (biodata s/d cetak laporan) untuk TA ${activeTA} akan terhapus dan tab sheet di Google Sheets akan dihapus & dibuat ulang secara bersih.\n\nApakah Anda yakin ingin melanjutkan?`)) return;
-
-  const currentBioNama = get("bio_nama", "");
+  if(!confirm(`PERINGATAN KONFIRMASI RESET:\n\n1. Seluruh isi Biodata s/d Ringkasan Laporan akan TERHAPUS BERSIH.\n2. Tab Sheet Google Sheets '${makeSheetNameLocal()}' akan DIHAPUS & DIBUAT ULANG.\n3. Akun Login Anda (Username & Password) tetap AMAN di server.\n\nApakah Anda yakin ingin melanjutkan reset?`)) return;
 
   const btnReset = document.querySelector("button[onclick='resetPlanner()']");
   let origText = "";
   if(btnReset) {
     origText = btnReset.innerHTML;
     btnReset.disabled = true;
-    btnReset.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mereset...`;
+    btnReset.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menghapus Sheet & Data...`;
   }
 
   try {
-    // 1. Bersihkan penyimpanan lokal aplikasi
-    clearPlannerLocalData();
-
-    // 2. Kirim instruksi ke Google Apps Script untuk menghapus tab sheet lama & membuat sheet baru yang bersih
+    // 1. Kirim instruksi ke Google Apps Script (menghapus tab sheet di Google Sheets & buat lembar baru)
     if (activeUserKey && activeTA) {
       const res = await cloudPost({
         action: "reset_ta_v2",
@@ -2275,18 +2268,23 @@ async function resetPlanner(){
       });
 
       if (!res.ok) {
-        throw new Error(res.error || "Gagal mereset sheet di Google Sheets.");
-      }
-
-      if (res.payload) {
-        putPayloadToLocal(res.payload);
+        throw new Error(res.error || "Gagal mereset tab sheet di Google Sheets.");
       }
     }
 
-    set("auto_ta", activeTA);
-    if(currentBioNama) set("bio_nama", currentBioNama);
+    // 2. Bersihkan penyimpanan lokal aplikasi
+    clearPlannerLocalData();
+    localStorage.removeItem("jtp_bio_nama");
 
-    // 3. Render ulang tampilan interface
+    // 3. Set ulang TA aktif
+    set("auto_ta", activeTA);
+
+    // 4. Reset seluruh input elemen di layar
+    document.querySelectorAll("[data-save]").forEach(input => {
+      input.value = "";
+    });
+
+    // 5. Render ulang tampilan interface dari awal
     initInputs();
     renderStudents();
     renderActivities();
@@ -2296,15 +2294,20 @@ async function resetPlanner(){
     renderNilai();
     renderRefleksi();
 
-    alert(`Data TA ${activeTA} dan tab sheet terkait di Google Sheets telah berhasil direset.`);
+    alert(`Reset Berhasil!\n\nTab Sheet telah dihapus & diperbarui, seluruh data (Biodata s/d Ringkasan Laporan) telah bersih. Akun login Anda tetap aman.`);
   } catch(err) {
-    alert("Gagal mereset data: " + err.message);
+    alert("Gagal melakukan reset data: " + err.message);
   } finally {
     if(btnReset) {
       btnReset.disabled = false;
       btnReset.innerHTML = origText;
     }
   }
+}
+
+function makeSheetNameLocal(){
+  const name = get("bio_nama", activeUsername || "Guru");
+  return `${name} - TA ${activeTA}`;
 }
 
 (async function init(){
