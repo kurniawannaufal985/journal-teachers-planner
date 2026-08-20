@@ -248,7 +248,7 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 }
 .toggle-password-btn:hover { color: var(--green); }
 
-/* PENYESUAIAN MOBILE TATA LETAK LOGOUT & RESET DATA */
+/* RESPONSIVE DESAIN UNTUK HP */
 @media(max-width:1050px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .sidebar{width:235px}
@@ -1239,7 +1239,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykwRSkL2HqXVEr5XzwXjQEudWzYmVp08UT7jUWXdqn7cODcrJ3OApFn-OhnwwC9cCb/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXcoHRswlghat-d1rh8vADWU60YZs3lrt8maoFxoj2v7R98GVEezReJmXWgBpFwb6e/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -1406,32 +1406,38 @@ async function handleLogin(e){
   e.preventDefault();
   const btn=document.getElementById("btnLoginSubmit");
   const orig=btn.innerHTML;
-  btn.disabled=true;btn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Memverifikasi...`;
+  btn.disabled=true;
+  btn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Memverifikasi...`;
+  
   try{
     const rawUsername=document.getElementById("loginUsername").value.trim();
     const username = rawUsername.charAt(0).toUpperCase() + rawUsername.slice(1);
     const password=document.getElementById("loginPassword").value;
     
-    // Mengirimkan password asli ke Apps Script
     const res=await cloudPost({action:"login_v2", username, password});
     if(!res.ok) throw new Error(res.error || "Username atau password salah.");
 
     activeUserKey=res.userKey;
     activeUsername=res.username;
+    activeTA = res.ta || getCalculatedTA();
+
     localStorage.setItem("jtp_is_logged_in","true");
     localStorage.setItem("jtp_account_user_key",activeUserKey);
     localStorage.setItem("jtp_account_username",activeUsername);
-
-    activeTA = res.ta || getCalculatedTA();
     localStorage.setItem("jtp_active_ta",activeTA);
-    localStorage.setItem("jtp_auto_ta",activeTA);
 
-    await loadTAData(activeTA);
+    // LANGSUNG MASUK INSTAN TANPA MENUNGGU LOADING DATA SPREADSHEET
     document.getElementById("loginScreen").style.display="none";
+    setAcademicYearUI(activeTA);
+
+    // BISMILLAH LOAD DATA DI BACKGROUND
+    loadTAData(activeTA);
+
   }catch(err){
     alert(err.message || "Login gagal.");
   }finally{
-    btn.disabled=false;btn.innerHTML=orig;
+    btn.disabled=false;
+    btn.innerHTML=orig;
   }
 }
 
@@ -1439,7 +1445,9 @@ async function handleRegister(e){
   e.preventDefault();
   const btn=document.getElementById("btnRegSubmit");
   const orig=btn.innerHTML;
-  btn.disabled=true;btn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...`;
+  btn.disabled=true;
+  btn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...`;
+  
   try{
     const nama=document.getElementById("regNama").value.trim();
     const rawUsername=document.getElementById("regUsername").value.trim();
@@ -1455,7 +1463,6 @@ async function handleRegister(e){
       auto_ta:ta
     };
 
-    // Mendaftarkan akun dengan password asli (plain text)
     const res=await cloudPost({
       action:"register_v2",
       name:nama,
@@ -1469,19 +1476,23 @@ async function handleRegister(e){
     activeUserKey=res.userKey;
     activeUsername=res.username;
     activeTA=res.ta || ta;
+
     localStorage.setItem("jtp_is_logged_in","true");
     localStorage.setItem("jtp_account_user_key",activeUserKey);
     localStorage.setItem("jtp_account_username",activeUsername);
     localStorage.setItem("jtp_active_ta",activeTA);
-    localStorage.setItem("jtp_auto_ta",activeTA);
 
-    await loadTAData(activeTA);
+    // MASUK APKLIKASI INSTAN
+    putPayloadToLocal(payload);
+    setAcademicYearUI(activeTA);
     document.getElementById("loginScreen").style.display="none";
-    alert("Akun berhasil dibuat dan langsung masuk ke planner.");
+
+    alert("Akun berhasil dibuat!");
   }catch(err){
     alert(err.message || "Registrasi gagal.");
   }finally{
-    btn.disabled=false;btn.innerHTML=orig;
+    btn.disabled=false;
+    btn.innerHTML=orig;
   }
 }
 
