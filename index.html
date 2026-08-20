@@ -231,6 +231,42 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     box-shadow:0 2px 8px #00000012;
 }
 
+/* STYLING KHUSUS LOGO UNTUK TAMPILAN OVERLAY LOGIN */
+.auth-header-brand {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed var(--border);
+}
+.auth-logo-img {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  object-fit: contain;
+  margin: 0 auto 10px;
+  display: block;
+  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.2);
+  border: 2px solid #d1fae5;
+  background: #ffffff;
+}
+.auth-school-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+.auth-ta-badge {
+  display: inline-block;
+  margin-top: 5px;
+  background: #d1fae5;
+  color: #047857;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
 .date-range-box { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .date-range-box input[type="date"] { flex: 1; min-width: 130px; cursor: pointer; }
 .date-sep { font-weight: 700; color: var(--sub); font-size: 11px; }
@@ -310,7 +346,7 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     background: #ffe4e6;
     color: var(--red);
     padding: 7px 9px;
-    border-radius: 9px;
+    border-radius: 99px;
     font-size: 10.5px;
     font-weight: 700;
     cursor: pointer;
@@ -406,6 +442,15 @@ th { border-color: inherit !important; }
 <div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto;">
   <div style="background:#fff; border-radius:16px; width:100%; max-width:420px; padding:25px; box-shadow:0 10px 25px rgba(0,0,0,0.2); margin:auto;">
     
+    <!-- BRANDING LOGIN: LOGO SEKOLAH, NAMA SEKOLAH, & TAHUN AJARAN SAAT INI -->
+    <div class="auth-header-brand">
+      <img class="school-logo auth-logo-img" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
+      <span class="brand-logo-fallback" style="display:none; font-size:32px; margin-bottom:8px;"><i class="fa-solid fa-school"></i></span>
+      <div class="auth-school-title">SD ISLAM RAMAH ANAK</div>
+      <div style="font-size: 11px; font-weight: 700; color: var(--sub); margin-top:2px;">Journal Teachers Planner</div>
+      <div class="auth-ta-badge"><i class="fa-solid fa-calendar-check"></i> TA <span class="dynamic-ta">--</span></div>
+    </div>
+
     <div class="auth-tabs">
       <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">Masuk (Login)</button>
       <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">Daftar Akun Baru</button>
@@ -414,8 +459,8 @@ th { border-color: inherit !important; }
     <!-- FORM LOGIN -->
     <div id="authLoginForm">
       <div style="text-align:center; margin-bottom:18px;">
-        <h2 style="font-size:18px; color:#0f172a; font-weight:800;">Silakan Login</h2>
-        <p style="font-size:11px; color:#64748b; margin-top:4px;">Gunakan Username &amp; Password yang telah didaftarkan</p>
+        <h2 style="font-size:16px; color:#0f172a; font-weight:800;">Silakan Login</h2>
+        <p style="font-size:11px; color:#64748b; margin-top:3px;">Gunakan Username &amp; Password terdaftar</p>
       </div>
       <form onsubmit="handleLogin(event)">
         <div class="field" style="margin-bottom:14px;">
@@ -440,8 +485,8 @@ th { border-color: inherit !important; }
     <!-- FORM REGISTRASI -->
     <div id="authRegisterForm" style="display:none;">
       <div style="text-align:center; margin-bottom:18px;">
-        <h2 style="font-size:18px; color:#0f172a; font-weight:800;">Pendaftaran Akun Guru</h2>
-        <p style="font-size:11px; color:#64748b; margin-top:4px;">Isi biodata &amp; buat password Anda</p>
+        <h2 style="font-size:16px; color:#0f172a; font-weight:800;">Pendaftaran Akun Guru</h2>
+        <p style="font-size:11px; color:#64748b; margin-top:3px;">Isi biodata &amp; buat password Anda</p>
       </div>
       <form onsubmit="handleRegister(event)">
         <div class="field" style="margin-bottom:12px;">
@@ -1239,7 +1284,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw9Qrhvu3qN89-PzcsJvo15HNS4zp5wu328jjVgQ5zE7Y5IIPJA-dhv97Ae31gFbaM1/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGdJv7JuGn-Tgy4aw2wvunwI4O2PnOTFqVGyzLYEzqsKI8a485JdJURIfbnb5NkxzO/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -1638,7 +1683,7 @@ function initSchoolLogo(){
       if(index >= candidates.length){
         img.style.display = "none";
         const fallback = img.nextElementSibling;
-        if(fallback) fallback.style.display = "grid";
+        if(fallback) fallback.style.display = "block";
         return;
       }
       const test = new Image();
