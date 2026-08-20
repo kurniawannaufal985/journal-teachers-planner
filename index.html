@@ -248,6 +248,7 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 }
 .toggle-password-btn:hover { color: var(--green); }
 
+/* PENYESUAIAN MOBILE TATA LETAK LOGOUT & RESET DATA */
 @media(max-width:1050px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .sidebar{width:235px}
@@ -300,7 +301,7 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
   .mobile-action-group {
     display: flex !important;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     margin-left: auto;
   }
 
@@ -308,14 +309,14 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     border: 0;
     background: #ffe4e6;
     color: var(--red);
-    padding: 8px 10px;
+    padding: 7px 9px;
     border-radius: 9px;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
   }
 
   .mobile-menu {
@@ -341,7 +342,10 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
   }
 
   .sidebar-bottom {
-    display: none !important;
+    display: block !important;
+    border-top: 1px solid var(--border);
+    padding-top: 15px;
+    margin-top: 10px;
   }
 
   .main {
@@ -364,7 +368,7 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     gap: 10px;
   }
 
-  .topbar-right button, .topbar-right select {
+  .topbar-right button {
     width: 100%;
     justify-content: center;
   }
@@ -415,8 +419,8 @@ th { border-color: inherit !important; }
       </div>
       <form onsubmit="handleLogin(event)">
         <div class="field" style="margin-bottom:14px;">
-          <label>Username (Bebas: Nama / NUPTK / NIK / Email)</label>
-          <input type="text" id="loginUsername" required placeholder="Tuliskan nama/username Anda...">
+          <label>Username</label>
+          <input type="text" id="loginUsername" required placeholder="Tuliskan username Anda..." oninput="capitalizeInput(this)">
         </div>
         <div class="field" style="margin-bottom:20px;">
           <label>Password</label>
@@ -445,8 +449,8 @@ th { border-color: inherit !important; }
           <input type="text" id="regNama" required placeholder="Contoh: Ahmad Subagja, S.Pd">
         </div>
         <div class="field" style="margin-bottom:12px;">
-          <label>Username (Bebas: Nama / NUPTK / NIK / Email)</label>
-          <input type="text" id="regUsername" required placeholder="Contoh: ahmad / 12345 / email">
+          <label>Username</label>
+          <input type="text" id="regUsername" required placeholder="Contoh: Ahmad / 12345" oninput="capitalizeInput(this)">
         </div>
         <div class="field" style="margin-bottom:20px;">
           <label>Buat Password Kustom</label>
@@ -521,13 +525,6 @@ th { border-color: inherit !important; }
   </div>
   
   <div class="topbar-right">
-    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;width:100%;">
-      <select id="taSelector" onchange="changeActiveTA(this.value)" style="background:var(--input);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:11px;font-weight:700;flex:1;">
-        <option>TA --</option>
-      </select>
-      <button class="btn secondary" onclick="createNewTA()"><i class="fa-solid fa-plus"></i> TA Baru</button>
-    </div>
-    
     <button class="btn danger" onclick="resetPlanner()" title="Reset seluruh data dan hapus akun"><i class="fa-solid fa-trash-can"></i> Reset Total Data &amp; Akun</button>
     
     <div class="clock">
@@ -1241,14 +1238,27 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-// MASUKKAN URL APPS SCRIPT HASIL DEPLOY DENGAN AKSES "SIAPA SAJA" DI BAWAH INI:
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfL15sLk7pZFMOCd6u1OaCu5-O9D17Pm15FaaKLp4yLF4FwhIM4dTABdvZ4AhmB1BM/exec";
+// URL APPS SCRIPT
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7i1sGqki9MTrMFtChR_VkxLUwv_H8nQqNsliUjSxnRe3dXxmBr4Hqwkj5iWRyqss6/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
 let activeUserKey = localStorage.getItem("jtp_account_user_key") || "";
 let activeUsername = localStorage.getItem("jtp_account_username") || "";
-let activeTA = localStorage.getItem("jtp_active_ta") || localStorage.getItem("jtp_auto_ta") || "";
+let activeTA = localStorage.getItem("jtp_active_ta") || localStorage.getItem("jtp_auto_ta") || getCalculatedTA();
+
+function capitalizeInput(el) {
+  if (el && el.value) {
+    el.value = el.value.charAt(0).toUpperCase() + el.value.slice(1);
+  }
+}
+
+function getCalculatedTA() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  return month >= 6 ? `${year}/${year + 1}` : `${year - 1}/${year}`;
+}
 
 function togglePasswordVisibility(inputId, btnEl) {
   const input = document.getElementById(inputId);
@@ -1263,16 +1273,9 @@ function togglePasswordVisibility(inputId, btnEl) {
   }
 }
 
-async function sha256Hex(value){
-  const data = new TextEncoder().encode(String(value));
-  const digest = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(digest))
-    .map(b => b.toString(16).padStart(2,"0")).join("");
-}
-
 async function cloudPost(body){
   if(!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE_URL_APPS_SCRIPT")){
-    throw new Error("URL Apps Script belum dipasang di index.html!");
+    throw new Error("URL Apps Script belum dipasang!");
   }
   
   const res = await fetch(GOOGLE_SCRIPT_URL, {
@@ -1288,7 +1291,7 @@ async function cloudPost(body){
     data = JSON.parse(text); 
   } catch(e) { 
     if (text.includes("<!DOCTYPE html>") || text.includes("<html")) {
-      throw new Error("Akses Google Apps Script Ditolak! Pastikan saat Deploy -> 'Who has access' / 'Siapa yang memiliki akses' diatur ke 'Anyone' / 'Siapa saja'.");
+      throw new Error("Akses Google Apps Script Ditolak! Pastikan 'Who has access' diatur ke 'Anyone'.");
     }
     throw new Error("Respons Server Salah Format: " + text.slice(0, 150)); 
   }
@@ -1321,14 +1324,15 @@ function putPayloadToLocal(payload){
 }
 
 function autoSyncToCloud(){
-  if(cloudLoading || !activeUserKey || !activeTA) return;
+  if(cloudLoading || !activeUserKey) return;
+  const currentTA = activeTA || getCalculatedTA();
   clearTimeout(syncTimeout);
   syncTimeout = setTimeout(async()=>{
     try{
       await cloudPost({
         action:"save_v2",
         userKey:activeUserKey,
-        ta:activeTA,
+        ta:currentTA,
         payload:getLocalPayload()
       });
     }catch(err){
@@ -1338,20 +1342,21 @@ function autoSyncToCloud(){
 }
 
 async function loadTAData(ta){
-  if(!activeUserKey || !ta) return false;
+  if(!activeUserKey) return false;
+  const taToUse = ta || getCalculatedTA();
   cloudLoading = true;
   try{
     const res = await cloudPost({
       action:"load_v2",
       userKey:activeUserKey,
-      ta:ta
+      ta:taToUse
     });
     if(!res.ok) throw new Error(res.error || "Gagal memuat data.");
-    activeTA = ta;
-    localStorage.setItem("jtp_active_ta",ta);
-    localStorage.setItem("jtp_auto_ta",ta);
+    activeTA = taToUse;
+    localStorage.setItem("jtp_active_ta",taToUse);
+    localStorage.setItem("jtp_auto_ta",taToUse);
     putPayloadToLocal(res.payload || {});
-    setAcademicYearUI(ta);
+    setAcademicYearUI(taToUse);
     initInputs();
     renderStudents();
     renderActivities();
@@ -1366,78 +1371,14 @@ async function loadTAData(ta){
   }
 }
 
-async function getTAList(){
-  if(!activeUserKey) return [];
-  const res = await cloudPost({action:"list_ta_v2",userKey:activeUserKey});
-  return res.ok ? (res.taList || []) : [];
-}
-
 function setAcademicYearUI(ta){
-  if(!ta) {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    ta = `${month >= 6 ? year : year - 1}/${month >= 6 ? year + 1 : year}`;
-  }
-  activeTA = ta;
-  localStorage.setItem("jtp_active_ta",ta);
-  localStorage.setItem("jtp_auto_ta",ta);
-  document.querySelectorAll(".dynamic-ta").forEach(el=>el.textContent=ta);
+  const taToDisplay = ta || getCalculatedTA();
+  activeTA = taToDisplay;
+  localStorage.setItem("jtp_active_ta",taToDisplay);
+  localStorage.setItem("jtp_auto_ta",taToDisplay);
+  document.querySelectorAll(".dynamic-ta").forEach(el=>el.textContent=taToDisplay);
   const footerYr=document.getElementById("currentYearFooter");
-  if(footerYr) footerYr.textContent=`TA. ${ta}`;
-  const sel=document.getElementById("taSelector");
-  if(sel) sel.value=ta;
-}
-
-async function renderTASelector(){
-  const sel=document.getElementById("taSelector");
-  if(!sel || !activeUserKey) return;
-  try{
-    const list=await getTAList();
-    sel.innerHTML="";
-    if(!list.length) {
-      if(activeTA) list.push(activeTA);
-      else list.push("2026/2027");
-    }
-    list.forEach(ta=>{
-      const o=document.createElement("option");
-      o.value=ta;o.textContent="TA " + ta;sel.appendChild(o);
-    });
-    if(activeTA && list.includes(activeTA)) sel.value=activeTA;
-    else if(list.length){ activeTA=list[0]; sel.value=activeTA; }
-    setAcademicYearUI(activeTA);
-  }catch(e){console.error(e);}
-}
-
-async function changeActiveTA(ta){
-  if(!ta || ta===activeTA) return;
-  if(!confirm(`Buka data TA ${ta}? Data TA yang sedang aktif akan tetap aman.`)) return;
-  try{
-    await loadTAData(ta);
-    await renderTASelector();
-  }catch(e){alert("Gagal memuat TA: "+e.message);}
-}
-
-async function createNewTA(){
-  if(!activeUserKey) return alert("Silakan login terlebih dahulu.");
-  const newTA=prompt("Masukkan Tahun Ajaran baru. Contoh: 2026/2027", "");
-  if(!newTA) return;
-  if(!/^\d{4}\/\d{4}$/.test(newTA.trim()))
-    return alert("Format TA harus seperti 2026/2027.");
-  if((await getTAList()).includes(newTA.trim()))
-    return alert("TA tersebut sudah ada.");
-  try{
-    const res=await cloudPost({
-      action:"create_ta_v2",
-      userKey:activeUserKey,
-      sourceTA:activeTA,
-      newTA:newTA.trim()
-    });
-    if(!res.ok) throw new Error(res.error || "Gagal membuat TA.");
-    await loadTAData(newTA.trim());
-    await renderTASelector();
-    alert(`TA ${newTA.trim()} berhasil dibuat. Biodata guru disalin, data akademik dibuat baru.`);
-  }catch(e){alert("Gagal membuat TA baru: "+e.message);}
+  if(footerYr) footerYr.textContent=`TA. ${taToDisplay}`;
 }
 
 function checkLoginSession(){
@@ -1467,10 +1408,12 @@ async function handleLogin(e){
   const orig=btn.innerHTML;
   btn.disabled=true;btn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Memverifikasi...`;
   try{
-    const username=document.getElementById("loginUsername").value.trim();
+    const rawUsername=document.getElementById("loginUsername").value.trim();
+    const username = rawUsername.charAt(0).toUpperCase() + rawUsername.slice(1);
     const password=document.getElementById("loginPassword").value;
-    const passwordHash=await sha256Hex(password);
-    const res=await cloudPost({action:"login_v2",username,passwordHash});
+    
+    // Mengirimkan password asli ke Apps Script
+    const res=await cloudPost({action:"login_v2", username, password});
     if(!res.ok) throw new Error(res.error || "Username atau password salah.");
 
     activeUserKey=res.userKey;
@@ -1479,15 +1422,12 @@ async function handleLogin(e){
     localStorage.setItem("jtp_account_user_key",activeUserKey);
     localStorage.setItem("jtp_account_username",activeUsername);
 
-    const list=res.taList || [];
-    activeTA=localStorage.getItem("jtp_active_ta");
-    if(!activeTA || !list.includes(activeTA)) activeTA=list[0] || res.ta;
+    activeTA = res.ta || getCalculatedTA();
     localStorage.setItem("jtp_active_ta",activeTA);
     localStorage.setItem("jtp_auto_ta",activeTA);
 
     await loadTAData(activeTA);
     document.getElementById("loginScreen").style.display="none";
-    await renderTASelector();
   }catch(err){
     alert(err.message || "Login gagal.");
   }finally{
@@ -1502,25 +1442,25 @@ async function handleRegister(e){
   btn.disabled=true;btn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...`;
   try{
     const nama=document.getElementById("regNama").value.trim();
-    const username=document.getElementById("regUsername").value.trim();
+    const rawUsername=document.getElementById("regUsername").value.trim();
+    const username = rawUsername.charAt(0).toUpperCase() + rawUsername.slice(1);
     const password=document.getElementById("regPassword").value;
+    
     if(password.length<4) throw new Error("Password minimal 4 karakter.");
 
-    const passwordHash=await sha256Hex(password);
-    const now=new Date();
-    const y=now.getFullYear(),m=now.getMonth();
-    const ta=`${m>=6?y:y-1}/${m>=6?y+1:y}`;
+    const ta=getCalculatedTA();
     const payload={
       bio_nama:nama,
       bio_nuptk:"",
       auto_ta:ta
     };
 
+    // Mendaftarkan akun dengan password asli (plain text)
     const res=await cloudPost({
       action:"register_v2",
       name:nama,
       username,
-      passwordHash,
+      password,
       ta,
       payload
     });
@@ -1528,7 +1468,7 @@ async function handleRegister(e){
 
     activeUserKey=res.userKey;
     activeUsername=res.username;
-    activeTA=res.ta;
+    activeTA=res.ta || ta;
     localStorage.setItem("jtp_is_logged_in","true");
     localStorage.setItem("jtp_account_user_key",activeUserKey);
     localStorage.setItem("jtp_account_username",activeUsername);
@@ -1537,7 +1477,6 @@ async function handleRegister(e){
 
     await loadTAData(activeTA);
     document.getElementById("loginScreen").style.display="none";
-    await renderTASelector();
     alert("Akun berhasil dibuat dan langsung masuk ke planner.");
   }catch(err){
     alert(err.message || "Registrasi gagal.");
@@ -1642,11 +1581,7 @@ function getFormattedDateRange(keyStart, keyEnd) {
 }
 
 function initAcademicYear(){
- const now = new Date();
- const year = now.getFullYear();
- const month = now.getMonth(); 
- const defaultTA = `${month >= 6 ? year : year - 1}/${month >= 6 ? year + 1 : year}`;
- const ta = activeTA || get("auto_ta", "") || get("jtp_active_ta", "") || defaultTA;
+ const ta = activeTA || get("auto_ta", "") || get("jtp_active_ta", "") || getCalculatedTA();
  setAcademicYearUI(ta);
 }
 
@@ -1655,7 +1590,7 @@ function showSection(id){
  document.getElementById(id).classList.add("active");
  document.querySelectorAll(".nav button[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===id));
  
- const ta = activeTA || get("auto_ta", "") || "2026/2027";
+ const ta = activeTA || getCalculatedTA();
  const titles={
    home:["Journal Teachers Planner",`Tahun Ajaran ${ta} — SD Islam Ramah Anak`],
    biodata:["Biodata Guru","Data personal dan informasi pendidik"],
@@ -2457,10 +2392,7 @@ async function resetPlanner(){
  startClock();
  if(localStorage.getItem("jtp_is_logged_in")==="true" && activeUserKey){
     try{
-      const list=await getTAList();
-      if(!activeTA || !list.includes(activeTA)) activeTA=list[0] || activeTA;
-      if(activeTA) await loadTAData(activeTA);
-      await renderTASelector();
+      await loadTAData(activeTA || getCalculatedTA());
     }catch(err){ console.error("Gagal memuat sesi cloud:",err); }
  }
 })();
