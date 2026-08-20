@@ -573,22 +573,22 @@ th { border-color: inherit !important; }
   <div class="card">
     <div class="card-title">Data Pribadi</div>
     <div class="form-grid" style="margin-top:16px">
-      <div class="field"><label>Nama Lengkap</label><input data-save="bio_nama" placeholder="Tuliskan nama lengkap..."></div>
-      <div class="field"><label>Nama Panggilan</label><input data-save="bio_panggilan" placeholder="..."></div>
-      <div class="field"><label>No. Telepon / WA</label><input data-save="bio_telepon" placeholder="..."></div>
-      <div class="field"><label>E-mail</label><input data-save="bio_email" placeholder="..."></div>
-      <div class="field"><label>NUPTK</label><input data-save="bio_nuptk" placeholder="..."></div>
-      <div class="field"><label>NIK</label><input data-save="bio_nik" placeholder="..."></div>
+      <div class="field"><label>Nama Lengkap</label><input type="text" data-save="bio_nama" placeholder="Tuliskan nama lengkap..."></div>
+      <div class="field"><label>Nama Panggilan</label><input type="text" data-save="bio_panggilan" placeholder="..."></div>
+      <div class="field"><label>No. Telepon / WA</label><input type="tel" data-save="bio_telepon" placeholder="08xxxxxxxxxx"></div>
+      <div class="field"><label>E-mail</label><input type="email" data-save="bio_email" placeholder="..."></div>
+      <div class="field"><label>NUPTK</label><input type="text" data-save="bio_nuptk" placeholder="..."></div>
+      <div class="field"><label>NIK</label><input type="text" data-save="bio_nik" placeholder="..."></div>
       <div class="field full"><label>Alamat</label><textarea data-save="bio_alamat" placeholder="..."></textarea></div>
     </div>
   </div>
   <div class="card">
     <div class="card-title">Data Tambahan</div>
     <div class="form-grid" style="margin-top:16px">
-      <div class="field"><label>Status</label><input data-save="bio_status" placeholder="..."></div>
-      <div class="field"><label>Nama Suami / Istri</label><input data-save="bio_pasangan" placeholder="..."></div>
-      <div class="field"><label>Nama Anak</label><input data-save="bio_anak" placeholder="..."></div>
-      <div class="field"><label>Hobi</label><input data-save="bio_hobi" placeholder="..."></div>
+      <div class="field"><label>Status</label><input type="text" data-save="bio_status" placeholder="..."></div>
+      <div class="field"><label>Nama Suami / Istri</label><input type="text" data-save="bio_pasangan" placeholder="..."></div>
+      <div class="field"><label>Nama Anak</label><input type="text" data-save="bio_anak" placeholder="..."></div>
+      <div class="field"><label>Hobi</label><input type="text" data-save="bio_hobi" placeholder="..."></div>
       <div class="field full"><label>Motto Pendidik</label><textarea data-save="bio_motto" placeholder="..."></textarea></div>
     </div>
   </div>
@@ -640,7 +640,7 @@ th { border-color: inherit !important; }
   
   <div class="card">
     <div class="form-grid" style="margin-bottom:15px; grid-template-columns:repeat(2,1fr);">
-      <div class="field"><label>Guru Kelas</label><input data-save="abs_guru" placeholder="Nama Guru / Kelas..."></div>
+      <div class="field"><label>Guru Kelas</label><input type="text" data-save="abs_guru" placeholder="Nama Guru / Kelas..."></div>
       <div class="field">
         <label>Pilih Bulan Absensi</label>
         <select id="absensiMonthSelect" onchange="changeAbsensiMonth(this.value)">
@@ -909,7 +909,7 @@ th { border-color: inherit !important; }
           <input type="date" data-save="nilai_tgl_selesai" onchange="renderNilai()">
         </div>
       </div>
-      <div class="field"><label>Kelas / Semester</label><input data-save="nilai_kelas" placeholder="Isi Kelas / Semester..."></div>
+      <div class="field"><label>Kelas / Semester</label><input type="text" data-save="nilai_kelas" placeholder="Isi Kelas / Semester..."></div>
     </div>
     <div class="card-title" style="margin-bottom:6px">Tabel Nilai Formatif Per Mapel</div>
     <div class="card-sub" style="margin-bottom:12px">Isi angka nilai (0-100) per mata pelajaran. Kolom <b>Remedial</b> diisi jumlah mapel yang diremedial. Rata-rata, Nilai Tertinggi, dan Nilai Terendah dihitung otomatis!</div>
@@ -1003,8 +1003,8 @@ th { border-color: inherit !important; }
 
   <div class="card">
     <div class="form-grid" style="grid-template-columns: repeat(3, 1fr);">
-      <div class="field"><label>Nama Guru</label><input data-save="bio_nama" placeholder="Nama Guru (Otomatis)..."></div>
-      <div class="field"><label>Kelas</label><input data-save="ref_kelas_input" placeholder="Kelas..."></div>
+      <div class="field"><label>Nama Guru</label><input type="text" data-save="bio_nama" placeholder="Nama Guru (Otomatis)..."></div>
+      <div class="field"><label>Kelas</label><input type="text" data-save="ref_kelas_input" placeholder="Kelas..."></div>
       <div class="field">
         <label>Tanggal / Rentang Pekan</label>
         <div class="date-range-box">
@@ -1049,7 +1049,7 @@ th { border-color: inherit !important; }
     <div class="form-grid" style="grid-template-columns:1fr; gap:16px;">
       <div class="field">
         <label>Tuliskan jenis metode atau media pembelajarannya:</label>
-        <input id="ref_metode_pembelajaran" oninput="saveRefleksiText(this)" placeholder="Metode, strategi, atau model pembelajaran...">
+        <input type="text" id="ref_metode_pembelajaran" oninput="saveRefleksiText(this)" placeholder="Metode, strategi, atau model pembelajaran...">
       </div>
       <div class="field">
         <label>Apa yang berjalan baik minggu ini?</label>
@@ -1239,7 +1239,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLnQM07LgDpThFGMCE6jT7eNFZ_PJc4FzMWEF7hyNyqFvr8sDlZVDvWgHuL34Nttpt/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw9Qrhvu3qN89-PzcsJvo15HNS4zp5wu328jjVgQ5zE7Y5IIPJA-dhv97Ae31gFbaM1/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -1319,7 +1319,7 @@ function clearPlannerLocalData(){
 function putPayloadToLocal(payload){
   clearPlannerLocalData();
   Object.keys(payload || {}).forEach(k => {
-    localStorage.setItem("jtp_"+k, payload[k]);
+    localStorage.setItem("jtp_"+k, String(payload[k]));
   });
 }
 
@@ -1426,11 +1426,9 @@ async function handleLogin(e){
     localStorage.setItem("jtp_account_username",activeUsername);
     localStorage.setItem("jtp_active_ta",activeTA);
 
-    // LANGSUNG MASUK INSTAN TANPA MENUNGGU LOADING DATA SPREADSHEET
     document.getElementById("loginScreen").style.display="none";
     setAcademicYearUI(activeTA);
 
-    // BISMILLAH LOAD DATA DI BACKGROUND
     loadTAData(activeTA);
 
   }catch(err){
@@ -1482,7 +1480,6 @@ async function handleRegister(e){
     localStorage.setItem("jtp_account_username",activeUsername);
     localStorage.setItem("jtp_active_ta",activeTA);
 
-    // MASUK APKLIKASI INSTAN
     putPayloadToLocal(payload);
     setAcademicYearUI(activeTA);
     document.getElementById("loginScreen").style.display="none";
@@ -1543,9 +1540,13 @@ const defaultNilaiData=[];
 const monthsKeys=["JULI","AGUST","SEPT","OKT","NOV","DES","JAN","FEB","MAR","APR","MEI","JUN"];
 let currentMonth="AGUST";
 
-function get(k,d=""){return localStorage.getItem("jtp_"+k)??d}
+function get(k,d=""){
+  let val = localStorage.getItem("jtp_"+k);
+  return val !== null ? String(val) : d;
+}
+
 function set(k,v){
-  localStorage.setItem("jtp_"+k,v);
+  localStorage.setItem("jtp_"+k, String(v));
   autoSyncToCloud();
 }
 
@@ -1679,7 +1680,7 @@ function initInputs(){
    let savedVal = get(k, el.value||"");
    el.value = savedVal;
    el.addEventListener("input",()=>{
-     set(k,el.value);
+     set(k, String(el.value));
      if(k==="bio_nama") {
        document.querySelectorAll("[data-save='bio_nama']").forEach(input => {
          if(input !== el) input.value = el.value;
@@ -1713,7 +1714,7 @@ function renderStudents(){
    const fields = ["name","nisn","gender","birth","parent","job","phone"];
    
    tr.innerHTML = `<td>${i+1}</td>` + 
-     fields.map(f => `<td><input class="edit-cell student-input" data-i="${i}" data-f="${f}" value="${esc(s[f]||"")}" placeholder="${f==="name"?"Nama siswa":""}"></td>`).join("");
+     fields.map(f => `<td><input type="text" class="edit-cell student-input" data-i="${i}" data-f="${f}" value="${esc(s[f]||"")}" placeholder="${f==="name"?"Nama siswa":""}"></td>`).join("");
    body.appendChild(tr);
  });
  
@@ -1729,7 +1730,7 @@ function saveStudents(){
  const arr=[];
  document.querySelectorAll("#studentBody tr").forEach((tr,i)=>{
    const s={};
-   tr.querySelectorAll(".student-input").forEach(x=>s[x.dataset.f]=x.value);
+   tr.querySelectorAll(".student-input").forEach(x=>s[x.dataset.f]=String(x.value));
    arr[i]=s;
  });
  set("students", JSON.stringify(arr));
@@ -1794,7 +1795,7 @@ function renderAbsensi(){
    let daysHtml="";
    for(let d=1;d<=31;d++){
      const val=studentAbs[d]||"";
-     daysHtml+=`<td><input class="day-cell" data-s="${i}" data-d="${d}" value="${esc(val)}" maxlength="1"></td>`;
+     daysHtml+=`<td><input type="text" class="day-cell" data-s="${i}" data-d="${d}" value="${esc(val)}" maxlength="1"></td>`;
    }
    const tr=document.createElement("tr");
    tr.id=`absRow_${i}`;
@@ -1826,7 +1827,7 @@ function renderAbsensi(){
 function saveAbsensiVal(s,d,val){
  const monthData=JSON.parse(get("absData_"+currentMonth,"{}"));
  if(!monthData[s]) monthData[s]={};
- monthData[s][d]=val;
+ monthData[s][d]=String(val);
  set("absData_"+currentMonth,JSON.stringify(monthData));
 }
 
@@ -1920,7 +1921,7 @@ function renderActivities(){
  if(row[0] === "REST") {
    tr.innerHTML = `<td><b>${times[r]}</b></td><td colspan="5" style="text-align:center;color:var(--amber);font-weight:800">ISTIRAHAT (MAKAN SIANG & SHOLAT ZUHUR)</td>`;
  } else {
-   tr.innerHTML = `<td><b>${times[r]}</b></td>` + row.map((v, c) => `<td><input data-ar="${r}" data-ac="${c}" value="${esc(v)}"></td>`).join("");
+   tr.innerHTML = `<td><b>${times[r]}</b></td>` + row.map((v, c) => `<td><input type="text" data-ar="${r}" data-ac="${c}" value="${esc(v)}"></td>`).join("");
  }
  body.appendChild(tr);
  });
@@ -1937,7 +1938,7 @@ function saveActivities(){
    return;
  }
  const row = [];
- tr.querySelectorAll("input").forEach(x => row[x.dataset.ac] = x.value);
+ tr.querySelectorAll("input").forEach(x => row[x.dataset.ac] = String(x.value));
  arr.push(row);
  });
 
@@ -1983,7 +1984,7 @@ function renderTargets(){
  const tr = document.createElement("tr");
  tr.className = "target-row" + (isFail ? " failed" : "");
  tr.innerHTML = `<td>${no}</td><td>${esc(text)}</td>
-   <td style="text-align:center"><input class="done-input" data-target="${no}" value="${esc(status)}" maxlength="1" placeholder="-"></td>
+   <td style="text-align:center"><input type="text" class="done-input" data-target="${no}" value="${esc(status)}" maxlength="1" placeholder="-"></td>
    <td style="text-align:center"><span class="badge ${isFail?'danger':'success'}">${isFail?'Tidak Tercapai':'Tercapai'}</span></td>`;
  body.appendChild(tr);
  });
@@ -2044,7 +2045,7 @@ function renderDPL(){
  let colsHtml = "";
  for(let c = 0; c < 8; c++){
    const val = (saved[r] && saved[r][c]) || "";
-   colsHtml += `<td style="text-align:center"><input class="dpl-input" data-r="${r}" data-c="${c}" value="${esc(val)}"></td>`;
+   colsHtml += `<td style="text-align:center"><input type="text" class="dpl-input" data-r="${r}" data-c="${c}" value="${esc(val)}"></td>`;
  }
  tr.innerHTML = `<td style="text-align:center">${r+1}</td><td><b>${day}</b></td>${colsHtml}`;
  body.appendChild(tr);
@@ -2058,7 +2059,7 @@ function saveDPL(){
  const arr = [];
  document.querySelectorAll("#dplBody tr").forEach((tr, r) => {
  const row = [];
- tr.querySelectorAll(".dpl-input").forEach(x => row[x.dataset.c] = x.value);
+ tr.querySelectorAll(".dpl-input").forEach(x => row[x.dataset.c] = String(x.value));
  arr.push(row);
  });
 
@@ -2095,8 +2096,8 @@ function renderAnekdot(){
    const tr = document.createElement("tr");
    tr.innerHTML = `<td style="text-align:center">${i+1}</td>
      <td style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>${esc(name)}</b></td>
-     <td><input class="anekdot-input" data-i="${i}" data-f="tempat" value="${esc(item.tempat||"")}" placeholder="Tempat..."></td>
-     <td><input class="anekdot-input" data-i="${i}" data-f="waktu" value="${esc(item.waktu||"")}" placeholder="Waktu..."></td>
+     <td><input type="text" class="anekdot-input" data-i="${i}" data-f="tempat" value="${esc(item.tempat||"")}" placeholder="Tempat..."></td>
+     <td><input type="text" class="anekdot-input" data-i="${i}" data-f="waktu" value="${esc(item.waktu||"")}" placeholder="Waktu..."></td>
      <td><textarea class="anekdot-input" data-i="${i}" data-f="kronologi" placeholder="Kronologis peristiwa...">${esc(item.kronologi||"")}</textarea></td>`;
    body.appendChild(tr);
  });
@@ -2107,7 +2108,7 @@ function saveAnekdot(){
  const arr=[];
  document.querySelectorAll("#anekdotBody tr").forEach((tr,i)=>{
  const item={};
- tr.querySelectorAll(".anekdot-input").forEach(x=>item[x.dataset.f]=x.value);
+ tr.querySelectorAll(".anekdot-input").forEach(x=>item[x.dataset.f]=String(x.value));
  arr[i]=item;
  });
  set("anekdotData",JSON.stringify(arr));
@@ -2134,7 +2135,7 @@ function renderNilai(){
    let mapelCols = "";
    mapelKeys.forEach(mKey => {
      const val = sNilai[mKey] || "";
-     mapelCols += `<td style="text-align:center"><input class="nilai-cell" data-i="${i}" data-m="${mKey}" value="${esc(val)}" placeholder="-"></td>`;
+     mapelCols += `<td style="text-align:center"><input type="text" class="nilai-cell" data-i="${i}" data-m="${mKey}" value="${esc(val)}" placeholder="-"></td>`;
    });
    
    const remedVal = sNilai.remed || "";
@@ -2144,7 +2145,7 @@ function renderNilai(){
      <td style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>${esc(name)}</b></td>
      <td>${esc(nisn)}</td>
      ${mapelCols}
-     <td style="text-align:center"><input class="remed-cell" data-i="${i}" data-m="remed" value="${esc(remedVal)}" placeholder="0"></td>`;
+     <td style="text-align:center"><input type="text" class="remed-cell" data-i="${i}" data-m="remed" value="${esc(remedVal)}" placeholder="0"></td>`;
    body.appendChild(tr);
  });
  
@@ -2200,7 +2201,7 @@ function saveNilai(){
  const arr = [];
  document.querySelectorAll("#nilaiBody tr").forEach((tr, i) => {
  const item = {};
- tr.querySelectorAll("input").forEach(x => item[x.dataset.m] = x.value);
+ tr.querySelectorAll("input").forEach(x => item[x.dataset.m] = String(x.value));
  arr[i] = item;
  });
  const key = getNilaiStorageKey();
@@ -2269,7 +2270,7 @@ function saveRefleksiMapel(){
 function saveRefleksiText(el){
   const key = getRefleksiStorageKey();
   const data = JSON.parse(get(key, "{}"));
-  data[el.id] = el.value;
+  data[el.id] = String(el.value);
   set(key, JSON.stringify(data));
 }
 
