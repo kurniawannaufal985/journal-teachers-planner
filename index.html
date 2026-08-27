@@ -1309,7 +1309,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyS_V9HWk-Y03tjrHSLTRuC_eX_hisP1qU0UuBXCENdU02ofq0s3AQqq3f_T1PZAP4w/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwf398A1byjUsR4xDzoJefOgyrh2euupQINtPF5xwfsNITaKvWAQalOEIn33oBtDsbn/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -1688,7 +1688,7 @@ function showSection(id){
  };
  
  if(titles[id]){
-   const backBtnHtml = id !== 'home' ? `<button class="btn-back-home" onclick="showSection('home')"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</button>` : '';
+   const backBtnHtml = id !== 'home' ? `<button class="btn-back-home" onclick="showSection('home')"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard / Home</button>` : '';
    document.getElementById("pageTitle").innerHTML = backBtnHtml + `<div>${titles[id][0]}</div>`;
    document.getElementById("pageSubtitle").textContent = titles[id][1];
  }
