@@ -237,14 +237,14 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 .print-section-title{font-size:9.5px;font-weight:800;color:var(--green);margin-bottom:2px;border-bottom:1.5px solid var(--green);padding-bottom:1px;text-transform:uppercase}
 .print-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px}
 .print-box{border:1px solid var(--border);padding:4px 6px;border-radius:4px;background:#f8fafc}
-.print-box textarea{width:100%;border:1px dashed var(--border);border-radius:3px;padding:2px;font-size:8.5px;min-height:22px;margin-top:1px;background:#fff}
+.print-box textarea{width:100%;border:1px dashed var(--border);border-radius:3px;padding:2px;font-size:8.5px;min-height:20px;margin-top:1px;background:#fff}
 
-.ttd-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:6px;text-align:center;font-size:8.5px}
-.ttd-space{height:22px}
+.ttd-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:4px;text-align:center;font-size:8.5px}
+.ttd-space{height:20px}
 
 .print-logo{
-    width:38px;
-    height:38px;
+    width:36px;
+    height:36px;
     border-radius:50%;
     object-fit:contain;
     padding:1px;
@@ -456,11 +456,11 @@ table { border-collapse: collapse !important; border: 1px solid #cbd5e1 !importa
 th, td { border: 1px solid #cbd5e1 !important; }
 th { border-color: inherit !important; }
 
-/* ATURAN ULTRADENSE AGAR FIT 1 HALAMAN A4 SAAT CETAK / SAVE PDF */
+/* ATURAN CETAK DENGAN STRUKTUR SISIPAN PERSIS SESUAI GAMBAR BARU */
 @media print {
   @page {
     size: A4 portrait;
-    margin: 2mm 3mm;
+    margin: 2mm 4mm;
   }
 
   body, html {
@@ -549,12 +549,12 @@ th { border-color: inherit !important; }
   }
 
   .ttd-space {
-    height: 18px !important;
+    height: 16px !important;
   }
 
   .print-logo {
-    width: 30px !important;
-    height: 30px !important;
+    width: 28px !important;
+    height: 28px !important;
     margin-bottom: 1px !important;
   }
 }
@@ -1371,7 +1371,7 @@ th { border-color: inherit !important; }
     <div class="print-section-title">V. Rata-Rata Nilai Formatif</div>
     <div class="print-grid">
       <div class="print-box" style="grid-column: 1 / -1;">
-        <b>Grafik Rata-Rata Nilai Formatif (10 Mata Pelajaran):</b>
+        <b>Grafik Rata-Rata Nilai Formatif:</b>
         <div id="printNilaiChart" style="margin-top:1px; display:grid; grid-template-columns: 1fr 1fr; gap:0 10px;"></div>
       </div>
       <div class="print-box" style="grid-column: 1 / -1;">
@@ -1380,24 +1380,38 @@ th { border-color: inherit !important; }
       </div>
     </div>
 
-    <!-- VI. RINGKASAN JURNAL REFLEKSI GURU -->
+    <!-- VI. RINGKASAN JURNAL REFLEKSI GURU (STRUKTUR SESUAI GAMBAR TERBARU) -->
     <div class="print-section-title">VI. Ringkasan Jurnal Refleksi Guru</div>
-    <div class="print-grid" style="grid-template-columns:1fr; gap:3px;">
+    <div class="print-grid" style="grid-template-columns:1fr; gap:3px; margin-bottom:2px;">
+      
+      <!-- BOX BARIS 1: Refleksi Pembelajaran Pekan Ini -->
       <div class="print-box">
-        <div style="font-size:8px; display:grid; grid-template-columns:1fr 1fr; gap:2px;">
-          <div><b>Mata Pelajaran:</b> <span id="printRefMapel">-</span></div>
-          <div><b>Target Kepuasan:</b> <span id="printRefKepuasan">0%</span></div>
+        <b>Refleksi Pembelajaran Pekan Ini:</b>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:1px; font-size:8pt;">
+          <div>
+            <div><b>Mata Pelajaran:</b> <span id="printRefMapel">-</span></div>
+            <div><b>Materi:</b> <span id="printRefMateri">-</span></div>
+            <div><b>Metode/Media:</b> <span id="printRefMetode">-</span></div>
+          </div>
+          <div style="text-align:right; font-weight:700;">
+            <b>Target Kepuasan:</b> <span id="printRefKepuasan">0%</span>
+          </div>
         </div>
-        <div style="margin-top:1px; font-size:8px;"><b>Materi:</b> <span id="printRefMateri">-</span> | <b>Metode/Media:</b> <span id="printRefMetode">-</span></div>
       </div>
 
+      <!-- BOX BARIS 2: Identifikasi & Evaluasi Refleksi -->
       <div class="print-box">
-        <div style="font-size:8px;"><b>Berjalan baik:</b> <span id="printRefBaik">-</span> | <b>Tantangan:</b> <span id="printRefTantangan">-</span></div>
-        <div style="margin-top:1px; font-size:8px;"><b>Tindak Lanjut:</b> <span id="printRefTindakLanjut">-</span></div>
+        <b>Identifikasi &amp; Evaluasi Refleksi:</b>
+        <div style="font-size:8pt; margin-top:1px;">
+          <div><b>Apa yang berjalan baik:</b> <span id="printRefBaik">-</span></div>
+          <div><b>Tantangan yang dihadapi:</b> <span id="printRefTantangan">-</span></div>
+          <div><b>Deskripsi Tindak Lanjut:</b> <span id="printRefTindakLanjut">-</span></div>
+        </div>
       </div>
+
     </div>
 
-    <!-- TANDA TANGAN -->
+    <!-- TANDA TANGAN PERSIS SESUAI GAMBAR -->
     <div class="ttd-grid">
       <div>
         Mengetahui,<br>
@@ -1422,7 +1436,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby_sfrJ3j3mXmxu9J8QHcg33hIMavlrN1eOviaMIHpu21kFl8Q4B5Nc_E2rV_-uJNs/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpSGIdEHUZ_qOhoIs1HtECOxDH_1l59_VcVb5v9f_7FkGw0yAoQjC3d8EV87Y2dA9S/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
