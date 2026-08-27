@@ -660,7 +660,7 @@ th { border-color: inherit !important; }
   </div>
 </section>
 
-<!-- SISWA (DENGAN FITUR PASTE NAMA EXCEL) -->
+<!-- SISWA -->
 <section id="siswa" class="page">
   <div class="section-head">
     <div>
@@ -668,7 +668,7 @@ th { border-color: inherit !important; }
       <div class="card-sub">Atur jumlah siswa secara fleksibel (Maksimal 24 siswa). Perubahan tersimpan otomatis.</div>
     </div>
     <div class="actions">
-      <button class="btn amber" onclick="togglePasteBox()"><i class="fa-solid fa-paste"></i> Paste Nama dari Excel</button>
+      <button class="btn amber" onclick="togglePasteBox()"><i class="fa-solid fa-paste"></i> Paste Data dari Excel</button>
       <button class="btn" onclick="addStudentRow()"><i class="fa-solid fa-plus"></i> Tambah Siswa</button>
       <button class="btn danger" onclick="removeLastStudentRow()"><i class="fa-solid fa-minus"></i> Kurangi Siswa</button>
       <button class="btn secondary" onclick="saveStudents()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
@@ -677,15 +677,15 @@ th { border-color: inherit !important; }
 
   <!-- KOTAK POPUP INPUT TEMPEL EXCEL -->
   <div id="pasteBoxContainer" class="card" style="display:none; background:#fffbe8; border:1px solid #fde68a;">
-    <div class="card-title" style="color:var(--amber)"><i class="fa-solid fa-clipboard"></i> Tempel (Paste) Daftar Nama dari Excel</div>
+    <div class="card-title" style="color:var(--amber)"><i class="fa-solid fa-clipboard"></i> Tempel (Paste) Data Siswa dari Excel</div>
     <div class="card-sub" style="margin-bottom:10px">
-      Blok kolom nama siswa di Excel, tekan <b>Ctrl + C</b>, lalu paste (<b>Ctrl + V</b>) pada kotak di bawah ini dan klik <b>Proses Tempel Nama</b>.
+      Blok kolom data siswa di Excel (bisa 1 kolom Nama saja, atau sekaligus beberapa kolom: Nama, NISN, Jenis Kelamin, dll), tekan <b>Ctrl + C</b>, lalu tempelkan (<b>Ctrl + V</b>) pada kotak di bawah ini dan klik <b>Proses Tempel Data</b>.
     </div>
     <div class="field">
-      <textarea id="pasteInputText" placeholder="Tempelkan daftar nama siswa di sini (satu nama per baris)..." style="height:120px; background:#fff;"></textarea>
+      <textarea id="pasteInputText" placeholder="Tempelkan baris/kolom dari Excel di sini..." style="height:120px; background:#fff;"></textarea>
     </div>
     <div style="margin-top:10px; display:flex; gap:8px;">
-      <button class="btn" onclick="processPastedNames()"><i class="fa-solid fa-check"></i> Proses Tempel Nama</button>
+      <button class="btn" onclick="processPastedNames()"><i class="fa-solid fa-check"></i> Proses Tempel Data</button>
       <button class="btn secondary" onclick="togglePasteBox()">Batal</button>
     </div>
   </div>
@@ -1322,7 +1322,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbycFa437XZVBG1t9TAvhypyOkIWEX2MRu37nxl-AyQHo5N-DQ6WlJUImHxmzyM9poys/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOJXsBO3TAlag9ixJGwqtfJGVVzX1iUjjrUD545_7WleqWqjKWXQyP5dy7NOIO2019/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -1856,7 +1856,7 @@ function removeLastStudentRow(){
   }
 }
 
-// FUNGSI UNTUK TEMPEL NAMA DARI EXCEL
+// TOGGLE POPUP KOTAK PASTE EXCEL
 function togglePasteBox() {
   const box = document.getElementById("pasteBoxContainer");
   if (box.style.display === "none") {
@@ -1867,35 +1867,54 @@ function togglePasteBox() {
   }
 }
 
+// PROSES TEMPEL MULTI-KOLOM DARI EXCEL
 function processPastedNames() {
   const text = document.getElementById("pasteInputText").value;
   if (!text.trim()) {
-    alert("Silakan tempelkan daftar nama siswa terlebih dahulu.");
+    alert("Silakan tempelkan data terlebih dahulu.");
     return;
   }
 
-  const names = text.split(/\r?\n/).map(n => n.trim()).filter(n => n.length > 0);
+  // Pecah teks per baris
+  const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
 
-  if (names.length === 0) {
-    alert("Tidak ada nama valid yang ditemukan.");
+  if (lines.length === 0) {
+    alert("Tidak ada data valid yang ditemukan.");
     return;
   }
 
   let saved = getStudentsData();
 
-  if (names.length > saved.length) {
-    const limit = Math.min(names.length, 24);
+  // Menyesuaikan jumlah baris tabel jika data tempelan lebih banyak (maksimal 24)
+  if (lines.length > saved.length) {
+    const limit = Math.min(lines.length, 24);
     while (saved.length < limit) {
       saved.push({ name: "", nisn: "", gender: "", birth: "", parent: "", job: "", phone: "" });
     }
   }
 
-  names.forEach((name, index) => {
+  const fieldsOrder = ["name", "nisn", "gender", "birth", "parent", "job", "phone"];
+
+  lines.forEach((line, index) => {
     if (index < 24) {
       if (!saved[index]) {
         saved[index] = { name: "", nisn: "", gender: "", birth: "", parent: "", job: "", phone: "" };
       }
-      saved[index].name = name;
+
+      // Memisah kolom Excel berdasarkan Tab (\t)
+      const cols = line.split("\t").map(c => c.trim());
+
+      // Jika hanya 1 kolom yang di-copy, otomatis masuk ke Nama Siswa
+      if (cols.length === 1) {
+        saved[index].name = cols[0];
+      } else {
+        // Jika multiple kolom di-copy, masukkan ke masing-masing atribut berurutan
+        cols.forEach((val, colIdx) => {
+          if (colIdx < fieldsOrder.length) {
+            saved[index][fieldsOrder[colIdx]] = val;
+          }
+        });
+      }
     }
   });
 
@@ -1905,7 +1924,7 @@ function processPastedNames() {
   document.getElementById("pasteInputText").value = "";
   togglePasteBox();
 
-  alert(`Berhasil memasukkan ${Math.min(names.length, 24)} nama siswa ke dalam tabel!`);
+  alert(`Berhasil mengimpor ${Math.min(lines.length, 24)} baris data siswa ke dalam tabel!`);
 }
 
 function esc(v){return String(v).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
