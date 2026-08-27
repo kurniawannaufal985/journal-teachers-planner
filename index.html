@@ -239,8 +239,8 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 .print-box{border:1px solid var(--border);padding:4px 6px;border-radius:4px;background:#f8fafc}
 .print-box textarea{width:100%;border:1px dashed var(--border);border-radius:3px;padding:2px;font-size:8.5px;min-height:20px;margin-top:1px;background:#fff}
 
-.ttd-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:4px;text-align:center;font-size:8.5px}
-.ttd-space{height:20px}
+.ttd-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:10px;text-align:center;font-size:8.5px}
+.ttd-space{height:55px} /* JARAK TANDA TANGAN DI WEB */
 
 .print-logo{
     width:36px;
@@ -383,7 +383,7 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     border: 0;
     background: #10b98118;
     color: var(--green);
-    border-radius: 9px;
+    border-radius: 99px;
     width: 36px;
     height: 36px;
     font-size: 16px;
@@ -456,7 +456,7 @@ table { border-collapse: collapse !important; border: 1px solid #cbd5e1 !importa
 th, td { border: 1px solid #cbd5e1 !important; }
 th { border-color: inherit !important; }
 
-/* ATURAN CETAK DENGAN STRUKTUR SISIPAN PERSIS SESUAI GAMBAR BARU */
+/* ATURAN CETAK DENGAN JARAK TANDA TANGAN LEBIH LAPANG */
 @media print {
   @page {
     size: A4 portrait;
@@ -543,13 +543,13 @@ th { border-color: inherit !important; }
   }
 
   .ttd-grid {
-    margin-top: 4px !important;
+    margin-top: 6px !important;
     font-size: 7.5pt !important;
     gap: 10px !important;
   }
 
   .ttd-space {
-    height: 16px !important;
+    height: 45px !important; /* JARAK TANDA TANGAN SAAT DICETAK A4 */
   }
 
   .print-logo {
@@ -569,7 +569,7 @@ th { border-color: inherit !important; }
     <div class="auth-header-brand">
       <img class="school-logo auth-logo-img" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
       <span class="brand-logo-fallback" style="display:none; font-size:32px; margin-bottom:8px;"><i class="fa-solid fa-school"></i></span>
-      <div class="auth-school-title">SD ISLAM RAMAH ANAK</div>
+      <div class="auth-school-title">SEKOLAH DASAR ISLAM RAMAH ANAK</div>
       <div style="font-size: 11px; font-weight: 700; color: var(--sub); margin-top:2px;">Journal Teachers Planner</div>
       <div class="auth-ta-badge"><i class="fa-solid fa-calendar-check"></i> TA <span class="dynamic-ta">--</span></div>
     </div>
@@ -1380,7 +1380,7 @@ th { border-color: inherit !important; }
       </div>
     </div>
 
-    <!-- VI. RINGKASAN JURNAL REFLEKSI GURU (STRUKTUR SESUAI GAMBAR TERBARU) -->
+    <!-- VI. RINGKASAN JURNAL REFLEKSI GURU -->
     <div class="print-section-title">VI. Ringkasan Jurnal Refleksi Guru</div>
     <div class="print-grid" style="grid-template-columns:1fr; gap:3px; margin-bottom:2px;">
       
@@ -1411,7 +1411,7 @@ th { border-color: inherit !important; }
 
     </div>
 
-    <!-- TANDA TANGAN PERSIS SESUAI GAMBAR -->
+    <!-- TANDA TANGAN DENGAN JARAK TINGGI (55px / 45px saat print) -->
     <div class="ttd-grid">
       <div>
         Mengetahui,<br>
@@ -1436,7 +1436,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpSGIdEHUZ_qOhoIs1HtECOxDH_1l59_VcVb5v9f_7FkGw0yAoQjC3d8EV87Y2dA9S/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwfKDBFgK5hT1PjfZtdWy-q3F5aKkvuvGh9LpnHiZc989x9qwjQP_XoFdZIoUYBK_aH/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
