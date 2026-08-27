@@ -76,7 +76,6 @@ button,input,textarea,select{font-family:inherit}
 h1{font-size:27px;line-height:1.2;margin-top:5px;color:var(--text)}
 .subtitle{color:var(--sub);font-size:12px;margin-top:7px}
 
-/* STYLING TOMBOL KEMBALI KE DASHBOARD */
 .btn-back-home {
   display: inline-flex;
   align-items: center;
@@ -256,7 +255,6 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     box-shadow:0 2px 8px #00000012;
 }
 
-/* STYLING KHUSUS LOGO UNTUK TAMPILAN OVERLAY LOGIN */
 .auth-header-brand {
   text-align: center;
   margin-bottom: 20px;
@@ -309,7 +307,6 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 }
 .toggle-password-btn:hover { color: var(--green); }
 
-/* RESPONSIVE DESAIN UNTUK HP */
 @media(max-width:1050px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .sidebar{width:235px}
@@ -467,7 +464,6 @@ th { border-color: inherit !important; }
 <div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto;">
   <div style="background:#fff; border-radius:16px; width:100%; max-width:420px; padding:25px; box-shadow:0 10px 25px rgba(0,0,0,0.2); margin:auto;">
     
-    <!-- BRANDING LOGIN -->
     <div class="auth-header-brand">
       <img class="school-logo auth-logo-img" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
       <span class="brand-logo-fallback" style="display:none; font-size:32px; margin-bottom:8px;"><i class="fa-solid fa-school"></i></span>
@@ -664,7 +660,7 @@ th { border-color: inherit !important; }
   </div>
 </section>
 
-<!-- SISWA -->
+<!-- SISWA (DENGAN FITUR PASTE NAMA EXCEL) -->
 <section id="siswa" class="page">
   <div class="section-head">
     <div>
@@ -672,11 +668,28 @@ th { border-color: inherit !important; }
       <div class="card-sub">Atur jumlah siswa secara fleksibel (Maksimal 24 siswa). Perubahan tersimpan otomatis.</div>
     </div>
     <div class="actions">
+      <button class="btn amber" onclick="togglePasteBox()"><i class="fa-solid fa-paste"></i> Paste Nama dari Excel</button>
       <button class="btn" onclick="addStudentRow()"><i class="fa-solid fa-plus"></i> Tambah Siswa</button>
       <button class="btn danger" onclick="removeLastStudentRow()"><i class="fa-solid fa-minus"></i> Kurangi Siswa</button>
       <button class="btn secondary" onclick="saveStudents()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
     </div>
   </div>
+
+  <!-- KOTAK POPUP INPUT TEMPEL EXCEL -->
+  <div id="pasteBoxContainer" class="card" style="display:none; background:#fffbe8; border:1px solid #fde68a;">
+    <div class="card-title" style="color:var(--amber)"><i class="fa-solid fa-clipboard"></i> Tempel (Paste) Daftar Nama dari Excel</div>
+    <div class="card-sub" style="margin-bottom:10px">
+      Blok kolom nama siswa di Excel, tekan <b>Ctrl + C</b>, lalu paste (<b>Ctrl + V</b>) pada kotak di bawah ini dan klik <b>Proses Tempel Nama</b>.
+    </div>
+    <div class="field">
+      <textarea id="pasteInputText" placeholder="Tempelkan daftar nama siswa di sini (satu nama per baris)..." style="height:120px; background:#fff;"></textarea>
+    </div>
+    <div style="margin-top:10px; display:flex; gap:8px;">
+      <button class="btn" onclick="processPastedNames()"><i class="fa-solid fa-check"></i> Proses Tempel Nama</button>
+      <button class="btn secondary" onclick="togglePasteBox()">Batal</button>
+    </div>
+  </div>
+
   <div class="card">
     <div class="table-wrap">
       <table>
@@ -1309,7 +1322,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwf398A1byjUsR4xDzoJefOgyrh2euupQINtPF5xwfsNITaKvWAQalOEIn33oBtDsbn/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbycFa437XZVBG1t9TAvhypyOkIWEX2MRu37nxl-AyQHo5N-DQ6WlJUImHxmzyM9poys/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -1667,7 +1680,6 @@ function initAcademicYear(){
  setAcademicYearUI(ta);
 }
 
-// UPDATE FUNGSI SHOWSECTION: MENAMPILKAN TOMBOL KEMBALI KE DASHBOARD
 function showSection(id){
  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
  document.getElementById(id).classList.add("active");
@@ -1842,6 +1854,58 @@ function removeLastStudentRow(){
     set("students", JSON.stringify(saved));
     renderStudents();
   }
+}
+
+// FUNGSI UNTUK TEMPEL NAMA DARI EXCEL
+function togglePasteBox() {
+  const box = document.getElementById("pasteBoxContainer");
+  if (box.style.display === "none") {
+    box.style.display = "block";
+    document.getElementById("pasteInputText").focus();
+  } else {
+    box.style.display = "none";
+  }
+}
+
+function processPastedNames() {
+  const text = document.getElementById("pasteInputText").value;
+  if (!text.trim()) {
+    alert("Silakan tempelkan daftar nama siswa terlebih dahulu.");
+    return;
+  }
+
+  const names = text.split(/\r?\n/).map(n => n.trim()).filter(n => n.length > 0);
+
+  if (names.length === 0) {
+    alert("Tidak ada nama valid yang ditemukan.");
+    return;
+  }
+
+  let saved = getStudentsData();
+
+  if (names.length > saved.length) {
+    const limit = Math.min(names.length, 24);
+    while (saved.length < limit) {
+      saved.push({ name: "", nisn: "", gender: "", birth: "", parent: "", job: "", phone: "" });
+    }
+  }
+
+  names.forEach((name, index) => {
+    if (index < 24) {
+      if (!saved[index]) {
+        saved[index] = { name: "", nisn: "", gender: "", birth: "", parent: "", job: "", phone: "" };
+      }
+      saved[index].name = name;
+    }
+  });
+
+  set("students", JSON.stringify(saved));
+  renderStudents();
+
+  document.getElementById("pasteInputText").value = "";
+  togglePasteBox();
+
+  alert(`Berhasil memasukkan ${Math.min(names.length, 24)} nama siswa ke dalam tabel!`);
 }
 
 function esc(v){return String(v).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
