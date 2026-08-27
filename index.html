@@ -458,7 +458,7 @@ table { border-collapse: collapse !important; border: 1px solid #cbd5e1 !importa
 th, td { border: 1px solid #cbd5e1 !important; }
 th { border-color: inherit !important; }
 
-/* ATURAN CETAK (PRINT CETAK KERMIT A4) */
+/* ATURAN CETAK (PRINT CETAK A4 KERMIT) */
 @media print {
   @page {
     size: A4 portrait;
@@ -523,11 +523,18 @@ th { border-color: inherit !important; }
     height: 14px !important;
   }
 
+  /* JUDUL JUDUL ELEMEN UTAMA DIPERTEGAS JADI HITAM PEKAT */
+  .print-report-container h2,
+  .print-report-container h3 {
+    color: #000000 !important;
+  }
+
   .print-section-title {
     font-size: 8pt !important;
     margin-bottom: 1px !important;
     padding-bottom: 1px !important;
-    border-bottom: 1px solid var(--green) !important;
+    color: #000000 !important; /* Diubah menjadi Hitam */
+    border-bottom: 1.5px solid #000000 !important; /* Garis bawah Hitam */
   }
 
   .print-grid {
@@ -537,23 +544,40 @@ th { border-color: inherit !important; }
 
   .print-box {
     padding: 2px 4px !important;
+    border: 1px solid #64748b !important;
+    background: #ffffff !important;
   }
 
   .bar-row {
     margin: 0px 0 !important;
   }
+
+  /* PERSEBAHAN TEKS LABEL & PERSENTASE */
   .bar-label {
     font-size: 7.5pt !important;
     margin-bottom: 0px !important;
+    color: #000000 !important;
+  }
+  
+  /* HANYA ANGKA PERSENTASE DI GRAFIK & SUMMARY YANG HIJAU TEGAS */
+  .bar-label b:last-child,
+  #printTargetPctText,
+  #printAbsensiPctText,
+  #printRefKepuasan,
+  #printTargetSummary {
+    color: #047857 !important;
+    font-weight: 800 !important;
   }
   
   .bar-track {
     height: 4px !important;
-    background-color: #cbd5e1 !important;
-    border: 0.5px solid #94a3b8 !important;
+    background-color: #e2e8f0 !important;
+    border: 0.5px solid #cbd5e1 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+  
+  /* HANYA BATANG ISI GRAFIK YANG TETAP BERWARNA HIJAU */
   .bar-fill {
     height: 100% !important;
     background-color: #059669 !important;
@@ -566,6 +590,7 @@ th { border-color: inherit !important; }
     margin-top: 6px !important;
     font-size: 7.5pt !important;
     gap: 10px !important;
+    color: #000000 !important;
   }
 
   .ttd-space {
@@ -1350,7 +1375,7 @@ th { border-color: inherit !important; }
     <div class="print-grid">
       <div class="print-box">
         <b>Grafik &amp; Capaian Target:</b>
-        <div style="font-size:9.5px; font-weight:800; color:var(--green); margin-top:1px;" id="printTargetSummary">15 / 15 Target Tercapai</div>
+        <div style="font-size:9.5px; font-weight:800; margin-top:1px;" id="printTargetSummary">15 / 15 Target Tercapai</div>
         <div style="margin-top:2px;">
           <div class="bar-label"><span><b>Persentase Target Tercapai</b></span><b id="printTargetPctText">100%</b></div>
           <div class="bar-track"><div class="bar-fill" id="printTargetBar" style="width:100%"></div></div>
@@ -1461,7 +1486,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxlaZYuaU-Pl20yvX6tIIcJLA7-y08jDxQACbmbUMHU3KhLhK3vi4IaEODs7e6r_-Fx/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyo1ef_K-wE9ZoygNqhju1bT0tCVMs_P3sWO4LQT3ockvJvjPkilCEW6-um6wKs3l0/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
