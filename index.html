@@ -76,6 +76,31 @@ button,input,textarea,select{font-family:inherit}
 h1{font-size:27px;line-height:1.2;margin-top:5px;color:var(--text)}
 .subtitle{color:var(--sub);font-size:12px;margin-top:7px}
 
+/* STYLING TOMBOL KEMBALI KE DASHBOARD */
+.btn-back-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  color: var(--sub);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+.btn-back-home:hover {
+  background: #ffffff;
+  color: var(--green);
+  border-color: var(--green);
+  transform: translateX(-3px);
+  box-shadow: 0 4px 10px rgba(4,120,87,0.12);
+}
+
 .clock{
   background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
   border: 1px solid #10b98144;
@@ -442,7 +467,7 @@ th { border-color: inherit !important; }
 <div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto;">
   <div style="background:#fff; border-radius:16px; width:100%; max-width:420px; padding:25px; box-shadow:0 10px 25px rgba(0,0,0,0.2); margin:auto;">
     
-    <!-- BRANDING LOGIN: LOGO SEKOLAH, NAMA SEKOLAH, & TAHUN AJARAN SAAT INI -->
+    <!-- BRANDING LOGIN -->
     <div class="auth-header-brand">
       <img class="school-logo auth-logo-img" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
       <span class="brand-logo-fallback" style="display:none; font-size:32px; margin-bottom:8px;"><i class="fa-solid fa-school"></i></span>
@@ -1284,7 +1309,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGdJv7JuGn-Tgy4aw2wvunwI4O2PnOTFqVGyzLYEzqsKI8a485JdJURIfbnb5NkxzO/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyS_V9HWk-Y03tjrHSLTRuC_eX_hisP1qU0UuBXCENdU02ofq0s3AQqq3f_T1PZAP4w/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -1642,6 +1667,7 @@ function initAcademicYear(){
  setAcademicYearUI(ta);
 }
 
+// UPDATE FUNGSI SHOWSECTION: MENAMPILKAN TOMBOL KEMBALI KE DASHBOARD
 function showSection(id){
  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
  document.getElementById(id).classList.add("active");
@@ -1660,10 +1686,13 @@ function showSection(id){
    refleksi:["Jurnal Refleksi Guru","Evaluasi pembelajaran, identifikasi masalah, & tindak lanjut"],
    print_view:["Ringkasan Laporan Planner","Siap untuk dicetak dan ditandatangani"]
  };
+ 
  if(titles[id]){
-   document.getElementById("pageTitle").textContent=titles[id][0];
-   document.getElementById("pageSubtitle").textContent=titles[id][1];
+   const backBtnHtml = id !== 'home' ? `<button class="btn-back-home" onclick="showSection('home')"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</button>` : '';
+   document.getElementById("pageTitle").innerHTML = backBtnHtml + `<div>${titles[id][0]}</div>`;
+   document.getElementById("pageSubtitle").textContent = titles[id][1];
  }
+ 
  window.scrollTo({top:0,behavior:"smooth"});
  if(innerWidth<=760) document.getElementById("sidebar").classList.remove("open");
  if(id==="print_view") updatePrintViewData();
