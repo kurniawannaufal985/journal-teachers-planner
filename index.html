@@ -240,17 +240,17 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 .print-box textarea{width:100%;border:1px dashed var(--border);border-radius:3px;padding:2px;font-size:8.5px;min-height:20px;margin-top:1px;background:#fff}
 
 .ttd-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:10px;text-align:center;font-size:8.5px}
-.ttd-space{height:55px} /* JARAK TANDA TANGAN DI WEB */
+.ttd-space{height:55px}
 
 .print-logo{
-    width:36px;
-    height:36px;
+    width:60px;
+    height:60px;
     border-radius:50%;
     object-fit:contain;
     padding:1px;
     background:#fff;
     border:0;
-    margin:0 auto 2px;
+    margin:0 auto 4px;
     display:block;
 }
 
@@ -383,7 +383,7 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
     border: 0;
     background: #10b98118;
     color: var(--green);
-    border-radius: 99px;
+    border-radius: 9px;
     width: 36px;
     height: 36px;
     font-size: 16px;
@@ -456,7 +456,7 @@ table { border-collapse: collapse !important; border: 1px solid #cbd5e1 !importa
 th, td { border: 1px solid #cbd5e1 !important; }
 th { border-color: inherit !important; }
 
-/* ATURAN CETAK DENGAN JARAK TANDA TANGAN LEBIH LAPANG */
+/* ATURAN CETAK (LOGO DIPERBESAR DIPRINT) */
 @media print {
   @page {
     size: A4 portrait;
@@ -549,13 +549,13 @@ th { border-color: inherit !important; }
   }
 
   .ttd-space {
-    height: 45px !important; /* JARAK TANDA TANGAN SAAT DICETAK A4 */
+    height: 45px !important;
   }
 
   .print-logo {
-    width: 28px !important;
-    height: 28px !important;
-    margin-bottom: 1px !important;
+    width: 50px !important; /* UKURAN LOGO DIPERBESAR PAS DIPRINT */
+    height: 50px !important;
+    margin-bottom: 2px !important;
   }
 }
 </style>
@@ -1411,7 +1411,7 @@ th { border-color: inherit !important; }
 
     </div>
 
-    <!-- TANDA TANGAN DENGAN JARAK TINGGI (55px / 45px saat print) -->
+    <!-- TANDA TANGAN -->
     <div class="ttd-grid">
       <div>
         Mengetahui,<br>
@@ -1436,7 +1436,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwfKDBFgK5hT1PjfZtdWy-q3F5aKkvuvGh9LpnHiZc989x9qwjQP_XoFdZIoUYBK_aH/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFIg6AjAUuv5bnqLkKNcTSvebYEQwxydwiT1z6JdahLU4P-eSAgn6-mAsRrAoE8LKS/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
