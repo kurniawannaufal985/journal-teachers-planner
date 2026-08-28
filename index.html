@@ -1472,12 +1472,11 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxc2jyYUGMjqaWtdbWjl1rxd-2DfJYtH7aNxFzYpss8FpLt1NTduv1B6dRhjMUTBBo/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxoz8USgR8MjkfEYeWrR2DwF1spqQb66RsCncbaijPXW7kmL1YZx7TuBRICADvPEudY/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
 
-// Memuat data akun tersimpan secara permanen dari LocalStorage
 let activeUserKey = localStorage.getItem("jtp_account_user_key") || "";
 let activeUsername = localStorage.getItem("jtp_account_username") || "";
 let activeTA = localStorage.getItem("jtp_active_ta") || localStorage.getItem("jtp_auto_ta") || getCalculatedTA();
@@ -1552,7 +1551,6 @@ function clearPlannerLocalData(){
 }
 
 function putPayloadToLocal(payload){
-  clearPlannerLocalData();
   Object.keys(payload || {}).forEach(k => {
     localStorage.setItem("jtp_"+k, String(payload[k]));
   });
@@ -1576,8 +1574,9 @@ function autoSyncToCloud(){
   },900);
 }
 
-async function loadTAData(ta){
-  if(!activeUserKey) return false;
+// DIPERBAIKI: HANYA DILAKUKAN SECARA BACKGROUND AGAR TIDAK MERESET BROWSER
+async function loadTADataBackground(ta){
+  if(!activeUserKey) return;
   const taToUse = ta || getCalculatedTA();
   cloudLoading = true;
   try{
@@ -1586,21 +1585,23 @@ async function loadTAData(ta){
       userKey:activeUserKey,
       ta:taToUse
     });
-    if(!res.ok) throw new Error(res.error || "Gagal memuat data.");
-    activeTA = taToUse;
-    localStorage.setItem("jtp_active_ta",taToUse);
-    localStorage.setItem("jtp_auto_ta",taToUse);
-    putPayloadToLocal(res.payload || {});
-    setAcademicYearUI(taToUse);
-    initInputs();
-    renderStudents();
-    renderActivities();
-    renderTargets();
-    renderDPL();
-    renderAnekdot();
-    renderNilai();
-    renderRefleksi();
-    return true;
+    if(res.ok && res.payload) {
+      activeTA = taToUse;
+      localStorage.setItem("jtp_active_ta",taToUse);
+      localStorage.setItem("jtp_auto_ta",taToUse);
+      putPayloadToLocal(res.payload);
+      setAcademicYearUI(taToUse);
+      initInputs();
+      renderStudents();
+      renderActivities();
+      renderTargets();
+      renderDPL();
+      renderAnekdot();
+      renderNilai();
+      renderRefleksi();
+    }
+  }catch(e){
+    console.log("Mode offline: menggunakan data lokal HP/Laptop");
   }finally{
     cloudLoading = false;
   }
@@ -1616,16 +1617,13 @@ function setAcademicYearUI(ta){
   if(footerYr) footerYr.textContent=`TA. ${taToDisplay}`;
 }
 
-// PENGECEKAN KETAT UNTUK KONSISTENSI SESI LOGIN
+// PENGECEKAN SESI LOKAL KETAT - BEBAS RESET & REFRESH
 function checkLoginSession(){
   const isLoggedIn = localStorage.getItem("jtp_is_logged_in") === "true";
+  const userKey = localStorage.getItem("jtp_account_user_key");
   const loginScreen = document.getElementById("loginScreen");
 
-  activeUserKey = localStorage.getItem("jtp_account_user_key") || "";
-  activeUsername = localStorage.getItem("jtp_account_username") || "";
-  activeTA = localStorage.getItem("jtp_active_ta") || getCalculatedTA();
-
-  if(isLoggedIn && activeUserKey) {
+  if(isLoggedIn && userKey) {
     loginScreen.style.display = "none";
     return true;
   } else {
@@ -1675,7 +1673,7 @@ async function handleLogin(e){
     document.getElementById("loginScreen").style.display="none";
     setAcademicYearUI(activeTA);
 
-    loadTAData(activeTA);
+    loadTADataBackground(activeTA);
 
   }catch(err){
     alert(err.message || "Login gagal.");
@@ -1739,7 +1737,6 @@ async function handleRegister(e){
   }
 }
 
-// FUNGSI LOGOUT DIPERBAIKI UNTUK MENGHAPUS SELURUH FLAG SESI LOGIN
 function handleLogout(){
   if(!confirm("Apakah Anda yakin ingin keluar dari akun?")) return;
   
@@ -2683,14 +2680,10 @@ async function resetPlanner(){
 
   try {
     if (activeUserKey) {
-      const res = await cloudPost({
+      await cloudPost({
         action: "reset_ta_v2",
         userKey: activeUserKey
       });
-
-      if (!res.ok) {
-        throw new Error(res.error || "Gagal mereset data akun di server.");
-      }
     }
 
     localStorage.removeItem("jtp_is_logged_in");
@@ -2712,12 +2705,14 @@ async function resetPlanner(){
   }
 }
 
-// PROSES INISIALISASI DAN PENGECEKAN SESI LOGIN SAAT HALAMAN DIMUAT (REFRESH/HOME)
-(async function init(){
+// PROSES INISIALISASI APPS SAAT DI-REFRESH
+(function init(){
   document.documentElement.dataset.theme = "light";
   
+  // 1. Cek Sesi Lokal
   const isSessionValid = checkLoginSession();
   
+  // 2. Render tampilan dari data HP/Laptop secara instant
   initSchoolLogo();
   initAcademicYear();
   initInputs();
@@ -2730,12 +2725,9 @@ async function resetPlanner(){
   renderRefleksi();
   startClock();
 
+  // 3. Muat data Google Sheets di background tanpa menggangu layar utama
   if (isSessionValid && activeUserKey) {
-    try {
-      await loadTAData(activeTA || getCalculatedTA());
-    } catch(err) { 
-      console.error("Gagal memuat sesi cloud:", err); 
-    }
+    loadTADataBackground(activeTA || getCalculatedTA());
   }
 })();
 </script>
