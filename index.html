@@ -29,7 +29,7 @@ button,input,textarea,select{font-family:inherit}
   padding:22px 16px;
   display:flex;
   flex-direction:column;
-  justify-style:space-between;
+  justify-content:space-between;
   position:fixed;
   inset:0 auto 0 0;
   z-index:50;
@@ -217,8 +217,16 @@ tr:hover td{background:#0596690a}
 .mobile-menu{display:none}
 footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 
+/* STICKY ABSENSI TABEL (NAMA & NO TIDAK TERGESER) */
+.absensi-table { border-collapse: separate !important; border-spacing: 0; }
 .absensi-table input.day-cell{width:26px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:3px 0;font-size:10px;font-weight:700}
 .rekap-table td, .rekap-table th{text-align:center;font-size:10px}
+
+.absensi-table th { position: sticky; top: 0; z-index: 10; background: var(--header); }
+.absensi-table td:nth-child(1), .absensi-table th:nth-child(1) { position: sticky; left: 0; z-index: 11; background: #ffffff; border-right: 1px solid var(--border); }
+.absensi-table td:nth-child(2), .absensi-table th:nth-child(2) { position: sticky; left: 30px; z-index: 11; background: #ffffff; border-right: 2px solid var(--border); }
+.absensi-table th:nth-child(1), .absensi-table th:nth-child(2) { z-index: 12; }
+tr:hover td:nth-child(1), tr:hover td:nth-child(2) { background: #f1f5f9; }
 
 .dpl-table input{width:45px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:4px;font-size:11px}
 .anekdot-table input,.anekdot-table textarea{width:100%;background:transparent;border:0;outline:none;color:var(--text);font-size:11px;padding:4px}
@@ -918,7 +926,7 @@ th { border-color: inherit !important; }
       </div>
     </div>
     <div class="card-title" style="margin-bottom:6px">Daftar Hadir Bulanan - <span id="currentMonthLabel" style="color:var(--green)">Agustus</span></div>
-    <div class="card-sub" style="margin-bottom:12px">Isi kode <b>H / . / 1</b> (Hadir), <b>S</b> (Sakit), <b>I</b> (Izin), atau <b>A</b> (Alpha). Kolom <b>Hadir</b>, <b>Izin</b>, <b>Sakit</b>, <b>Alpha</b> &amp; <b>% Kehadiran</b> terhitung otomatis!</div>
+    <div class="card-sub" style="margin-bottom:12px">Isi kode <b>H / . / 1</b> (Hadir), <b>S</b> (Sakit), <b>I</b> (Izin), atau <b>A</b> (Alpha). Kolom No dan Nama tidak akan tergeser saat di-scroll!</div>
     <div class="table-wrap">
       <table class="absensi-table">
         <thead>
@@ -1085,9 +1093,19 @@ th { border-color: inherit !important; }
 
   <div class="card">
     <div class="card-title" style="margin-bottom:6px">1. Capaian 8 DPL (Dimensi Profil Lulusan)</div>
-    <div class="card-sub" style="margin-bottom:12px; color:var(--green)">
-      <i class="fa-solid fa-circle-info"></i> Pilih tanggal pekan di bawah ini. Tabel &amp; Diagram akan otomatis berganti sesuai pekan yang dipilih!
+    
+    <!-- PETUNJUK BARU DPL REVISED & SANGAT RAMAH GURU -->
+    <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:14px; margin-bottom:15px; border-radius:12px;">
+      <div style="font-weight:800; color:var(--green); font-size:12px; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+        <i class="fa-solid fa-circle-info" style="font-size:15px;"></i> PETUNJUK PENGISIAN UNTUK BAPAK/IBU GURU:
+      </div>
+      <ul style="font-size:11px; color:#166534; padding-left:20px; line-height:1.6;">
+        <li><b>Pilih Tanggal Pekan:</b> Tentukan rentang pekan pada kotak tanggal di bawah. Data tabel &amp; diagram akan berganti otomatis per pekan.</li>
+        <li><b>Cara Mengisi Kolom:</b> Isikan angka <b>1</b> pada kolom aspek DPL yang dilaksanakan atau dicapai oleh peserta didik pada hari tersebut.</li>
+        <li><b>Kalkulasi Otomatis:</b> Grafik alokasi dan total persentase akan dihitung otomatis oleh sistem berdasarkan input angka Anda.</li>
+      </ul>
     </div>
+
     <div class="form-grid" style="grid-template-columns:1fr; margin-bottom:15px;">
       <div class="field">
         <label>Tanggal / Rentang Pekan DPL</label>
@@ -1155,20 +1173,35 @@ th { border-color: inherit !important; }
       <div class="card-sub">Daftar Nilai Formatif Peserta Didik per Pekan</div>
     </div>
     <div class="actions">
-      <!-- TOMBOL PASTE NILAI -->
       <button class="btn amber" onclick="togglePasteNilaiBox()"><i class="fa-solid fa-paste"></i> Paste Nilai dari Excel</button>
       <span class="badge success"><i class="fa-solid fa-floppy-disk"></i> Auto Save</span>
     </div>
   </div>
 
-  <!-- KOTAK PASTE DATA NILAI EXCEL -->
+  <!-- KOTAK PASTE DATA NILAI EXCEL DENGAN DROPDOWN MAPEL -->
   <div id="pasteNilaiBoxContainer" class="card" style="display:none; background:#fffbe8; border:1px solid #fde68a;">
     <div class="card-title" style="color:var(--amber)"><i class="fa-solid fa-clipboard"></i> Tempel (Paste) Data Nilai dari Excel</div>
     <div class="card-sub" style="margin-bottom:10px">
-      Blok/Copy baris nilai dari Excel sesuai urutan mapel: <br>
-      <b>[PAI | B.INA | MTK | IPAS | SENI | PJOK | B.ING | SUNDA | ARAB | TIK]</b><br>
-      Tekan <b>Ctrl + C</b> di Excel, tempelkan (<b>Ctrl + V</b>) pada kotak di bawah ini, lalu klik <b>Proses Tempel Nilai</b>.
+      Pilih Mata Pelajaran tujuan untuk nilai yang akan ditempelkan, atau biarkan <b>"Semua Mapel (Berurutan)"</b> jika menyalin seluruh kolom mapel dari Excel.
     </div>
+    
+    <div class="field" style="margin-bottom:10px;">
+      <label>Pilih Mapel Tujuan Paste:</label>
+      <select id="pasteMapelTarget" style="background:#fff;">
+        <option value="ALL">Semua Mapel (Berurutan: PAI, B.INA, MTK, IPAS, SENI, PJOK, B.ING, SUNDA, ARAB, TIK)</option>
+        <option value="pai">PAI</option>
+        <option value="bina">Bahasa Indonesia</option>
+        <option value="mtk">Matematika</option>
+        <option value="ipas">IPAS</option>
+        <option value="seni">Seni</option>
+        <option value="pjok">PJOK</option>
+        <option value="bing">Bahasa Inggris</option>
+        <option value="sunda">Bahasa Sunda</option>
+        <option value="arab">Bahasa Arab</option>
+        <option value="tik">TIK</option>
+      </select>
+    </div>
+
     <div class="field">
       <textarea id="pasteNilaiInputText" placeholder="Tempelkan baris/kolom nilai dari Excel di sini..." style="height:120px; background:#fff;"></textarea>
     </div>
@@ -1179,7 +1212,7 @@ th { border-color: inherit !important; }
   </div>
 
   <div class="card">
-    <div class="form-grid" style="margin-bottom:15px;">
+    <div class="form-grid" style="margin-bottom:15px; grid-template-columns: repeat(3, 1fr);">
       <div class="field">
         <label>Tanggal / Rentang Pekan Pelaksanaan</label>
         <div class="date-range-box">
@@ -1188,10 +1221,18 @@ th { border-color: inherit !important; }
           <input type="date" data-save="nilai_tgl_selesai" onchange="renderNilai()">
         </div>
       </div>
-      <div class="field"><label>Kelas / Semester</label><input type="text" data-save="nilai_kelas" placeholder="Isi Kelas / Semester..."></div>
+      <div class="field">
+        <label>Kelas / Level</label>
+        <input type="text" data-save="nilai_kelas" placeholder="Isi Kelas / Level..." oninput="renderNilai()">
+      </div>
+      <!-- FITUR BARU: INPUT KKM DINAMIS PER LEVEL -->
+      <div class="field">
+        <label>KKM Level Ini</label>
+        <input type="number" id="kkmInput" data-save="nilai_kkm" value="75" placeholder="70 / 75 / 80" oninput="saveKKM(this.value)">
+      </div>
     </div>
     <div class="card-title" style="margin-bottom:6px">Tabel Nilai Formatif Per Mapel</div>
-    <div class="card-sub" style="margin-bottom:12px">Isi angka nilai (0-100) per mata pelajaran. Nilai di bawah KKM (<b>&lt; 75</b>) otomatis <b>berwarna merah</b> dan jumlah <b>Remedial</b> terhitung otomatis!</div>
+    <div class="card-sub" style="margin-bottom:12px">Isi angka nilai (0-100). Nilai di bawah KKM (<b id="kkmInfoText">&lt; 75</b>) otomatis <b>berwarna merah</b> dan jumlah <b>Remedial</b> terhitung otomatis!</div>
     <div class="table-wrap">
       <table class="nilai-table">
         <thead>
@@ -1524,7 +1565,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_cymPuwOxUsfAjwD2csD2LSWUOJqf7LDuU-LURP6_6iyW2LE3ymSd33jxKE9m5P9J/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvxJj1bpYTO834v7ZEP7FJSyrWWiyRRkuIRKjJLQlDwiHmIOIPbE1UoYdHn3leLUwc/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -2536,12 +2577,31 @@ function getNilaiStorageKey(){
   return `nilaiData_${start}_${end}`;
 }
 
+// FUNGSI UNTUK MENGAMBIL DAN MENYIMPAN KKM DINAMIS
+function getKKM() {
+  const saved = get("nilai_kkm", "75");
+  const num = parseFloat(saved);
+  return isNaN(num) ? 75 : num;
+}
+
+function saveKKM(val) {
+  set("nilai_kkm", val);
+  renderNilai();
+}
+
 function renderNilai(){
+ const kkm = getKKM();
  const key = getNilaiStorageKey();
  const students = getStudentsData();
  const saved = JSON.parse(get(key, JSON.stringify(defaultNilaiData)));
  const body = document.getElementById("nilaiBody");
  body.innerHTML = "";
+
+ const kkmEl = document.getElementById("kkmInput");
+ if(kkmEl && !kkmEl.value) kkmEl.value = kkm;
+
+ const kkmInfoText = document.getElementById("kkmInfoText");
+ if(kkmInfoText) kkmInfoText.textContent = `< ${kkm}`;
 
  students.forEach((st, i) => {
     const name = st.name || "";
@@ -2554,7 +2614,7 @@ function renderNilai(){
     mapelKeys.forEach(mKey => {
       const val = sNilai[mKey] || "";
       const valNum = parseVal(val);
-      const isUnderKKM = valNum !== null && valNum < 75;
+      const isUnderKKM = valNum !== null && valNum < kkm;
 
       if(isUnderKKM) remedCount++;
 
@@ -2588,6 +2648,8 @@ function togglePasteNilaiBox() {
 
 function processPastedNilai() {
   const text = document.getElementById("pasteNilaiInputText").value;
+  const targetMapel = document.getElementById("pasteMapelTarget").value;
+
   if (!text.trim()) {
     alert("Silakan tempelkan data nilai terlebih dahulu.");
     return;
@@ -2614,12 +2676,17 @@ function processPastedNilai() {
     if (index < students.length) {
       const cols = line.split("\t").map(c => c.trim());
 
-      cols.forEach((val, colIdx) => {
-        if (colIdx < mapelsOrder.length) {
-          const mapelKey = mapelsOrder[colIdx];
-          saved[index][mapelKey] = val;
+      if (targetMapel === "ALL") {
+        cols.forEach((val, colIdx) => {
+          if (colIdx < mapelsOrder.length) {
+            saved[index][mapelsOrder[colIdx]] = val;
+          }
+        });
+      } else {
+        if (cols.length > 0) {
+          saved[index][targetMapel] = cols[0];
         }
-      });
+      }
     }
   });
 
@@ -2677,32 +2744,33 @@ function calcNilaiStats(){
 }
 
 function saveNilai(){
+ const kkm = getKKM();
  const arr = [];
  document.querySelectorAll("#nilaiBody tr").forEach((tr, i) => {
-   const item = {};
-   let remedCount = 0;
+    const item = {};
+    let remedCount = 0;
 
-   tr.querySelectorAll("input.nilai-cell").forEach(x => {
-     const mKey = x.dataset.m;
-     const val = String(x.value);
-     item[mKey] = val;
+    tr.querySelectorAll("input.nilai-cell").forEach(x => {
+      const mKey = x.dataset.m;
+      const val = String(x.value);
+      item[mKey] = val;
 
-     const valNum = parseVal(val);
-     const isUnderKKM = valNum !== null && valNum < 75;
+      const valNum = parseVal(val);
+      const isUnderKKM = valNum !== null && valNum < kkm;
 
-     if (isUnderKKM) {
-       remedCount++;
-       x.classList.add("under-kkm");
-     } else {
-       x.classList.remove("under-kkm");
-     }
-   });
+      if (isUnderKKM) {
+        remedCount++;
+        x.classList.add("under-kkm");
+      } else {
+        x.classList.remove("under-kkm");
+      }
+    });
 
-   item.remed = String(remedCount);
-   const remedInput = document.getElementById(`remed_count_${i}`);
-   if(remedInput) remedInput.value = remedCount;
+    item.remed = String(remedCount);
+    const remedInput = document.getElementById(`remed_count_${i}`);
+    if(remedInput) remedInput.value = remedCount;
 
-   arr[i] = item;
+    arr[i] = item;
  });
 
  const key = getNilaiStorageKey();
