@@ -217,7 +217,7 @@ tr:hover td{background:#0596690a}
 .mobile-menu{display:none}
 footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 
-/* STICKY PERBAIKAN TOTAL TABEL ABSENSI (KOLOM NO & NAMA TIDAK IKUT TERGESER) */
+/* STICKY PERBAIKAN TOTAL TABEL ABSENSI */
 .absensi-table {
   border-collapse: separate !important;
   border-spacing: 0 !important;
@@ -244,7 +244,7 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 
 /* CSS UNTUK HARI LIBUR SABTU & MINGGU */
 th.is-weekend, td.is-weekend {
-  background-color: #fee2e2 !important; /* Warna abu-abu/merah muda khas hari libur */
+  background-color: #fee2e2 !important;
   color: #991b1b !important;
 }
 input.day-cell:disabled {
@@ -912,7 +912,7 @@ th { border-color: inherit !important; }
   </div>
 </section>
 
-<!-- SISWA -->
+<!-- SISWA (DENGAN DROPDOWN PILIHAN PASTE DAFTAR SISWA) -->
 <section id="siswa" class="page">
   <div class="section-head">
     <div>
@@ -930,10 +930,25 @@ th { border-color: inherit !important; }
   <div id="pasteBoxContainer" class="card" style="display:none; background:#fffbe8; border:1px solid #fde68a;">
     <div class="card-title" style="color:var(--amber)"><i class="fa-solid fa-clipboard"></i> Tempel (Paste) Data Siswa dari Excel</div>
     <div class="card-sub" style="margin-bottom:10px">
-      Blok kolom data siswa di Excel (bisa 1 kolom Nama saja, atau sekaligus beberapa kolom: Nama, NISN, Jenis Kelamin, dll), tekan <b>Ctrl + C</b>, lalu tempelkan (<b>Ctrl + V</b>) pada kotak di bawah ini dan klik <b>Proses Tempel Data</b>.
+      Pilih kolom mana yang ingin diisi pada dropdown, atau pilih <b>"Semua Kolom (Berurutan)"</b> jika menyalin seluruh kolom data siswa sekaligus dari Excel.
     </div>
+
+    <div class="field" style="margin-bottom:12px;">
+      <label>Pilih Kolom Tujuan Paste:</label>
+      <select id="pasteStudentTarget" style="background:#fff;">
+        <option value="ALL">Semua Kolom (Berurutan: Nama, NISN, L/P, Tempat Tgl Lahir, Orang Tua, Pekerjaan, No Telp)</option>
+        <option value="name">Hanya Nama Siswa</option>
+        <option value="nisn">Hanya NISN</option>
+        <option value="gender">Hanya Jenis Kelamin (L/P)</option>
+        <option value="birth">Hanya Tempat, Tgl Lahir</option>
+        <option value="parent">Hanya Nama Orang Tua</option>
+        <option value="job">Hanya Pekerjaan Ortu</option>
+        <option value="phone">Hanya No. Telp Orang Tua</option>
+      </select>
+    </div>
+
     <div class="field">
-      <textarea id="pasteInputText" placeholder="Tempelkan baris/kolom dari Excel di sini..." style="height:120px; background:#fff;"></textarea>
+      <textarea id="pasteInputText" placeholder="Tempelkan baris/kolom data dari Excel di sini..." style="height:120px; background:#fff;"></textarea>
     </div>
     <div style="margin-top:10px; display:flex; gap:8px;">
       <button class="btn" onclick="processPastedNames()"><i class="fa-solid fa-check"></i> Proses Tempel Data</button>
@@ -962,7 +977,7 @@ th { border-color: inherit !important; }
   </div>
 </section>
 
-<!-- ABSENSI (REVISI DINAMIS TANGGAL & PENGUNCIAN HARI LIBUR SABTU-MINGGU) -->
+<!-- ABSENSI -->
 <section id="absensi" class="page">
   <div class="section-head">
     <div>
@@ -1633,7 +1648,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUPWYEI4WzaPfkHEZF3Xj-wugzp9VxBQ7K5PV5dJK5BHYrqT72OIEf-bWsTKQp1yK5/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGHobcHeEto-9q5KVBnJuxIo98hKP4eiAGfn3oNwEJN5GnhLKbVbDZjgN1UYVsUEbL/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -2233,7 +2248,7 @@ function removeLastStudentRow(){
 
 function togglePasteBox() {
   const box = document.getElementById("pasteBoxContainer");
-  if (box.style.display === "none") {
+  if (box.style.display === "none" || !box.style.display) {
     box.style.display = "block";
     document.getElementById("pasteInputText").focus();
   } else {
@@ -2241,8 +2256,11 @@ function togglePasteBox() {
   }
 }
 
+/* FUNGSI PROSES TEMPEL SISWA TERBARU DENGAN DROPDOWN PILIHAN KOLOM */
 function processPastedNames() {
   const text = document.getElementById("pasteInputText").value;
+  const targetField = document.getElementById("pasteStudentTarget").value;
+
   if (!text.trim()) {
     alert("Silakan tempelkan data terlebih dahulu.");
     return;
@@ -2274,14 +2292,16 @@ function processPastedNames() {
 
       const cols = line.split("\t").map(c => c.trim());
 
-      if (cols.length === 1) {
-        saved[index].name = cols[0];
-      } else {
+      if (targetField === "ALL") {
         cols.forEach((val, colIdx) => {
           if (colIdx < fieldsOrder.length) {
             saved[index][fieldsOrder[colIdx]] = val;
           }
         });
+      } else {
+        if (cols.length > 0) {
+          saved[index][targetField] = cols[0];
+        }
       }
     }
   });
@@ -2292,7 +2312,7 @@ function processPastedNames() {
   document.getElementById("pasteInputText").value = "";
   togglePasteBox();
 
-  alert(`Berhasil mengimpor ${Math.min(lines.length, 24)} baris data siswa ke dalam tabel!`);
+  alert(`Berhasil mengimpor data untuk ${Math.min(lines.length, 24)} siswa!`);
 }
 
 function esc(v){return String(v).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
@@ -2304,7 +2324,6 @@ function changeAbsensiMonth(m){
  renderAbsensi();
 }
 
-/* HELPER FUNGSIONALITAS KALENDER DINAMIS & SABTU-MINGGU */
 function getMonthDaysAndYear(monthKey) {
   const ta = activeTA || getCalculatedTA();
   const years = ta.split("/");
@@ -2327,7 +2346,6 @@ function getMonthDaysAndYear(monthKey) {
   };
 
   const info = monthMap[monthKey] || { mIndex: 7, year: startYear };
-  // Mendapatkan jumlah hari dalam bulan tersebut
   const daysInMonth = new Date(info.year, info.mIndex + 1, 0).getDate();
   
   return {
@@ -2349,7 +2367,7 @@ function renderAbsensi(){
 
  for (let d = 1; d <= totalDays; d++) {
     const dateObj = new Date(monthInfo.year, monthInfo.mIndex, d);
-    const dayOfWeek = dateObj.getDay(); // 0 = Minggu, 6 = Sabtu
+    const dayOfWeek = dateObj.getDay();
     const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
 
     headerRow.innerHTML += `<th style="padding:4px;text-align:center" class="${isWeekend ? 'is-weekend' : ''}">${d}</th>`;
