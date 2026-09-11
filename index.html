@@ -242,6 +242,18 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 }
 .rekap-table td, .rekap-table th { text-align: center; font-size: 10px; }
 
+/* CSS UNTUK HARI LIBUR SABTU & MINGGU */
+th.is-weekend, td.is-weekend {
+  background-color: #fee2e2 !important; /* Warna abu-abu/merah muda khas hari libur */
+  color: #991b1b !important;
+}
+input.day-cell:disabled {
+  background-color: #fecdd3 !important;
+  border-color: #fca5a5 !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* Sticky Header Top untuk Tanggal */
 .absensi-table th {
   position: sticky;
@@ -950,7 +962,7 @@ th { border-color: inherit !important; }
   </div>
 </section>
 
-<!-- ABSENSI (REVISI STICKY FROZEN NO & NAMA SISWA) -->
+<!-- ABSENSI (REVISI DINAMIS TANGGAL & PENGUNCIAN HARI LIBUR SABTU-MINGGU) -->
 <section id="absensi" class="page">
   <div class="section-head">
     <div>
@@ -982,14 +994,17 @@ th { border-color: inherit !important; }
       </div>
     </div>
     <div class="card-title" style="margin-bottom:6px">Daftar Hadir Bulanan - <span id="currentMonthLabel" style="color:var(--green)">Agustus</span></div>
-    <div class="card-sub" style="margin-bottom:12px">Isi kode <b>H / . / 1</b> (Hadir), <b>S</b> (Sakit), <b>I</b> (Izin), atau <b>A</b> (Alpha). Kolom <b>NO</b> dan <b>NAMA SISWA</b> dikunci (tidak bergeser) saat tabel di-scroll!</div>
+    <div class="card-sub" style="margin-bottom:12px">
+      Isi kode <b>H / . / 1</b> (Hadir), <b>S</b> (Sakit), <b>I</b> (Izin), atau <b>A</b> (Alpha). 
+      Kolom berwarna <span style="background:#fee2e2; color:#991b1b; padding:2px 6px; border-radius:4px; font-weight:bold;">merah muda</span> adalah hari <b>Sabtu &amp; Minggu (Libur)</b> dan tidak dapat diisi.
+    </div>
     <div class="table-wrap">
       <table class="absensi-table">
         <thead>
-          <tr>
+          <tr id="absensiHeaderRow1">
             <th rowspan="2" class="col-sticky-1" style="text-align:center">NO.</th>
             <th rowspan="2" class="col-sticky-2" style="text-align:left; padding-left:10px;">NAMA SISWA</th>
-            <th colspan="31" style="text-align:center">TANGGAL</th>
+            <th id="tanggalHeaderGroup" colspan="31" style="text-align:center">TANGGAL</th>
             <th rowspan="2" style="width:45px;text-align:center">Izin</th>
             <th rowspan="2" style="width:45px;text-align:center">Sakit</th>
             <th rowspan="2" style="width:45px;text-align:center">Alpha</th>
@@ -1618,7 +1633,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTOy9SOQp3MwnA-zgr-qfm8Rmhvq8_RfAL9P67YySWtJvraR8jAG0HkBtPXwkqswI/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUPWYEI4WzaPfkHEZF3Xj-wugzp9VxBQ7K5PV5dJK5BHYrqT72OIEf-bWsTKQp1yK5/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -2289,27 +2304,81 @@ function changeAbsensiMonth(m){
  renderAbsensi();
 }
 
+/* HELPER FUNGSIONALITAS KALENDER DINAMIS & SABTU-MINGGU */
+function getMonthDaysAndYear(monthKey) {
+  const ta = activeTA || getCalculatedTA();
+  const years = ta.split("/");
+  const startYear = parseInt(years[0]) || new Date().getFullYear();
+  const endYear = parseInt(years[1]) || (startYear + 1);
+
+  const monthMap = {
+    "JULI": { mIndex: 6, year: startYear },
+    "AGUST": { mIndex: 7, year: startYear },
+    "SEPT": { mIndex: 8, year: startYear },
+    "OKT": { mIndex: 9, year: startYear },
+    "NOV": { mIndex: 10, year: startYear },
+    "DES": { mIndex: 11, year: startYear },
+    "JAN": { mIndex: 0, year: endYear },
+    "FEB": { mIndex: 1, year: endYear },
+    "MAR": { mIndex: 2, year: endYear },
+    "APR": { mIndex: 3, year: endYear },
+    "MEI": { mIndex: 4, year: endYear },
+    "JUN": { mIndex: 5, year: endYear }
+  };
+
+  const info = monthMap[monthKey] || { mIndex: 7, year: startYear };
+  // Mendapatkan jumlah hari dalam bulan tersebut
+  const daysInMonth = new Date(info.year, info.mIndex + 1, 0).getDate();
+  
+  return {
+    daysCount: daysInMonth,
+    year: info.year,
+    mIndex: info.mIndex
+  };
+}
+
 function renderAbsensi(){
- const headerRow=document.getElementById("absensiDaysHeader");
- headerRow.innerHTML="";
- for(let d=1;d<=31;d++){headerRow.innerHTML+=`<th style="padding:4px;text-align:center">${d}</th>`;}
+ const monthInfo = getMonthDaysAndYear(currentMonth);
+ const totalDays = monthInfo.daysCount;
+
+ const tanggalGroup = document.getElementById("tanggalHeaderGroup");
+ if (tanggalGroup) tanggalGroup.colSpan = totalDays;
+
+ const headerRow = document.getElementById("absensiDaysHeader");
+ headerRow.innerHTML = "";
+
+ for (let d = 1; d <= totalDays; d++) {
+    const dateObj = new Date(monthInfo.year, monthInfo.mIndex, d);
+    const dayOfWeek = dateObj.getDay(); // 0 = Minggu, 6 = Sabtu
+    const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+
+    headerRow.innerHTML += `<th style="padding:4px;text-align:center" class="${isWeekend ? 'is-weekend' : ''}">${d}</th>`;
+ }
 
  const students = getStudentsData();
- const monthData = JSON.parse(get("absData_"+currentMonth,"{}"));
+ const monthData = JSON.parse(get("absData_" + currentMonth, "{}"));
  const body = document.getElementById("absensiBody");
  body.innerHTML = "";
 
  students.forEach((st, i) => {
     const name = st.name || "";
     const studentAbs = monthData[i] || {};
-    let daysHtml="";
-    for(let d=1;d<=31;d++){
-      const val=studentAbs[d]||"";
-      daysHtml+=`<td><input type="text" class="day-cell" data-s="${i}" data-d="${d}" value="${esc(val)}" maxlength="1"></td>`;
+    let daysHtml = "";
+
+    for (let d = 1; d <= totalDays; d++) {
+      const val = studentAbs[d] || "";
+      const dateObj = new Date(monthInfo.year, monthInfo.mIndex, d);
+      const dayOfWeek = dateObj.getDay();
+      const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+
+      daysHtml += `<td class="${isWeekend ? 'is-weekend' : ''}">
+        <input type="text" class="day-cell" data-s="${i}" data-d="${d}" value="${isWeekend ? '' : esc(val)}" maxlength="1" ${isWeekend ? 'disabled' : ''}>
+      </td>`;
     }
-    const tr=document.createElement("tr");
-    tr.id=`absRow_${i}`;
-    tr.innerHTML=`<td class="col-sticky-1" style="text-align:center">${i+1}</td>
+
+    const tr = document.createElement("tr");
+    tr.id = `absRow_${i}`;
+    tr.innerHTML = `<td class="col-sticky-1" style="text-align:center">${i+1}</td>
       <td class="col-sticky-2" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>${esc(name)}</b></td>
       ${daysHtml}
       <td style="text-align:center" id="stat_i_${i}">0</td>
@@ -2321,13 +2390,13 @@ function renderAbsensi(){
     calcStudentAbsensi(i);
  });
 
- document.querySelectorAll(".day-cell").forEach(input=>{
-    input.addEventListener("input",e=>{
-      const s=e.target.dataset.s;
-      const d=e.target.dataset.d;
-      const val=e.target.value.toUpperCase();
-      e.target.value=val;
-      saveAbsensiVal(s,d,val);
+ document.querySelectorAll(".day-cell:not(:disabled)").forEach(input => {
+    input.addEventListener("input", e => {
+      const s = e.target.dataset.s;
+      const d = e.target.dataset.d;
+      const val = e.target.value.toUpperCase();
+      e.target.value = val;
+      saveAbsensiVal(s, d, val);
       calcStudentAbsensi(s);
       renderRekap();
     });
