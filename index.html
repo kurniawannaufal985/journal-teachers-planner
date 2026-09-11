@@ -29,7 +29,7 @@ button,input,textarea,select{font-family:inherit}
   padding:22px 16px;
   display:flex;
   flex-direction:column;
-  justify-content:space-between;
+  justify-style:space-between;
   position:fixed;
   inset:0 auto 0 0;
   z-index:50;
@@ -217,16 +217,72 @@ tr:hover td{background:#0596690a}
 .mobile-menu{display:none}
 footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 
-/* STICKY ABSENSI TABEL (NAMA & NO TIDAK TERGESER) */
-.absensi-table { border-collapse: separate !important; border-spacing: 0; }
-.absensi-table input.day-cell{width:26px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:3px 0;font-size:10px;font-weight:700}
-.rekap-table td, .rekap-table th{text-align:center;font-size:10px}
+/* STICKY PERBAIKAN TOTAL TABEL ABSENSI (KOLOM NO & NAMA TIDAK IKUT TERGESER) */
+.absensi-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  min-width: 1200px;
+}
+.absensi-table th, 
+.absensi-table td {
+  border-right: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--border) !important;
+  background-clip: padding-box;
+}
+.absensi-table input.day-cell {
+  width: 26px;
+  text-align: center;
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 3px 0;
+  font-size: 10px;
+  font-weight: 700;
+}
+.rekap-table td, .rekap-table th { text-align: center; font-size: 10px; }
 
-.absensi-table th { position: sticky; top: 0; z-index: 10; background: var(--header); }
-.absensi-table td:nth-child(1), .absensi-table th:nth-child(1) { position: sticky; left: 0; z-index: 11; background: #ffffff; border-right: 1px solid var(--border); }
-.absensi-table td:nth-child(2), .absensi-table th:nth-child(2) { position: sticky; left: 30px; z-index: 11; background: #ffffff; border-right: 2px solid var(--border); }
-.absensi-table th:nth-child(1), .absensi-table th:nth-child(2) { z-index: 12; }
-tr:hover td:nth-child(1), tr:hover td:nth-child(2) { background: #f1f5f9; }
+/* Sticky Header Top untuk Tanggal */
+.absensi-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--header) !important;
+}
+
+/* Frozen Kolom 1 (NO) */
+.absensi-table th.col-sticky-1,
+.absensi-table td.col-sticky-1 {
+  position: sticky !important;
+  left: 0 !important;
+  width: 45px !important;
+  min-width: 45px !important;
+  max-width: 45px !important;
+  background: #ffffff !important;
+  z-index: 20 !important;
+}
+
+/* Frozen Kolom 2 (NAMA SISWA) */
+.absensi-table th.col-sticky-2,
+.absensi-table td.col-sticky-2 {
+  position: sticky !important;
+  left: 45px !important;
+  min-width: 200px !important;
+  background: #ffffff !important;
+  z-index: 20 !important;
+  border-right: 2px solid var(--border) !important;
+}
+
+/* Header Kiri di atas sel biasa */
+.absensi-table thead th.col-sticky-1,
+.absensi-table thead th.col-sticky-2 {
+  z-index: 30 !important;
+  background: var(--header) !important;
+}
+
+.absensi-table tr:hover td {
+  background-color: #f1f5f9 !important;
+}
 
 .dpl-table input{width:45px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:4px;font-size:11px}
 .anekdot-table input,.anekdot-table textarea{width:100%;background:transparent;border:0;outline:none;color:var(--text);font-size:11px;padding:4px}
@@ -894,7 +950,7 @@ th { border-color: inherit !important; }
   </div>
 </section>
 
-<!-- ABSENSI -->
+<!-- ABSENSI (REVISI STICKY FROZEN NO & NAMA SISWA) -->
 <section id="absensi" class="page">
   <div class="section-head">
     <div>
@@ -926,13 +982,13 @@ th { border-color: inherit !important; }
       </div>
     </div>
     <div class="card-title" style="margin-bottom:6px">Daftar Hadir Bulanan - <span id="currentMonthLabel" style="color:var(--green)">Agustus</span></div>
-    <div class="card-sub" style="margin-bottom:12px">Isi kode <b>H / . / 1</b> (Hadir), <b>S</b> (Sakit), <b>I</b> (Izin), atau <b>A</b> (Alpha). Kolom No dan Nama tidak akan tergeser saat di-scroll!</div>
+    <div class="card-sub" style="margin-bottom:12px">Isi kode <b>H / . / 1</b> (Hadir), <b>S</b> (Sakit), <b>I</b> (Izin), atau <b>A</b> (Alpha). Kolom <b>NO</b> dan <b>NAMA SISWA</b> dikunci (tidak bergeser) saat tabel di-scroll!</div>
     <div class="table-wrap">
       <table class="absensi-table">
         <thead>
           <tr>
-            <th rowspan="2" style="width:30px">NO.</th>
-            <th rowspan="2" style="min-width:220px">NAMA SISWA</th>
+            <th rowspan="2" class="col-sticky-1" style="text-align:center">NO.</th>
+            <th rowspan="2" class="col-sticky-2" style="text-align:left; padding-left:10px;">NAMA SISWA</th>
             <th colspan="31" style="text-align:center">TANGGAL</th>
             <th rowspan="2" style="width:45px;text-align:center">Izin</th>
             <th rowspan="2" style="width:45px;text-align:center">Sakit</th>
@@ -1094,7 +1150,6 @@ th { border-color: inherit !important; }
   <div class="card">
     <div class="card-title" style="margin-bottom:6px">1. Capaian 8 DPL (Dimensi Profil Lulusan)</div>
     
-    <!-- PETUNJUK BARU DPL REVISED & SANGAT RAMAH GURU -->
     <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:14px; margin-bottom:15px; border-radius:12px;">
       <div style="font-weight:800; color:var(--green); font-size:12px; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
         <i class="fa-solid fa-circle-info" style="font-size:15px;"></i> PETUNJUK PENGISIAN UNTUK BAPAK/IBU GURU:
@@ -1178,7 +1233,6 @@ th { border-color: inherit !important; }
     </div>
   </div>
 
-  <!-- KOTAK PASTE DATA NILAI EXCEL DENGAN DROPDOWN MAPEL -->
   <div id="pasteNilaiBoxContainer" class="card" style="display:none; background:#fffbe8; border:1px solid #fde68a;">
     <div class="card-title" style="color:var(--amber)"><i class="fa-solid fa-clipboard"></i> Tempel (Paste) Data Nilai dari Excel</div>
     <div class="card-sub" style="margin-bottom:10px">
@@ -1225,7 +1279,6 @@ th { border-color: inherit !important; }
         <label>Kelas / Level</label>
         <input type="text" data-save="nilai_kelas" placeholder="Isi Kelas / Level..." oninput="renderNilai()">
       </div>
-      <!-- FITUR BARU: INPUT KKM DINAMIS PER LEVEL -->
       <div class="field">
         <label>KKM Level Ini</label>
         <input type="number" id="kkmInput" data-save="nilai_kkm" value="75" placeholder="70 / 75 / 80" oninput="saveKKM(this.value)">
@@ -1565,7 +1618,7 @@ th { border-color: inherit !important; }
 
 <script>
 // URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvxJj1bpYTO834v7ZEP7FJSyrWWiyRRkuIRKjJLQlDwiHmIOIPbE1UoYdHn3leLUwc/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTOy9SOQp3MwnA-zgr-qfm8Rmhvq8_RfAL9P67YySWtJvraR8jAG0HkBtPXwkqswI/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -2256,8 +2309,8 @@ function renderAbsensi(){
     }
     const tr=document.createElement("tr");
     tr.id=`absRow_${i}`;
-    tr.innerHTML=`<td style="text-align:center">${i+1}</td>
-      <td style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>${esc(name)}</b></td>
+    tr.innerHTML=`<td class="col-sticky-1" style="text-align:center">${i+1}</td>
+      <td class="col-sticky-2" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>${esc(name)}</b></td>
       ${daysHtml}
       <td style="text-align:center" id="stat_i_${i}">0</td>
       <td style="text-align:center" id="stat_s_${i}">0</td>
@@ -2577,7 +2630,6 @@ function getNilaiStorageKey(){
   return `nilaiData_${start}_${end}`;
 }
 
-// FUNGSI UNTUK MENGAMBIL DAN MENYIMPAN KKM DINAMIS
 function getKKM() {
   const saved = get("nilai_kkm", "75");
   const num = parseFloat(saved);
