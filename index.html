@@ -22,7 +22,6 @@ body{font-family:'Lexend',sans-serif;background:var(--bg);color:var(--text);min-
 button,input,textarea,select{font-family:inherit}
 .app{display:flex;min-height:100vh}
 
-/* SIDEBAR & TOGGLE STYLES */
 .sidebar{
   width:270px;
   background:var(--card);
@@ -72,7 +71,6 @@ button,input,textarea,select{font-family:inherit}
 
 .mobile-action-group{display:none}
 
-/* MAIN AREA & SIDEBAR CLOSED LAYOUT */
 .main{
   margin-left:270px;
   flex:1;
@@ -91,7 +89,6 @@ button,input,textarea,select{font-family:inherit}
   max-width: 100% !important;
 }
 
-/* TOMBOL HAMBURGER TOGGLE DESKTOP/MOBILE */
 .btn-toggle-sidebar {
   border: 1px solid var(--border);
   background: var(--card);
@@ -303,7 +300,7 @@ input.day-cell.filled-a { background-color: #ffe4e6 !important; color: #e11d48 !
 
 .rekap-table td, .rekap-table th { text-align: center; font-size: 10px; }
 
-/* CSS UNTUK HARI LIBUR SABTU & MINGGU */
+/* HARI LIBUR SABTU & MINGGU */
 th.is-weekend, td.is-weekend {
   background-color: #fee2e2 !important;
   color: #991b1b !important;
@@ -352,7 +349,6 @@ input.day-cell:disabled {
   background-color: #f1f5f9 !important;
 }
 
-/* INDICATOR BADGE SUDAH DIABSEN */
 .no-badge {
   display: inline-flex;
   align-items: center;
@@ -367,6 +363,34 @@ input.day-cell:disabled {
   background-color: #059669;
   color: white;
   box-shadow: 0 2px 5px rgba(5,150,105,0.3);
+}
+
+/* GRID SELEKSI SISWA CEPAT ABSENSI */
+.student-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 8px;
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.student-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 11px;
+  cursor: pointer;
+  user-select: none;
+}
+.student-picker-item input {
+  cursor: pointer;
 }
 
 .dpl-table input{width:45px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:4px;font-size:11px}
@@ -607,7 +631,7 @@ table { border-collapse: collapse !important; border: 1px solid #cbd5e1 !importa
 th, td { border: 1px solid #cbd5e1 !important; }
 th { border-color: inherit !important; }
 
-/* PENGATURAN CETAK PRESISI KERTAS F4 */
+/* PRINT F4 */
 @media print {
   @page {
     size: 215mm 330mm portrait;
@@ -756,7 +780,7 @@ th { border-color: inherit !important; }
 </head>
 <body>
 
-<!-- OVERLAY AUTH (LOGIN, DAFTAR, & RESET PASSWORD) -->
+<!-- OVERLAY AUTH -->
 <div id="loginScreen" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg,#047857,#0f172a); display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto;">
   <div style="background:#fff; border-radius:16px; width:100%; max-width:420px; padding:25px; box-shadow:0 10px 25px rgba(0,0,0,0.2); margin:auto;">
     
@@ -833,7 +857,7 @@ th { border-color: inherit !important; }
       </form>
     </div>
 
-    <!-- FORM RESET / LUPA PASSWORD -->
+    <!-- FORM RESET PASSWORD -->
     <div id="authResetPassForm" style="display:none;">
       <div style="text-align:center; margin-bottom:18px;">
         <h2 style="font-size:16px; color:#0f172a; font-weight:800;">Reset Password</h2>
@@ -864,7 +888,7 @@ th { border-color: inherit !important; }
 
 <div class="app" id="appLayout">
 
-<!-- SIDEBAR HEADER MOBILE / DESKTOP -->
+<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div>
     <div class="brand">
@@ -911,7 +935,6 @@ th { border-color: inherit !important; }
 <main class="main">
 <header class="topbar">
   <div style="display:flex; align-items:center; gap:12px;">
-    <!-- TOMBOL HAMBURGER GARIS 3 -->
     <button class="btn-toggle-sidebar" onclick="toggleSidebarToggle()" title="Sembunyikan / Tampilkan Bar Samping Left">
       <i class="fa-solid fa-bars"></i>
     </button>
@@ -1058,14 +1081,46 @@ th { border-color: inherit !important; }
   </div>
 </section>
 
-<!-- ABSENSI -->
+<!-- ABSENSI PEGAWAI / SISWA -->
 <section id="absensi" class="page">
   <div class="section-head">
     <div>
       <div class="section-title"><i class="fa-solid fa-clipboard-user"></i> Absensi Peserta Didik</div>
       <div class="card-sub">Daftar Hadir Peserta Didik SD Islam Ramah Anak TA. <span class="dynamic-ta">--</span></div>
     </div>
-    <span class="badge success"><i class="fa-solid fa-floppy-disk"></i> Auto Save</span>
+    <div class="actions">
+      <button class="btn" onclick="toggleQuickAbsenceBox()"><i class="fa-solid fa-bolt"></i> Absensi Cepat (Auto-Hadir)</button>
+      <span class="badge success"><div style="display:inline-block"><i class="fa-solid fa-floppy-disk"></i> Auto Save</div></span>
+    </div>
+  </div>
+
+  <!-- MODAL / BOX KONTROL ABSENSI CEPAT (Auto-Hadir + Pengecualian Nomor Siswa) -->
+  <div id="quickAbsenceBox" class="card" style="display:none; background:#f0fdf4; border:1.5px solid #86efac;">
+    <div class="card-title" style="color:var(--green); display:flex; align-items:center; gap:8px;">
+      <i class="fa-solid fa-bolt"></i> Fitur Pengisian Absensi Cepat Tanggal <span id="quickBoxDayLabel">1</span>
+    </div>
+    <div class="card-sub" style="margin-bottom:12px">
+      Klik <b>"Set Semua Siswa HADIR"</b> untuk mengisi kode <b>H</b> secara otomatis. Centang nama/nomor siswa yang <b>Sakit, Izin, atau Alpha</b> untuk mengubah statusnya secara instan tanpa mengetik manual.
+    </div>
+
+    <div style="margin-bottom:12px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn" onclick="applyAutoHadirAll()"><i class="fa-solid fa-user-check"></i> 1. Set Semua Siswa HADIR (H)</button>
+      <button class="btn danger" onclick="clearAbsenceActiveDay()"><i class="fa-solid fa-eraser"></i> Kosongkan Hari Ini</button>
+    </div>
+
+    <div class="field" style="margin-bottom:8px;">
+      <label style="color:#166534"><b>Pilih Siswa yang Pengecualian (Sakit / Izin / Alpha):</b></label>
+    </div>
+
+    <div class="student-picker-grid" id="studentPickerGrid"></div>
+
+    <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+      <span style="font-size:11px; font-weight:700; color:var(--sub)">Ubah Status Siswa Tercentang Menjadi:</span>
+      <button class="btn amber" onclick="applyExclusionToSelected('S')">Sakit (S)</button>
+      <button class="btn secondary" style="background:#e0f2fe; color:#0369a1; border-color:#7dd3fc;" onclick="applyExclusionToSelected('I')">Izin (I)</button>
+      <button class="btn danger" onclick="applyExclusionToSelected('A')">Alpha (A)</button>
+      <button class="btn secondary" style="margin-left:auto;" onclick="toggleQuickAbsenceBox()">Tutup Modul</button>
+    </div>
   </div>
   
   <div class="card">
@@ -1091,12 +1146,11 @@ th { border-color: inherit !important; }
       <div class="field">
         <label>Pilih Tanggal Pengisian Aktif</label>
         <select id="absensiActiveDaySelect" onchange="changeAbsensiActiveDay(this.value)">
-          <!-- Otomatis diisi oleh JavaScript -->
         </select>
       </div>
     </div>
 
-    <!-- BOX STATUS PROGRESS PENGERJAAN ABSENSI HARI INI -->
+    <!-- TRACKER STATUS ABSENSI -->
     <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px 16px; border-radius:12px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
       <div style="font-size:11.5px; color:#166534;">
         <i class="fa-solid fa-circle-check" style="color:#059669; font-size:14px; margin-right:5px;"></i>
@@ -1111,7 +1165,7 @@ th { border-color: inherit !important; }
     <div class="card-title" style="margin-bottom:6px">Daftar Hadir Bulanan - <span id="currentMonthLabel" style="color:var(--green)">Agustus</span></div>
     <div class="card-sub" style="margin-bottom:12px">
       Isi kode <b>H / . / 1</b> (Hadir), <b>S</b> (Sakit), <b>I</b> (Izin), atau <b>A</b> (Alpha). 
-      Nomor urut siswa bercentang hijau <span class="no-badge done"><i class="fa-solid fa-check"></i></span> menandakan absensi siswa tersebut telah diisi.
+      Nomor urut bercentang hijau <span class="no-badge done"><i class="fa-solid fa-check"></i></span> menandakan siswa tersebut sudah diabsen.
     </div>
     
     <div class="table-wrap">
@@ -1603,7 +1657,7 @@ th { border-color: inherit !important; }
   </div>
 </section>
 
-<!-- RINGKASAN LAPORAN PLANNER & CETAK LAPORAN (F4 PRESISI) -->
+<!-- RINGKASAN LAPORAN PLANNER -->
 <section id="print_view" class="page">
   <div class="section-head" style="margin-bottom:8px;">
     <div></div>
@@ -1624,7 +1678,6 @@ th { border-color: inherit !important; }
       <div><b>Tanggal / Pekan:</b> <span id="printDate">-</span></div>
     </div>
 
-    <!-- I. AKTIVITAS PEKANAN -->
     <div class="print-section-title">I. Aktivitas Pekanan</div>
     <div class="print-grid">
       <div class="print-box">
@@ -1637,7 +1690,6 @@ th { border-color: inherit !important; }
       </div>
     </div>
 
-    <!-- II. TARGET PENGEMBANGAN DIRI -->
     <div class="print-section-title">II. Target Pengembangan Diri</div>
     <div class="print-grid">
       <div class="print-box">
@@ -1654,7 +1706,6 @@ th { border-color: inherit !important; }
       </div>
     </div>
 
-    <!-- III. LAPORAN ABSENSI PESERTA DIDIK -->
     <div class="print-section-title">III. Laporan Absensi Peserta Didik</div>
     <div class="print-grid">
       <div class="print-box">
@@ -1671,7 +1722,6 @@ th { border-color: inherit !important; }
       </div>
     </div>
 
-    <!-- IV. CAPAIAN 8 DPL PESERTA DIDIK -->
     <div class="print-section-title">IV. Capaian 8 DPL Peserta Didik</div>
     <div class="print-grid">
       <div class="print-box">
@@ -1684,7 +1734,6 @@ th { border-color: inherit !important; }
       </div>
     </div>
 
-    <!-- V. RATA-RATA NILAI FORMATIF -->
     <div class="print-section-title">V. Rata-Rata Nilai Formatif</div>
     <div class="print-grid">
       <div class="print-box" style="grid-column: 1 / -1;">
@@ -1697,7 +1746,6 @@ th { border-color: inherit !important; }
       </div>
     </div>
 
-    <!-- VI. RINGKASAN JURNAL REFLEKSI GURU -->
     <div class="print-section-title">VI. Ringkasan Jurnal Refleksi Guru</div>
     <div class="print-grid" style="grid-template-columns:1fr; gap:3px; margin-bottom:2px;">
       <div class="print-box">
@@ -1724,7 +1772,6 @@ th { border-color: inherit !important; }
       </div>
     </div>
 
-    <!-- TANDA TANGAN -->
     <div class="ttd-grid">
       <div>
         Mengetahui,<br>
@@ -1748,8 +1795,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-// URL APPS SCRIPT
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxL3mS1Ngx1bctdlTnJ_Q7whPQZ6iSukhu3EowqnCgAP4kPIfd_pPFvPm37Ew4zhW8T/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywMC_WY26-3TOPuhphm5do6PF2w5GThXuafw-tfHw-RmrcCsrv4oSUuWPWsyaGaavq/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -1760,7 +1806,6 @@ let activeTA = localStorage.getItem("jtp_active_ta") || localStorage.getItem("jt
 
 let activeAbsensiDay = parseInt(localStorage.getItem("jtp_abs_active_day") || new Date().getDate());
 
-/* FUNGSI TOGGLE SIDEBAR HAMBURGER DESKTOP & MOBILE */
 function toggleSidebarToggle() {
   const appLayout = document.getElementById("appLayout");
   const sidebar = document.getElementById("sidebar");
@@ -2443,8 +2488,11 @@ function changeAbsensiActiveDay(d) {
  activeAbsensiDay = parseInt(d);
  localStorage.setItem("jtp_abs_active_day", d);
  document.getElementById("activeDayProgressText").textContent = d;
+ const quickDayLabel = document.getElementById("quickBoxDayLabel");
+ if(quickDayLabel) quickDayLabel.textContent = d;
  updateAbsenceProgressTracker();
  renderAbsensiNumberBadges();
+ buildStudentPickerGrid();
 }
 
 function getMonthDaysAndYear(monthKey) {
@@ -2478,6 +2526,96 @@ function getMonthDaysAndYear(monthKey) {
   };
 }
 
+function toggleQuickAbsenceBox() {
+  const box = document.getElementById("quickAbsenceBox");
+  if(box.style.display === "none" || !box.style.display) {
+    box.style.display = "block";
+    buildStudentPickerGrid();
+  } else {
+    box.style.display = "none";
+  }
+}
+
+function buildStudentPickerGrid() {
+  const grid = document.getElementById("studentPickerGrid");
+  if(!grid) return;
+  grid.innerHTML = "";
+  const students = getStudentsData();
+
+  students.forEach((st, i) => {
+    const item = document.createElement("label");
+    item.className = "student-picker-item";
+    item.innerHTML = `<input type="checkbox" class="student-select-cb" data-idx="${i}"> <b>${i+1}.</b> ${esc(st.name || 'Siswa')}`;
+    grid.appendChild(item);
+  });
+}
+
+function applyAutoHadirAll() {
+  const monthInfo = getMonthDaysAndYear(currentMonth);
+  const dateObj = new Date(monthInfo.year, monthInfo.mIndex, activeAbsensiDay);
+  if(dateObj.getDay() === 0 || dateObj.getDay() === 6) {
+    alert(`Tanggal ${activeAbsensiDay} adalah hari libur (Sabtu/Minggu).`);
+    return;
+  }
+
+  const students = getStudentsData();
+  const monthData = JSON.parse(get("absData_" + currentMonth, "{}"));
+
+  students.forEach((st, i) => {
+    if(!monthData[i]) monthData[i] = {};
+    monthData[i][activeAbsensiDay] = "H";
+  });
+
+  set("absData_" + currentMonth, JSON.stringify(monthData));
+  renderAbsensi();
+  renderRekap();
+}
+
+function applyExclusionToSelected(statusCode) {
+  const checkboxes = document.querySelectorAll(".student-select-cb:checked");
+  if(checkboxes.length === 0) {
+    alert("Silakan centang nomor/nama siswa terlebih dahulu.");
+    return;
+  }
+
+  const monthInfo = getMonthDaysAndYear(currentMonth);
+  const dateObj = new Date(monthInfo.year, monthInfo.mIndex, activeAbsensiDay);
+  if(dateObj.getDay() === 0 || dateObj.getDay() === 6) {
+    alert(`Tanggal ${activeAbsensiDay} adalah hari libur.`);
+    return;
+  }
+
+  const monthData = JSON.parse(get("absData_" + currentMonth, "{}"));
+
+  checkboxes.forEach(cb => {
+    const idx = cb.dataset.idx;
+    if(!monthData[idx]) monthData[idx] = {};
+    monthData[idx][activeAbsensiDay] = statusCode;
+    cb.checked = false;
+  });
+
+  set("absData_" + currentMonth, JSON.stringify(monthData));
+  renderAbsensi();
+  renderRekap();
+}
+
+function clearAbsenceActiveDay() {
+  if(!confirm(`Apakah Anda yakin ingin menghapus seluruh isian absensi pada Tanggal ${activeAbsensiDay}?`)) return;
+
+  const students = getStudentsData();
+  const monthData = JSON.parse(get("absData_" + currentMonth, "{}"));
+
+  students.forEach((st, i) => {
+    if(monthData[i] && monthData[i][activeAbsensiDay]) {
+      delete monthData[i][activeAbsensiDay];
+    }
+  });
+
+  set("absData_" + currentMonth, JSON.stringify(monthData));
+  renderAbsensi();
+  renderRekap();
+}
+
 function renderAbsensi(){
  const monthInfo = getMonthDaysAndYear(currentMonth);
  const totalDays = monthInfo.daysCount;
@@ -2485,7 +2623,6 @@ function renderAbsensi(){
  const tanggalGroup = document.getElementById("tanggalHeaderGroup");
  if (tanggalGroup) tanggalGroup.colSpan = totalDays;
 
- // Update dropdown pilihan tanggal aktif
  const activeDaySelect = document.getElementById("absensiActiveDaySelect");
  if(activeDaySelect) {
    activeDaySelect.innerHTML = "";
@@ -3298,7 +3435,6 @@ async function resetPlanner(){
   }
 }
 
-// PROSES INISIALISASI APPS SAAT DI-REFRESH
 (function init(){
   document.documentElement.dataset.theme = "light";
   
