@@ -233,9 +233,9 @@ h1{font-size:27px;line-height:1.2;margin-top:5px;color:var(--text)}
 .full{grid-column:1/-1}
 .btn{border:0;border-radius:10px;padding:10px 14px;background:#059669;color:white;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s}.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
 .btn.secondary{background:var(--input);color:var(--text);border:1px solid var(--border)}.btn.danger{background:#e11d48;color:white}.btn.amber{background:#d97706;color:white}
+.btn.blue{background:#0284c7;color:white}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 
-/* CONTAINER TABEL SCROLLING FIX */
 .table-wrap {
   overflow-x: auto !important;
   overflow-y: visible;
@@ -266,7 +266,6 @@ tr:hover td{background:#0596690a}
 .mobile-menu{display:none}
 footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
 
-/* STICKY TABEL ABSENSI (FREEZE COLUMN FIX) */
 .absensi-table {
   border-collapse: separate !important;
   border-spacing: 0 !important;
@@ -292,7 +291,6 @@ footer{color:var(--sub);font-size:10px;text-align:center;padding:24px 0}
   transition: all 0.15s ease;
 }
 
-/* WARNA STATUS INPUT ABSENSI */
 input.day-cell.filled-h { background-color: #d1fae5 !important; color: #047857 !important; border-color: #10b981 !important; }
 input.day-cell.filled-s { background-color: #fef3c7 !important; color: #b45309 !important; border-color: #f59e0b !important; }
 input.day-cell.filled-i { background-color: #e0f2fe !important; color: #0369a1 !important; border-color: #38bdf8 !important; }
@@ -300,7 +298,6 @@ input.day-cell.filled-a { background-color: #ffe4e6 !important; color: #e11d48 !
 
 .rekap-table td, .rekap-table th { text-align: center; font-size: 10px; }
 
-/* HARI LIBUR SABTU & MINGGU */
 th.is-weekend, td.is-weekend {
   background-color: #fee2e2 !important;
   color: #991b1b !important;
@@ -312,7 +309,6 @@ input.day-cell:disabled {
   opacity: 0.6;
 }
 
-/* Frozen / Sticky Kolom 1 (NO) */
 .absensi-table th.col-sticky-1,
 .absensi-table td.col-sticky-1 {
   position: sticky !important;
@@ -325,7 +321,6 @@ input.day-cell:disabled {
   text-align: center;
 }
 
-/* Frozen / Sticky Kolom 2 (NAMA SISWA) */
 .absensi-table th.col-sticky-2,
 .absensi-table td.col-sticky-2 {
   position: sticky !important;
@@ -365,7 +360,6 @@ input.day-cell:disabled {
   box-shadow: 0 2px 5px rgba(5,150,105,0.3);
 }
 
-/* GRID SELEKSI SISWA CEPAT ABSENSI */
 .student-picker-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -397,9 +391,8 @@ input.day-cell:disabled {
 .anekdot-table input,.anekdot-table textarea{width:100%;background:transparent;border:0;outline:none;color:var(--text);font-size:11px;padding:4px}
 .anekdot-table textarea{resize:vertical;min-height:38px}
 
-.nilai-table input.nilai-cell{width:52px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:4px;font-size:11px;transition: all 0.2s ease;}
-.nilai-table input.nilai-cell.under-kkm{background:#ffe4e6 !important; border-color:#f43f5e !important; color:#e11d48 !important; font-weight:800;}
-.nilai-table input.remed-cell{width:40px;text-align:center;background:#f1f5f9;border:1px solid var(--border);border-radius:5px;color:var(--text);padding:4px;font-size:11px;font-weight:700;}
+.nilai-table input.nilai-cell{width:48px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:4px;font-size:11px;transition: all 0.2s ease;}
+.nilai-table input.remed-cell{width:55px;text-align:center;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:4px;font-size:11px;}
 
 .refleksi-phase-title { font-weight:800; font-size:12px; text-transform:uppercase; color:var(--green); letter-spacing:1px; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
 .refleksi-subtext { font-size:11px; color:var(--sub); margin-bottom:10px; font-style:italic; }
@@ -631,7 +624,6 @@ table { border-collapse: collapse !important; border: 1px solid #cbd5e1 !importa
 th, td { border: 1px solid #cbd5e1 !important; }
 th { border-color: inherit !important; }
 
-/* PRINT F4 */
 @media print {
   @page {
     size: 215mm 330mm portrait;
@@ -1094,7 +1086,7 @@ th { border-color: inherit !important; }
     </div>
   </div>
 
-  <!-- MODAL / BOX KONTROL ABSENSI CEPAT (Auto-Hadir + Pengecualian Nomor Siswa) -->
+  <!-- MODAL / BOX KONTROL ABSENSI CEPAT -->
   <div id="quickAbsenceBox" class="card" style="display:none; background:#f0fdf4; border:1.5px solid #86efac;">
     <div class="card-title" style="color:var(--green); display:flex; align-items:center; gap:8px;">
       <i class="fa-solid fa-bolt"></i> Fitur Pengisian Absensi Cepat Tanggal <span id="quickBoxDayLabel">1</span>
@@ -1427,7 +1419,8 @@ th { border-color: inherit !important; }
     <div class="field" style="margin-bottom:10px;">
       <label>Pilih Mapel Tujuan Paste:</label>
       <select id="pasteMapelTarget" style="background:#fff;">
-        <option value="ALL">Semua Mapel (Berurutan: PAI, B.INA, MTK, IPAS, SENI, PJOK, B.ING, SUNDA, ARAB, TIK)</option>
+        <option value="ALL">Semua Mapel (Berurutan: PP, PAI, B.INA, MTK, IPAS, SENI, PJOK, B.ING, SUNDA, ARAB, TIK)</option>
+        <option value="pp">PP</option>
         <option value="pai">PAI</option>
         <option value="bina">Bahasa Indonesia</option>
         <option value="mtk">Matematika</option>
@@ -1451,7 +1444,7 @@ th { border-color: inherit !important; }
   </div>
 
   <div class="card">
-    <div class="form-grid" style="margin-bottom:15px; grid-template-columns: repeat(3, 1fr);">
+    <div class="form-grid" style="margin-bottom:15px; grid-template-columns: repeat(2, 1fr);">
       <div class="field">
         <label>Tanggal / Rentang Pekan Pelaksanaan</label>
         <div class="date-range-box">
@@ -1464,13 +1457,9 @@ th { border-color: inherit !important; }
         <label>Kelas / Level</label>
         <input type="text" data-save="nilai_kelas" placeholder="Isi Kelas / Level..." oninput="renderNilai()">
       </div>
-      <div class="field">
-        <label>KKM Level Ini</label>
-        <input type="number" id="kkmInput" data-save="nilai_kkm" value="75" placeholder="70 / 75 / 80" oninput="saveKKM(this.value)">
-      </div>
     </div>
     <div class="card-title" style="margin-bottom:6px">Tabel Nilai Formatif Per Mapel</div>
-    <div class="card-sub" style="margin-bottom:12px">Isi angka nilai (0-100). Nilai di bawah KKM (<b id="kkmInfoText">&lt; 75</b>) otomatis <b>berwarna merah</b> dan jumlah <b>Remedial</b> terhitung otomatis!</div>
+    <div class="card-sub" style="margin-bottom:12px">Isi angka nilai (0-100) per mata pelajaran dan isi keterangan Remedial secara manual jika diperlukan.</div>
     <div class="table-wrap">
       <table class="nilai-table">
         <thead>
@@ -1478,10 +1467,11 @@ th { border-color: inherit !important; }
             <th rowspan="2" style="width:30px">NO.</th>
             <th rowspan="2" style="min-width:200px">NAMA PESERTA DIDIK</th>
             <th rowspan="2" style="width:110px">NISN</th>
-            <th colspan="10" style="text-align:center">MATA PELAJARAN (FORMATIF)</th>
-            <th rowspan="2" style="width:60px;text-align:center">REMEDIAL</th>
+            <th colspan="11" style="text-align:center">MATA PELAJARAN (FORMATIF)</th>
+            <th rowspan="2" style="width:80px;text-align:center">REMEDIAL</th>
           </tr>
           <tr>
+            <th style="text-align:center">PP</th>
             <th style="text-align:center">PAI</th>
             <th style="text-align:center">B. INA</th>
             <th style="text-align:center">MTK</th>
@@ -1498,6 +1488,7 @@ th { border-color: inherit !important; }
         <tfoot style="background:var(--header);font-weight:bold;">
           <tr>
             <td colspan="3" style="text-align:right">Rata-Rata</td>
+            <td style="text-align:center" id="avg_pp">0,00</td>
             <td style="text-align:center" id="avg_pai">0,00</td>
             <td style="text-align:center" id="avg_bina">0,00</td>
             <td style="text-align:center" id="avg_mtk">0,00</td>
@@ -1512,6 +1503,7 @@ th { border-color: inherit !important; }
           </tr>
           <tr>
             <td colspan="3" style="text-align:right">Nilai Tertinggi</td>
+            <td style="text-align:center" id="max_pp">0,00</td>
             <td style="text-align:center" id="max_pai">0,00</td>
             <td style="text-align:center" id="max_bina">0,00</td>
             <td style="text-align:center" id="max_mtk">0,00</td>
@@ -1526,6 +1518,7 @@ th { border-color: inherit !important; }
           </tr>
           <tr>
             <td colspan="3" style="text-align:right">Nilai Terendah</td>
+            <td style="text-align:center" id="min_pp">0,00</td>
             <td style="text-align:center" id="min_pai">0,00</td>
             <td style="text-align:center" id="min_bina">0,00</td>
             <td style="text-align:center" id="min_mtk">0,00</td>
@@ -1579,6 +1572,7 @@ th { border-color: inherit !important; }
     <div class="refleksi-phase-title"><i class="fa-solid fa-circle-1"></i> Phase 1: Mata Pelajaran</div>
     <div class="refleksi-subtext">Pilih mapel tertentu yang perlu adanya refleksi dalam 1 pekan:</div>
     <div class="mapel-checkboxes" id="refMapelBoxes">
+      <label class="mapel-item"><input type="checkbox" data-mapel="PP" onchange="saveRefleksiMapel()"> Pendidikan Pancasila</label>
       <label class="mapel-item"><input type="checkbox" data-mapel="PAI" onchange="saveRefleksiMapel()"> Pendidikan Agama Islam</label>
       <label class="mapel-item"><input type="checkbox" data-mapel="BINA" onchange="saveRefleksiMapel()"> Bahasa Indonesia</label>
       <label class="mapel-item"><input type="checkbox" data-mapel="MTK" onchange="saveRefleksiMapel()"> Matematika</label>
@@ -1661,10 +1655,13 @@ th { border-color: inherit !important; }
 <section id="print_view" class="page">
   <div class="section-head" style="margin-bottom:8px;">
     <div></div>
-    <button class="btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Cetak Laporan Ini (Ukuran F4)</button>
+    <div class="actions">
+      <button class="btn blue" onclick="exportToWord()"><i class="fa-solid fa-file-word"></i> Unduh Format Ms. Word (.doc)</button>
+      <button class="btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Cetak Laporan Ini (Ukuran F4)</button>
+    </div>
   </div>
 
-  <div class="print-report-container">
+  <div class="print-report-container" id="printableWordContent">
     <div style="text-align:center; border-bottom:1.5px solid var(--text); padding-bottom:2px; margin-bottom:4px;">
       <img class="print-logo school-logo" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
       <h2 style="font-size:11px; font-weight:800; line-height:1.1;">SEKOLAH DASAR ISLAM RAMAH ANAK</h2>
@@ -1795,7 +1792,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywMC_WY26-3TOPuhphm5do6PF2w5GThXuafw-tfHw-RmrcCsrv4oSUuWPWsyaGaavq/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbze_y0ugmxO2kBRXVvUOpvOv3nNm0jLq1lDEQqbrQfVcxtjb1833MWHL__sBM0cgFtl/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -2168,7 +2165,7 @@ const defaultDPL=[
 ];
 
 const defaultAnekdotData=[];
-const mapelKeys=["pai","bina","mtk","ipas","seni","pjok","bing","sunda","arab","tik"];
+const mapelKeys=["pp","pai","bina","mtk","ipas","seni","pjok","bing","sunda","arab","tik"];
 const defaultNilaiData=[];
 const monthsKeys=["JULI","AGUST","SEPT","OKT","NOV","DES","JAN","FEB","MAR","APR","MEI","JUN"];
 let currentMonth="AGUST";
@@ -3056,30 +3053,12 @@ function getNilaiStorageKey(){
   return `nilaiData_${start}_${end}`;
 }
 
-function getKKM() {
-  const saved = get("nilai_kkm", "75");
-  const num = parseFloat(saved);
-  return isNaN(num) ? 75 : num;
-}
-
-function saveKKM(val) {
-  set("nilai_kkm", val);
-  renderNilai();
-}
-
 function renderNilai(){
- const kkm = getKKM();
  const key = getNilaiStorageKey();
  const students = getStudentsData();
  const saved = JSON.parse(get(key, JSON.stringify(defaultNilaiData)));
  const body = document.getElementById("nilaiBody");
  body.innerHTML = "";
-
- const kkmEl = document.getElementById("kkmInput");
- if(kkmEl && !kkmEl.value) kkmEl.value = kkm;
-
- const kkmInfoText = document.getElementById("kkmInfoText");
- if(kkmInfoText) kkmInfoText.textContent = `< ${kkm}`;
 
  students.forEach((st, i) => {
     const name = st.name || "";
@@ -3087,17 +3066,11 @@ function renderNilai(){
     const sNilai = saved[i] || {};
     
     let mapelCols = "";
-    let remedCount = 0;
 
     mapelKeys.forEach(mKey => {
       const val = sNilai[mKey] || "";
-      const valNum = parseVal(val);
-      const isUnderKKM = valNum !== null && valNum < kkm;
-
-      if(isUnderKKM) remedCount++;
-
       mapelCols += `<td style="text-align:center">
-        <input type="text" class="nilai-cell ${isUnderKKM ? 'under-kkm' : ''}" data-i="${i}" data-m="${mKey}" value="${esc(val)}" placeholder="-">
+        <input type="text" class="nilai-cell" data-i="${i}" data-m="${mKey}" value="${esc(val)}" placeholder="-">
       </td>`;
     });
     
@@ -3106,11 +3079,12 @@ function renderNilai(){
       <td style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>${esc(name)}</b></td>
       <td>${esc(nisn)}</td>
       ${mapelCols}
-      <td style="text-align:center"><input type="text" class="remed-cell" id="remed_count_${i}" value="${remedCount}" readonly></td>`;
+      <td style="text-align:center"><input type="text" class="remed-cell" data-i="${i}" value="${esc(sNilai.remed||"")}" placeholder="-"></td>`;
     body.appendChild(tr);
  });
  
  document.querySelectorAll(".nilai-cell").forEach(x => x.addEventListener("input", saveNilai));
+ document.querySelectorAll(".remed-cell").forEach(x => x.addEventListener("input", saveNilai));
  calcNilaiStats();
 }
 
@@ -3148,7 +3122,7 @@ function processPastedNilai() {
     if (!saved[idx]) saved[idx] = {};
   });
 
-  const mapelsOrder = ["pai", "bina", "mtk", "ipas", "seni", "pjok", "bing", "sunda", "arab", "tik"];
+  const mapelsOrder = ["pp", "pai", "bina", "mtk", "ipas", "seni", "pjok", "bing", "sunda", "arab", "tik"];
 
   lines.forEach((line, index) => {
     if (index < students.length) {
@@ -3222,31 +3196,16 @@ function calcNilaiStats(){
 }
 
 function saveNilai(){
- const kkm = getKKM();
  const arr = [];
  document.querySelectorAll("#nilaiBody tr").forEach((tr, i) => {
     const item = {};
-    let remedCount = 0;
 
     tr.querySelectorAll("input.nilai-cell").forEach(x => {
-      const mKey = x.dataset.m;
-      const val = String(x.value);
-      item[mKey] = val;
-
-      const valNum = parseVal(val);
-      const isUnderKKM = valNum !== null && valNum < kkm;
-
-      if (isUnderKKM) {
-        remedCount++;
-        x.classList.add("under-kkm");
-      } else {
-        x.classList.remove("under-kkm");
-      }
+      item[x.dataset.m] = String(x.value);
     });
 
-    item.remed = String(remedCount);
-    const remedInput = document.getElementById(`remed_count_${i}`);
-    if(remedInput) remedInput.value = remedCount;
+    const remedInput = tr.querySelector("input.remed-cell");
+    item.remed = remedInput ? String(remedInput.value) : "";
 
     arr[i] = item;
  });
@@ -3257,7 +3216,7 @@ function saveNilai(){
 }
 
 function renderNilaiChart(averages){
- const labels = ["PAI","B. INA","MTK","IPAS","SENI","PJOK","B. ING","B. SUNDA","B. ARAB","TIK"];
+ const labels = ["PP", "PAI", "B. INA", "MTK", "IPAS", "SENI", "PJOK", "B. ING", "B. SUNDA", "B. ARAB", "TIK"];
  document.getElementById("nilaiChart").innerHTML = averages.map((avg, i) => {
  const displayVal = avg !== null ? avg.toFixed(2).replace(".",",") : "0,00";
  const pct = avg !== null ? Math.min(100, Math.max(0, avg)) : 0;
@@ -3391,6 +3350,48 @@ function updatePrintViewData(){
  document.getElementById("printRefBaik").textContent = refData.ref_berjalan_baik_pdf || "-";
  document.getElementById("printRefTantangan").textContent = refData.ref_tantangan_pdf || "-";
  document.getElementById("printRefTindakLanjut").textContent = refData.ref_deskripsi_tindak_lanjut || "-";
+}
+
+function exportToWord() {
+  updatePrintViewData();
+  const content = document.getElementById("printableWordContent").cloneNode(true);
+  
+  content.querySelectorAll("textarea").forEach(ta => {
+    const val = ta.value || ta.textContent || "";
+    const p = document.createElement("p");
+    p.textContent = val;
+    p.style.margin = "2px 0";
+    ta.parentNode.replaceChild(p, ta);
+  });
+
+  const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+        "xmlns:w='urn:schemas-microsoft-com:office:word' "+
+        "xmlns='http://www.w3.org/TR/REC-html40'>"+
+        "<head><meta charset='utf-8'><title>Laporan Planner</title><style>"+
+        "body{font-family:Arial, sans-serif; font-size:9pt; color:#000;}"+
+        "table{width:100%; border-collapse:collapse; margin-bottom:10px;}"+
+        "th, td{border:1px solid #cbd5e1; padding:5px; font-size:8pt;}"+
+        "th{background-color:#f8fafc; text-align:left;}"+
+        ".print-section-title{font-size:10pt; font-weight:bold; color:#047857; border-bottom:1.5px solid #047857; margin-top:10px; margin-bottom:4px; text-transform:uppercase;}"+
+        ".ttd-grid{width:100%; margin-top:20px;}"+
+        ".bar-track{height:6px; background-color:#e2e8f0; border:1px solid #cbd5e1;}"+
+        ".bar-fill{height:100%; background-color:#059669;}"+
+        "</style></head><body>";
+  const footer = "</body></html>";
+  const sourceHTML = header + content.innerHTML + footer;
+
+  const blob = new Blob(['\ufeff', sourceHTML], {
+    type: 'application/msword'
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const teacherName = get("bio_nama", "Guru").replace(/[^a-zA-Z0-9]/g, "_");
+  a.download = `Laporan_Planner_${teacherName}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 window.addEventListener('beforeprint', () => {
