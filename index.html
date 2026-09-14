@@ -400,19 +400,20 @@ input.day-cell:disabled {
 .mapel-item{display:flex;align-items:center;gap:8px;background:var(--input);padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:11px;cursor:pointer;font-weight:600}
 .mapel-item input{cursor:pointer}
 
-.print-report-container{background:#fff;padding:12px;border-radius:8px;border:1px solid var(--border)}
-.print-section-title{font-size:9.5px;font-weight:800;color:var(--green);margin-bottom:2px;border-bottom:1.5px solid var(--green);padding-bottom:1px;text-transform:uppercase}
+/* PRINTER & WORD FORM LAYOUT PREVIEW */
+.print-report-container{background:#fff;padding:16px;border-radius:8px;border:1px solid var(--border);max-width:210mm;margin:0 auto;}
+.print-section-title{font-size:9.5px;font-weight:800;color:var(--green);margin-bottom:3px;margin-top:8px;border-bottom:1.5px solid var(--green);padding-bottom:1px;text-transform:uppercase}
 .print-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px}
-.print-box{border:1px solid var(--border);padding:4px 6px;border-radius:4px;background:#f8fafc}
-.print-box textarea{width:100%;border:1px dashed var(--border);border-radius:3px;padding:4px;font-size:8.5px;min-height:26px;margin-top:2px;background:#fff;outline:none;line-height:1.25;word-break:break-word}
+.print-box{border:1px solid var(--border);padding:5px 7px;border-radius:4px;background:#f8fafc;page-break-inside:avoid;}
+.print-box textarea{width:100%;border:1px dashed var(--border);border-radius:3px;padding:5px;font-size:8.5px;min-height:32px;margin-top:2px;background:#fff;outline:none;line-height:1.3;word-break:break-word}
 
-.ttd-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:10px;text-align:center;font-size:8.5px}
+.ttd-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:14px;text-align:center;font-size:8.5px;page-break-inside:avoid;}
 .ttd-space{height:55px}
 
 .print-logo{
-    width:95px;
-    height:95px;
-    max-height:100px;
+    width:85px;
+    height:85px;
+    max-height:90px;
     border-radius:50%;
     object-fit:contain;
     padding:1px;
@@ -484,131 +485,28 @@ input.day-cell:disabled {
 
 @media(max-width:760px){
   .app { display: block; }
-
   .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100% !important;
-    height: 68px;
-    padding: 10px 14px;
-    z-index: 999;
-    background: #ffffff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
+    position: fixed; top: 0; left: 0; right: 0; width: 100% !important; height: 68px;
+    padding: 10px 14px; z-index: 999; background: #ffffff; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border-right: none; border-bottom: 1px solid var(--border); overflow: hidden;
     transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-
-  .sidebar.open {
-    height: 100vh;
-    overflow-y: auto;
-  }
-
-  .brand {
-    padding: 0;
-    margin: 0;
-    width: 100%;
-  }
-
-  .brand-logo {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-  }
-
-  .brand-title {
-    font-size: 11px;
-  }
-
-  .mobile-action-group {
-    display: flex !important;
-    align-items: center;
-    gap: 6px;
-    margin-left: auto;
-  }
-
-  .btn-mobile-logout {
-    border: 0;
-    background: #ffe4e6;
-    color: var(--red);
-    padding: 7px 9px;
-    border-radius: 99px;
-    font-size: 10.5px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .mobile-menu {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    background: #10b98118;
-    color: var(--green);
-    border-radius: 9px;
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-
-  .nav {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 20px;
-    padding-bottom: 15px;
-  }
-
-  .sidebar-bottom {
-    display: block !important;
-    border-top: 1px solid var(--border);
-    padding-top: 15px;
-    margin-top: 10px;
-  }
-
-  .main {
-    margin-left: 0 !important;
-    padding: 82px 14px 25px 14px !important;
-    max-width: 100% !important;
-  }
-
-  .topbar {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 14px;
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-  }
-
-  .topbar-right {
-    flex-direction: column;
-    width: 100%;
-    gap: 10px;
-  }
-
-  .topbar-right button {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .clock {
-    width: 100%;
-    justify-content: flex-start;
-    padding: 12px 16px;
-    background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
-    border: 1px solid #10b98135;
-  }
-
+  .sidebar.open { height: 100vh; overflow-y: auto; }
+  .brand { padding: 0; margin: 0; width: 100%; }
+  .brand-logo { width: 40px; height: 40px; min-width: 40px; }
+  .brand-title { font-size: 11px; }
+  .mobile-action-group { display: flex !important; align-items: center; gap: 6px; margin-left: auto; }
+  .btn-mobile-logout { border: 0; background: #ffe4e6; color: var(--red); padding: 7px 9px; border-radius: 99px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+  .mobile-menu { display: flex !important; align-items: center; justify-content: center; border: 0; background: #10b98118; color: var(--green); border-radius: 9px; width: 36px; height: 36px; font-size: 16px; cursor: pointer; }
+  .nav { display: flex; flex-direction: column; gap: 6px; margin-top: 20px; padding-bottom: 15px; }
+  .sidebar-bottom { display: block !important; border-top: 1px solid var(--border); padding-top: 15px; margin-top: 10px; }
+  .main { margin-left: 0 !important; padding: 82px 14px 25px 14px !important; max-width: 100% !important; }
+  .topbar { align-items: stretch; flex-direction: column; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; }
+  .topbar-right { flex-direction: column; width: 100%; gap: 10px; }
+  .topbar-right button { width: 100%; justify-content: center; }
+  .clock { width: 100%; justify-content: flex-start; padding: 12px 16px; background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%); border: 1px solid #10b98135; }
   .clock-time { font-size: 18px; }
   .clock-date { font-size: 11px; }
-
   .grid-menu, .form-grid, .chart-grid { grid-template-columns: 1fr; }
   .stats { grid-template-columns: 1fr 1fr; }
   .full { grid-column: auto; }
@@ -627,7 +525,7 @@ th { border-color: inherit !important; }
 @media print {
   @page {
     size: 215mm 330mm portrait;
-    margin: 4mm 4mm 3mm 4mm;
+    margin: 6mm 6mm 5mm 6mm;
   }
 
   * {
@@ -646,16 +544,7 @@ th { border-color: inherit !important; }
     line-height: 1.15 !important;
   }
 
-  .sidebar, 
-  .topbar, 
-  .btn, 
-  .btn-back-home, 
-  footer, 
-  .section-head, 
-  .mobile-action-group, 
-  .clock,
-  .btn-toggle-sidebar,
-  #loginScreen {
+  .sidebar, .topbar, .btn, .btn-back-home, footer, .section-head, .mobile-action-group, .clock, .btn-toggle-sidebar, #loginScreen {
     display: none !important;
   }
 
@@ -679,6 +568,10 @@ th { border-color: inherit !important; }
     width: 100% !important;
   }
 
+  .print-box {
+    page-break-inside: avoid !important;
+  }
+
   .print-box textarea {
     border: none !important;
     resize: none !important;
@@ -689,83 +582,8 @@ th { border-color: inherit !important; }
     height: auto !important;
   }
 
-  .print-report-container h2,
-  .print-report-container h3 {
-    color: #000000 !important;
-  }
-
-  .print-section-title {
-    font-size: 8pt !important;
-    margin-bottom: 1px !important;
-    padding-bottom: 1px !important;
-    color: #000000 !important;
-    border-bottom: 1px solid #000000 !important;
-  }
-
-  .print-grid {
-    gap: 3px !important;
-    margin-bottom: 2px !important;
-  }
-
-  .print-box {
-    padding: 2px 4px !important;
-    border: 1px solid #64748b !important;
-    background: #ffffff !important;
-  }
-
-  .bar-row {
-    margin: 1px 0 !important;
-  }
-
-  .bar-label {
-    font-size: 7.5pt !important;
-    margin-bottom: 1px !important;
-    color: #000000 !important;
-  }
-  
-  .bar-label b:last-child,
-  #printTargetPctText,
-  #printAbsensiPctText,
-  #printRefKepuasan,
-  #printTargetSummary {
-    color: #047857 !important;
-    font-weight: 800 !important;
-  }
-  
-  .bar-track {
-    height: 4px !important;
-    background-color: #e2e8f0 !important;
-    border: 0.5px solid #cbd5e1 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  
-  .bar-fill {
-    height: 100% !important;
-    background-color: #059669 !important;
-    background: #059669 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
   .ttd-grid {
-    margin-top: 6px !important;
-    font-size: 7.5pt !important;
-    gap: 10px !important;
-    color: #000000 !important;
-  }
-
-  .ttd-space {
-    height: 40px !important;
-  }
-
-  .print-logo {
-    width: 75px !important;
-    height: 75px !important;
-    max-height: 80px !important;
-    margin: 0 auto 2px !important;
-    display: block !important;
-    object-fit: contain !important;
+    page-break-inside: avoid !important;
   }
 }
 </style>
@@ -1654,7 +1472,11 @@ th { border-color: inherit !important; }
 <!-- RINGKASAN LAPORAN PLANNER (CETAK & EDIT LANGSUNG) -->
 <section id="print_view" class="page">
   <div class="section-head" style="margin-bottom:8px;">
-    <div></div>
+    <div>
+      <div class="card-sub" style="color:var(--green); font-weight:700;">
+        <i class="fa-solid fa-pen-to-square"></i> Anda bisa langsung mengetik dan mengedit catatan di bawah sebelum diunduh/dicetak!
+      </div>
+    </div>
     <div class="actions">
       <button class="btn blue" onclick="exportToWord()"><i class="fa-solid fa-file-word"></i> Unduh Format Ms. Word (.doc)</button>
       <button class="btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Cetak Laporan Ini (Ukuran F4)</button>
@@ -1662,14 +1484,14 @@ th { border-color: inherit !important; }
   </div>
 
   <div class="print-report-container" id="printableWordContent">
-    <div style="text-align:center; border-bottom:1.5px solid var(--text); padding-bottom:2px; margin-bottom:4px;">
+    <div style="text-align:center; border-bottom:1.5px solid var(--text); padding-bottom:2px; margin-bottom:6px;">
       <img class="print-logo school-logo" src="assets/logo-sekolah.jpg" alt="Logo SD Islam Ramah Anak">
       <h2 style="font-size:11px; font-weight:800; line-height:1.1;">SEKOLAH DASAR ISLAM RAMAH ANAK</h2>
       <h3 style="font-size:9.5px; font-weight:700; color:var(--green); margin-top:1px; line-height:1.1;">JOURNAL TEACHERS PLANNER</h3>
       <p style="font-size:8px; font-weight:600;">TAHUN AJARAN <span class="dynamic-ta">--</span></p>
     </div>
 
-    <div class="form-grid" style="margin-bottom:4px; grid-template-columns: repeat(3, 1fr); font-size:8.5px;">
+    <div class="form-grid" style="margin-bottom:6px; grid-template-columns: repeat(3, 1fr); font-size:8.5px;">
       <div><b>Nama Guru:</b> <span id="printTeacherName">-</span></div>
       <div><b>Tugas:</b> <span id="printTeacherTask">Guru Kelas</span></div>
       <div><b>Tanggal / Pekan:</b> <span id="printDate">-</span></div>
@@ -1707,7 +1529,7 @@ th { border-color: inherit !important; }
     <div class="print-grid">
       <div class="print-box">
         <b>Rekap Kehadiran Bulan Ini:</b>
-        <div style="font-size:8.5px; font-weight:700; margin-top:1px;" id="printAbsensiSummary">Total Siswa: 0 | Tingkat Kehadiran Rata-Rata: 0%</div>
+        <div style="font-size:8.5px; font-weight:700; margin-top:1px;" id="printAbsensiSummary">Total Siswa: 0 | Kehadiran: 0%</div>
         <div style="margin-top:2px;">
           <div class="bar-label"><span><b>Persentase Kehadiran Murid</b></span><b id="printAbsensiPctText">0%</b></div>
           <div class="bar-track"><div class="bar-fill" id="printAbsensiBar" style="width:0%"></div></div>
@@ -1792,7 +1614,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxcagYA9TGXaq0u-ehaBSq1WBhrIcHmMQxiQJl5CkRVHqhlv6mR1Zd9J7vqyEB_Lonv/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJI7Gqr9YeBqfWQ6iwbCz-M7n0x2V02pLIulElIM9gVmggrLxcjTViiUoa89lyHV8J/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -2166,7 +1988,6 @@ const defaultDPL=[
 
 const defaultAnekdotData=[];
 
-// URUTAN UTAMA MAPEL FORMATIF: PAI DAHULU KEMUDIAN PP
 const mapelKeys=["pai","pp","bina","mtk","ipas","seni","pjok","bing","sunda","arab","tik"];
 const defaultNilaiData=[];
 const monthsKeys=["JULI","AGUST","SEPT","OKT","NOV","DES","JAN","FEB","MAR","APR","MEI","JUN"];
@@ -3369,7 +3190,6 @@ function getBase64Image(imgEl) {
 
 function exportToWord() {
   updatePrintViewData();
-  const content = document.getElementById("printableWordContent").cloneNode(true);
   
   // Ambil Data Gambar Logo Sekolah
   const logoImg = document.querySelector(".print-logo");
@@ -3378,23 +3198,182 @@ function exportToWord() {
     logoSrc = getBase64Image(logoImg);
   }
 
-  // Konversi textarea menjadi paragraf teks utuh agar 1 paragraf tidak terpotong & rapi
-  content.querySelectorAll("textarea").forEach(ta => {
-    const val = ta.value || ta.textContent || "";
-    const p = document.createElement("div");
-    p.textContent = val || "-";
-    p.style.margin = "2px 0";
-    p.style.fontSize = "7.5pt";
-    p.style.lineHeight = "1.2";
-    p.style.wordBreak = "break-word";
-    p.style.whiteSpace = "pre-wrap";
-    ta.parentNode.replaceChild(p, ta);
-  });
+  const name = get("bio_nama","-");
+  const ta = activeTA || getCalculatedTA();
+  const dateRange = getFormattedDateRange("akt_tgl_mulai", "akt_tgl_selesai");
 
-  const cloneLogo = content.querySelector(".print-logo");
-  if (cloneLogo && logoSrc) {
-    cloneLogo.src = logoSrc;
-  }
+  // Ambil Nilai Catatan dari Textarea Web Editor
+  const noteAct = get("print_note_aktivitas","") || "-";
+  const noteTar = get("print_note_target","") || "-";
+  const noteAbs = get("print_note_absensi","") || "-";
+  const noteDpl = get("print_note_dpl","") || "-";
+  const noteNil = get("print_note_nilai","") || "-";
+
+  // Ambil Konten Diagram HTML
+  const actChartHtml = document.getElementById("activityChart").innerHTML;
+  const targetPctText = document.getElementById("printTargetPctText").textContent;
+  const targetBarWidth = document.getElementById("printTargetBar").style.width;
+  const targetSummaryText = document.getElementById("printTargetSummary").textContent;
+  
+  const absSummaryText = document.getElementById("printAbsensiSummary").textContent;
+  const absPctText = document.getElementById("printAbsensiPctText").textContent;
+  const absBarWidth = document.getElementById("printAbsensiBar").style.width;
+  
+  const dplChartHtml = document.getElementById("dplChart").innerHTML;
+  const nilaiChartHtml = document.getElementById("nilaiChart").innerHTML;
+
+  const refKey = getRefleksiStorageKey();
+  const refData = JSON.parse(get(refKey, "{}"));
+  const selectedMapels = (refData.mapels || []).join(", ") || "-";
+  const refKepVal = refData.refKepuasanInputPdf ? refData.refKepuasanInputPdf + "%" : "0%";
+
+  // Konstruksi HTML Khusus Rendering Ms Word dengan Tabel Terstruktur (Tata Letak 100% Identik)
+  const wordBodyHTML = `
+    <div style="text-align:center; margin-bottom:10px;">
+      <img src="${logoSrc}" width="70" height="70" style="display:block; margin:0 auto 4px auto; border-radius:50%;" />
+      <h2 style="font-size:11pt; font-weight:bold; margin:0;">SEKOLAH DASAR ISLAM RAMAH ANAK</h2>
+      <h3 style="font-size:9.5pt; font-weight:bold; color:#047857; margin:2px 0 0 0;">JOURNAL TEACHERS PLANNER</h3>
+      <p style="font-size:8pt; margin:2px 0 0 0;">TAHUN AJARAN ${ta}</p>
+      <hr style="border:0; border-top:1.5px solid #000; margin-top:6px; margin-bottom:8px;" />
+    </div>
+
+    <table style="width:100%; margin-bottom:8px; border:none;">
+      <tr>
+        <td style="border:none; padding:2px; font-size:8.5pt;"><b>Nama Guru:</b> ${name}</td>
+        <td style="border:none; padding:2px; font-size:8.5pt;"><b>Tugas:</b> Guru Kelas</td>
+        <td style="border:none; padding:2px; font-size:8.5pt; text-align:right;"><b>Tanggal/Pekan:</b> ${dateRange}</td>
+      </tr>
+    </table>
+
+    <!-- SEKSI 1 -->
+    <div class="print-section-title">I. Aktivitas Pekanan</div>
+    <table style="width:100%; border:none; margin-bottom:6px;">
+      <tr style="page-break-inside:avoid;">
+        <td style="width:50%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff;">
+          <b>Grafik Aktivitas Pekanan:</b><br/>
+          ${actChartHtml}
+        </td>
+        <td style="width:50%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff;">
+          <b>Catatan Guru:</b>
+          <div style="font-size:7.5pt; line-height:1.2; word-break:break-word; white-space:pre-wrap; margin-top:4px;">${noteAct}</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- SEKSI 2 -->
+    <div class="print-section-title">II. Target Pengembangan Diri</div>
+    <table style="width:100%; border:none; margin-bottom:6px;">
+      <tr style="page-break-inside:avoid;">
+        <td style="width:50%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff;">
+          <b>Grafik &amp; Capaian Target:</b><br/>
+          <div style="font-size:9pt; font-weight:bold; margin-top:2px;">${targetSummaryText}</div>
+          <div style="margin-top:4px;">
+            <div class="bar-label"><span><b>Persentase Target Tercapai</b></span><b>${targetPctText}</b></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${targetBarWidth}"></div></div>
+          </div>
+        </td>
+        <td style="width:50%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff;">
+          <b>Catatan Guru:</b>
+          <div style="font-size:7.5pt; line-height:1.2; word-break:break-word; white-space:pre-wrap; margin-top:4px;">${noteTar}</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- SEKSI 3 -->
+    <div class="print-section-title">III. Laporan Absensi Peserta Didik</div>
+    <table style="width:100%; border:none; margin-bottom:6px;">
+      <tr style="page-break-inside:avoid;">
+        <td style="width:50%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff;">
+          <b>Rekap Kehadiran Bulan Ini:</b><br/>
+          <div style="font-size:8.5pt; font-weight:bold; margin-top:2px;">${absSummaryText}</div>
+          <div style="margin-top:4px;">
+            <div class="bar-label"><span><b>Persentase Kehadiran Murid</b></span><b>${absPctText}</b></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${absBarWidth}"></div></div>
+          </div>
+        </td>
+        <td style="width:50%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff;">
+          <b>Catatan Guru:</b>
+          <div style="font-size:7.5pt; line-height:1.2; word-break:break-word; white-space:pre-wrap; margin-top:4px;">${noteAbs}</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- SEKSI 4 -->
+    <div class="print-section-title">IV. Capaian 8 DPL Peserta Didik</div>
+    <table style="width:100%; border:none; margin-bottom:6px;">
+      <tr style="page-break-inside:avoid;">
+        <td style="width:50%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff;">
+          <b>Grafik Capaian 8 DPL:</b><br/>
+          ${dplChartHtml}
+        </td>
+        <td style="width:50%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff;">
+          <b>Catatan Guru:</b>
+          <div style="font-size:7.5pt; line-height:1.2; word-break:break-word; white-space:pre-wrap; margin-top:4px;">${noteDpl}</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- SEKSI 5 -->
+    <div class="print-section-title">V. Rata-Rata Nilai Formatif</div>
+    <table style="width:100%; border:none; margin-bottom:6px;">
+      <tr style="page-break-inside:avoid;">
+        <td style="width:100%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff;">
+          <b>Grafik Rata-Rata Nilai Formatif:</b><br/>
+          ${nilaiChartHtml}
+        </td>
+      </tr>
+      <tr style="page-break-inside:avoid;">
+        <td style="width:100%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff; margin-top:4px;">
+          <b>Catatan Guru:</b>
+          <div style="font-size:7.5pt; line-height:1.2; word-break:break-word; white-space:pre-wrap; margin-top:4px;">${noteNil}</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- SEKSI 6 -->
+    <div class="print-section-title">VI. Ringkasan Jurnal Refleksi Guru</div>
+    <table style="width:100%; border:none; margin-bottom:6px;">
+      <tr style="page-break-inside:avoid;">
+        <td style="width:100%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff;">
+          <b>Refleksi Pembelajaran Pekan Ini:</b>
+          <div style="font-size:8pt; margin-top:2px;">
+            <div><b>Mata Pelajaran:</b> ${selectedMapels}</div>
+            <div><b>Materi:</b> ${refData.ref_materi_pembelajaran || "-"}</div>
+            <div><b>Metode/Media:</b> ${refData.ref_metode_pembelajaran || "-"}</div>
+            <div><b>Target Kepuasan:</b> ${refKepVal}</div>
+          </div>
+        </td>
+      </tr>
+      <tr style="page-break-inside:avoid;">
+        <td style="width:100%; vertical-align:top; padding:4px; border:1px solid #64748b; background:#ffffff; margin-top:4px;">
+          <b>Identifikasi &amp; Evaluasi Refleksi:</b>
+          <div style="font-size:8pt; margin-top:2px;">
+            <div><b>Apa yang berjalan baik:</b> ${refData.ref_berjalan_baik_pdf || "-"}</div>
+            <div><b>Tantangan yang dihadapi:</b> ${refData.ref_tantangan_pdf || "-"}</div>
+            <div><b>Deskripsi Tindak Lanjut:</b> ${refData.ref_deskripsi_tindak_lanjut || "-"}</div>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- TANDA TANGAN -->
+    <table style="width:100%; margin-top:14px; border:none; page-break-inside:avoid;">
+      <tr>
+        <td style="width:50%; text-align:center; border:none; font-size:8.5pt;">
+          Mengetahui,<br/>
+          <b>Kepala SD Islam Ramah Anak</b>
+          <div style="height:45px;"></div>
+          <b>(Siti Komala Sari, S.Pd)</b>
+        </td>
+        <td style="width:50%; text-align:center; border:none; font-size:8.5pt;">
+          Depok, ${getFormattedSignatureDate()}<br/>
+          <b>Wali Kelas</b>
+          <div style="height:45px;"></div>
+          <b>(${name})</b>
+        </td>
+      </tr>
+    </table>
+  `;
 
   const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
         "xmlns:w='urn:schemas-microsoft-com:office:word' "+
@@ -3402,19 +3381,14 @@ function exportToWord() {
         "<head><meta charset='utf-8'><title>Laporan Planner</title><style>"+
         "@page { size: 215mm 330mm portrait; margin: 8mm 8mm 6mm 8mm; }"+
         "body{font-family:Arial, sans-serif; font-size:7.5pt; color:#000; line-height:1.15; padding:0; margin:0;}"+
-        "table{width:100%; border-collapse:collapse; margin-bottom:4px; page-break-inside:avoid;}"+
-        "th, td{border:1px solid #cbd5e1; padding:3px 5px; font-size:7.5pt;}"+
-        "th{background-color:#f8fafc; text-align:left;}"+
-        ".print-section-title{font-size:8pt; font-weight:bold; color:#047857; border-bottom:1px solid #047857; margin-top:5px; margin-bottom:2px; text-transform:uppercase;}"+
-        ".print-grid{display:table; width:100%; margin-bottom:3px;}"+
-        ".print-box{padding:3px 5px; border:1px solid #64748b; background:#ffffff; page-break-inside:avoid; margin-bottom:2px;}"+
-        ".ttd-grid{width:100%; margin-top:10px; font-size:7.5pt; page-break-inside:avoid;}"+
-        ".bar-track{height:4px; background-color:#e2e8f0; border:0.5px solid #cbd5e1;}"+
-        ".bar-fill{height:100%; background-color:#059669;}"+
-        ".print-logo{width:70px; height:70px; border-radius:50%; margin:0 auto 2px; display:block;}"+
+        "table{border-collapse:collapse; page-break-inside:avoid;}"+
+        ".print-section-title{font-size:8pt; font-weight:bold; color:#047857; border-bottom:1px solid #047857; margin-top:6px; margin-bottom:3px; text-transform:uppercase;}"+
+        ".bar-label{display:flex; justify-content:space-between; font-size:7.5pt; color:#64748b;}"+
+        ".bar-track{height:4px; background-color:#e2e8f0; border:0.5px solid #cbd5e1; border-radius:10px; overflow:hidden;}"+
+        ".bar-fill{height:100%; background-color:#059669; border-radius:10px;}"+
         "</style></head><body>";
   const footer = "</body></html>";
-  const sourceHTML = header + content.innerHTML + footer;
+  const sourceHTML = header + wordBodyHTML + footer;
 
   const blob = new Blob(['\ufeff', sourceHTML], {
     type: 'application/msword'
