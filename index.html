@@ -172,7 +172,7 @@ h1{font-size:27px;line-height:1.2;margin-top:5px;color:var(--text)}
   position: absolute;
   top: 2px;
   right: 2px;
-  width: 9px;
+  width: 99px;
   height: 9px;
   border-radius: 50%;
   background: #10b981;
@@ -1419,9 +1419,9 @@ th { border-color: inherit !important; }
     <div class="field" style="margin-bottom:10px;">
       <label>Pilih Mapel Tujuan Paste:</label>
       <select id="pasteMapelTarget" style="background:#fff;">
-        <option value="ALL">Semua Mapel (Berurutan: PP, PAI, B.INA, MTK, IPAS, SENI, PJOK, B.ING, SUNDA, ARAB, TIK)</option>
-        <option value="pp">PP</option>
+        <option value="ALL">Semua Mapel (Berurutan: PAI, PP, B.INA, MTK, IPAS, SENI, PJOK, B.ING, SUNDA, ARAB, TIK)</option>
         <option value="pai">PAI</option>
+        <option value="pp">PP</option>
         <option value="bina">Bahasa Indonesia</option>
         <option value="mtk">Matematika</option>
         <option value="ipas">IPAS</option>
@@ -1471,8 +1471,8 @@ th { border-color: inherit !important; }
             <th rowspan="2" style="width:80px;text-align:center">REMEDIAL</th>
           </tr>
           <tr>
-            <th style="text-align:center">PP</th>
             <th style="text-align:center">PAI</th>
+            <th style="text-align:center">PP</th>
             <th style="text-align:center">B. INA</th>
             <th style="text-align:center">MTK</th>
             <th style="text-align:center">IPAS</th>
@@ -1488,8 +1488,8 @@ th { border-color: inherit !important; }
         <tfoot style="background:var(--header);font-weight:bold;">
           <tr>
             <td colspan="3" style="text-align:right">Rata-Rata</td>
-            <td style="text-align:center" id="avg_pp">0,00</td>
             <td style="text-align:center" id="avg_pai">0,00</td>
+            <td style="text-align:center" id="avg_pp">0,00</td>
             <td style="text-align:center" id="avg_bina">0,00</td>
             <td style="text-align:center" id="avg_mtk">0,00</td>
             <td style="text-align:center" id="avg_ipas">0,00</td>
@@ -1503,8 +1503,8 @@ th { border-color: inherit !important; }
           </tr>
           <tr>
             <td colspan="3" style="text-align:right">Nilai Tertinggi</td>
-            <td style="text-align:center" id="max_pp">0,00</td>
             <td style="text-align:center" id="max_pai">0,00</td>
+            <td style="text-align:center" id="max_pp">0,00</td>
             <td style="text-align:center" id="max_bina">0,00</td>
             <td style="text-align:center" id="max_mtk">0,00</td>
             <td style="text-align:center" id="max_ipas">0,00</td>
@@ -1518,8 +1518,8 @@ th { border-color: inherit !important; }
           </tr>
           <tr>
             <td colspan="3" style="text-align:right">Nilai Terendah</td>
-            <td style="text-align:center" id="min_pp">0,00</td>
             <td style="text-align:center" id="min_pai">0,00</td>
+            <td style="text-align:center" id="min_pp">0,00</td>
             <td style="text-align:center" id="min_bina">0,00</td>
             <td style="text-align:center" id="min_mtk">0,00</td>
             <td style="text-align:center" id="min_ipas">0,00</td>
@@ -1572,8 +1572,8 @@ th { border-color: inherit !important; }
     <div class="refleksi-phase-title"><i class="fa-solid fa-circle-1"></i> Phase 1: Mata Pelajaran</div>
     <div class="refleksi-subtext">Pilih mapel tertentu yang perlu adanya refleksi dalam 1 pekan:</div>
     <div class="mapel-checkboxes" id="refMapelBoxes">
-      <label class="mapel-item"><input type="checkbox" data-mapel="PP" onchange="saveRefleksiMapel()"> Pendidikan Pancasila</label>
       <label class="mapel-item"><input type="checkbox" data-mapel="PAI" onchange="saveRefleksiMapel()"> Pendidikan Agama Islam</label>
+      <label class="mapel-item"><input type="checkbox" data-mapel="PP" onchange="saveRefleksiMapel()"> Pendidikan Pancasila</label>
       <label class="mapel-item"><input type="checkbox" data-mapel="BINA" onchange="saveRefleksiMapel()"> Bahasa Indonesia</label>
       <label class="mapel-item"><input type="checkbox" data-mapel="MTK" onchange="saveRefleksiMapel()"> Matematika</label>
       <label class="mapel-item"><input type="checkbox" data-mapel="IPAS" onchange="saveRefleksiMapel()"> IPAS</label>
@@ -1792,7 +1792,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbze_y0ugmxO2kBRXVvUOpvOv3nNm0jLq1lDEQqbrQfVcxtjb1833MWHL__sBM0cgFtl/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjWw8EG2BH3m5q00xhfULpB9xS3-OCqmYpH3lvGiXXZDBm5eCg-H476Mrq2B2XfJbi/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -2165,7 +2165,9 @@ const defaultDPL=[
 ];
 
 const defaultAnekdotData=[];
-const mapelKeys=["pp","pai","bina","mtk","ipas","seni","pjok","bing","sunda","arab","tik"];
+
+// URUTAN UTAMA MAPEL FORMATIF: PAI DAHULU KEMUDIAN PP
+const mapelKeys=["pai","pp","bina","mtk","ipas","seni","pjok","bing","sunda","arab","tik"];
 const defaultNilaiData=[];
 const monthsKeys=["JULI","AGUST","SEPT","OKT","NOV","DES","JAN","FEB","MAR","APR","MEI","JUN"];
 let currentMonth="AGUST";
@@ -3122,7 +3124,7 @@ function processPastedNilai() {
     if (!saved[idx]) saved[idx] = {};
   });
 
-  const mapelsOrder = ["pp", "pai", "bina", "mtk", "ipas", "seni", "pjok", "bing", "sunda", "arab", "tik"];
+  const mapelsOrder = ["pai", "pp", "bina", "mtk", "ipas", "seni", "pjok", "bing", "sunda", "arab", "tik"];
 
   lines.forEach((line, index) => {
     if (index < students.length) {
@@ -3216,7 +3218,7 @@ function saveNilai(){
 }
 
 function renderNilaiChart(averages){
- const labels = ["PP", "PAI", "B. INA", "MTK", "IPAS", "SENI", "PJOK", "B. ING", "B. SUNDA", "B. ARAB", "TIK"];
+ const labels = ["PAI", "PP", "B. INA", "MTK", "IPAS", "SENI", "PJOK", "B. ING", "B. SUNDA", "B. ARAB", "TIK"];
  document.getElementById("nilaiChart").innerHTML = averages.map((avg, i) => {
  const displayVal = avg !== null ? avg.toFixed(2).replace(".",",") : "0,00";
  const pct = avg !== null ? Math.min(100, Math.max(0, avg)) : 0;
