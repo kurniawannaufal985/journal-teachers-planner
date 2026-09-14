@@ -404,7 +404,7 @@ input.day-cell:disabled {
 .print-section-title{font-size:9.5px;font-weight:800;color:var(--green);margin-bottom:2px;border-bottom:1.5px solid var(--green);padding-bottom:1px;text-transform:uppercase}
 .print-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px}
 .print-box{border:1px solid var(--border);padding:4px 6px;border-radius:4px;background:#f8fafc}
-.print-box textarea{width:100%;border:1px dashed var(--border);border-radius:3px;padding:4px;font-size:8.5px;min-height:26px;margin-top:2px;background:#fff;outline:none}
+.print-box textarea{width:100%;border:1px dashed var(--border);border-radius:3px;padding:4px;font-size:8.5px;min-height:26px;margin-top:2px;background:#fff;outline:none;line-height:1.25;word-break:break-word}
 
 .ttd-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:10px;text-align:center;font-size:8.5px}
 .ttd-space{height:55px}
@@ -627,7 +627,7 @@ th { border-color: inherit !important; }
 @media print {
   @page {
     size: 215mm 330mm portrait;
-    margin: 5mm 5mm 3mm 5mm;
+    margin: 4mm 4mm 3mm 4mm;
   }
 
   * {
@@ -642,7 +642,7 @@ th { border-color: inherit !important; }
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
-    font-size: 8pt !important;
+    font-size: 7.5pt !important;
     line-height: 1.15 !important;
   }
 
@@ -684,9 +684,9 @@ th { border-color: inherit !important; }
     resize: none !important;
     padding: 0 !important;
     background: transparent !important;
-    min-height: 18px !important;
-    font-size: 8pt !important;
-    height: 18px !important;
+    min-height: 16px !important;
+    font-size: 7.5pt !important;
+    height: auto !important;
   }
 
   .print-report-container h2,
@@ -695,20 +695,20 @@ th { border-color: inherit !important; }
   }
 
   .print-section-title {
-    font-size: 8.5pt !important;
-    margin-bottom: 2px !important;
+    font-size: 8pt !important;
+    margin-bottom: 1px !important;
     padding-bottom: 1px !important;
     color: #000000 !important;
-    border-bottom: 1.5px solid #000000 !important;
+    border-bottom: 1px solid #000000 !important;
   }
 
   .print-grid {
-    gap: 4px !important;
-    margin-bottom: 3px !important;
+    gap: 3px !important;
+    margin-bottom: 2px !important;
   }
 
   .print-box {
-    padding: 3px 5px !important;
+    padding: 2px 4px !important;
     border: 1px solid #64748b !important;
     background: #ffffff !important;
   }
@@ -718,7 +718,7 @@ th { border-color: inherit !important; }
   }
 
   .bar-label {
-    font-size: 8pt !important;
+    font-size: 7.5pt !important;
     margin-bottom: 1px !important;
     color: #000000 !important;
   }
@@ -733,7 +733,7 @@ th { border-color: inherit !important; }
   }
   
   .bar-track {
-    height: 4.5px !important;
+    height: 4px !important;
     background-color: #e2e8f0 !important;
     border: 0.5px solid #cbd5e1 !important;
     -webkit-print-color-adjust: exact !important;
@@ -749,20 +749,20 @@ th { border-color: inherit !important; }
   }
 
   .ttd-grid {
-    margin-top: 8px !important;
-    font-size: 8pt !important;
+    margin-top: 6px !important;
+    font-size: 7.5pt !important;
     gap: 10px !important;
     color: #000000 !important;
   }
 
   .ttd-space {
-    height: 48px !important;
+    height: 40px !important;
   }
 
   .print-logo {
-    width: 90px !important;
-    height: 90px !important;
-    max-height: 95px !important;
+    width: 75px !important;
+    height: 75px !important;
+    max-height: 80px !important;
     margin: 0 auto 2px !important;
     display: block !important;
     object-fit: contain !important;
@@ -1792,7 +1792,7 @@ th { border-color: inherit !important; }
 </div>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxoakXnvUcqWZK9I5QzNz7sxQ6MMP9UH9BaMVXbFbADc1ISEN1JK0fFsX1hz7AOuSk7/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzu6mn0lhNfsRKh69guJKyLeFRQpQAMs2judDsp13Knnul6jCJX459gfUjqFrtu1ezb/exec";
 
 let syncTimeout = null;
 let cloudLoading = false;
@@ -3357,8 +3357,8 @@ function updatePrintViewData(){
 function getBase64Image(imgEl) {
   try {
     const canvas = document.createElement("canvas");
-    canvas.width = imgEl.naturalWidth || imgEl.width || 100;
-    canvas.height = imgEl.naturalHeight || imgEl.height || 100;
+    canvas.width = imgEl.naturalWidth || imgEl.width || 120;
+    canvas.height = imgEl.naturalHeight || imgEl.height || 120;
     const ctx = canvas.getContext("2d");
     ctx.drawImage(imgEl, 0, 0);
     return canvas.toDataURL("image/png");
@@ -3371,24 +3371,26 @@ function exportToWord() {
   updatePrintViewData();
   const content = document.getElementById("printableWordContent").cloneNode(true);
   
-  // Ambil data logo agar gambar logo sekolah tersimpan utuh di file Word
+  // Ambil Data Gambar Logo Sekolah
   const logoImg = document.querySelector(".print-logo");
   let logoSrc = "";
   if (logoImg) {
     logoSrc = getBase64Image(logoImg);
   }
 
-  // Mengubah input textarea menjadi paragraf teks biasa agar terformat rapi di MS Word
+  // Konversi textarea menjadi paragraf teks utuh agar 1 paragraf tidak terpotong & rapi
   content.querySelectorAll("textarea").forEach(ta => {
     const val = ta.value || ta.textContent || "";
-    const p = document.createElement("p");
+    const p = document.createElement("div");
     p.textContent = val || "-";
     p.style.margin = "2px 0";
-    p.style.fontSize = "8pt";
+    p.style.fontSize = "7.5pt";
+    p.style.lineHeight = "1.2";
+    p.style.wordBreak = "break-word";
+    p.style.whiteSpace = "pre-wrap";
     ta.parentNode.replaceChild(p, ta);
   });
 
-  // Ganti logo di clone jika base64 berhasil didapatkan
   const cloneLogo = content.querySelector(".print-logo");
   if (cloneLogo && logoSrc) {
     cloneLogo.src = logoSrc;
@@ -3398,15 +3400,18 @@ function exportToWord() {
         "xmlns:w='urn:schemas-microsoft-com:office:word' "+
         "xmlns='http://www.w3.org/TR/REC-html40'>"+
         "<head><meta charset='utf-8'><title>Laporan Planner</title><style>"+
-        "body{font-family:Arial, sans-serif; font-size:8.5pt; color:#000; padding:10px;}"+
-        "table{width:100%; border-collapse:collapse; margin-bottom:8px;}"+
-        "th, td{border:1px solid #cbd5e1; padding:4px 6px; font-size:8pt;}"+
+        "@page { size: 215mm 330mm portrait; margin: 8mm 8mm 6mm 8mm; }"+
+        "body{font-family:Arial, sans-serif; font-size:7.5pt; color:#000; line-height:1.15; padding:0; margin:0;}"+
+        "table{width:100%; border-collapse:collapse; margin-bottom:4px; page-break-inside:avoid;}"+
+        "th, td{border:1px solid #cbd5e1; padding:3px 5px; font-size:7.5pt;}"+
         "th{background-color:#f8fafc; text-align:left;}"+
-        ".print-section-title{font-size:9.5pt; font-weight:bold; color:#047857; border-bottom:1.5px solid #047857; margin-top:8px; margin-bottom:4px; text-transform:uppercase;}"+
-        ".ttd-grid{width:100%; margin-top:18px;}"+
-        ".bar-track{height:5px; background-color:#e2e8f0; border:0.5px solid #cbd5e1;}"+
+        ".print-section-title{font-size:8pt; font-weight:bold; color:#047857; border-bottom:1px solid #047857; margin-top:5px; margin-bottom:2px; text-transform:uppercase;}"+
+        ".print-grid{display:table; width:100%; margin-bottom:3px;}"+
+        ".print-box{padding:3px 5px; border:1px solid #64748b; background:#ffffff; page-break-inside:avoid; margin-bottom:2px;}"+
+        ".ttd-grid{width:100%; margin-top:10px; font-size:7.5pt; page-break-inside:avoid;}"+
+        ".bar-track{height:4px; background-color:#e2e8f0; border:0.5px solid #cbd5e1;}"+
         ".bar-fill{height:100%; background-color:#059669;}"+
-        ".print-logo{width:80px; height:80px; border-radius:50%; margin:0 auto 4px; display:block;}"+
+        ".print-logo{width:70px; height:70px; border-radius:50%; margin:0 auto 2px; display:block;}"+
         "</style></head><body>";
   const footer = "</body></html>";
   const sourceHTML = header + content.innerHTML + footer;
